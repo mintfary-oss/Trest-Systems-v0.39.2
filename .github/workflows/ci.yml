@@ -1,0 +1,17 @@
+name: Verify source
+on: [push, pull_request]
+permissions:
+  contents: read
+jobs:
+  unit:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: '1.23.2'
+      - run: sudo apt-get update && sudo apt-get install -y libpq-dev pkg-config python3-yaml python3-sqlalchemy
+      - run: go test -count=1 ./... && go vet ./... && go build ./...
+      - run: cd third_party/pgx && go test ./...
+      - run: /usr/bin/python3 -m unittest discover -s tests/installer -v
+      - run: bash scripts/release/build-binaries.sh

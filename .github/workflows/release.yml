@@ -1,0 +1,26 @@
+name: Build full release candidate
+on:
+  workflow_dispatch:
+  push:
+    tags: ['v0.39.2*']
+permissions:
+  contents: read
+jobs:
+  package:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: '1.23.2'
+      - run: sudo apt-get update && sudo apt-get install -y libpq-dev pkg-config python3-yaml python3-sqlalchemy
+      - run: /usr/bin/python3 -m unittest discover -s tests/installer -v
+      - run: bash scripts/build-release.sh
+      - name: Complete source and binary package (not production acceptance)
+        run: bash scripts/package-release.sh
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Trest-Systems-0.39.2-release-candidate
+          path: |
+            dist/*.zip
+            dist/*.sha256

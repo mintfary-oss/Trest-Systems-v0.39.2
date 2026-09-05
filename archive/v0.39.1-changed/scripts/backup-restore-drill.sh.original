@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+set -euo pipefail
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+cd "$ROOT"
+command -v docker >/dev/null 2>&1 || { echo "backup-drill: Docker required" >&2; exit 2; }
+docker compose version >/dev/null 2>&1 || { echo "backup-drill: Docker Compose required" >&2; exit 2; }
+[[ "${TREST_CONFIRM_RESTORE:-NO}" == "YES" ]] || { echo "backup-drill: set TREST_CONFIRM_RESTORE=YES for disposable restore verification" >&2; exit 2; }
+PROJECT="${COMPOSE_PROJECT_NAME:-trest-restore-drill}"
+BACKUP="${1:-.trest/backups/e2e-restore-drill.sql}"
+mkdir -p "$(dirname "$BACKUP")"
+C=(docker compose -p "$PROJECT" -f deployments/docker-compose.yml)
+cleanup(){ "${C[@]}" down -v --remove-orphans >/dev/null 2>&1 || true; }
+trap cleanup EXIT
+"${C[@]}" up -d postgres >/dev/null
+for _ in $(seq 1 60); do "${C[@]}" exec -T postgres pg_isready -U "${POSTGRES_USER:-trest}" -d "${POSTGRES_DB:-trest}" >/dev/null 2>&1 && break; sleep 2; done
+"${C[@]}" exec -T postgres pg_isready -U "${POSTGRES_USER:-trest}" -d "${POSTGRES_DB:-trest}" >/dev/null
+"${C[@]}" exec -T postgres pg_dump -U "${POSTGRES_USER:-trest}" -d "${POSTGRES_DB:-trest}" > "$BACKUP"
+./scripts/backup-verify.sh "$BACKUP"
+"${C[@]}" exec -T postgres psql -U "${POSTGRES_USER:-trest}" -d "${POSTGRES_DB:-trest}" -c 'CREATE TABLE IF NOT EXISTS trest_restore_drill_marker(id integer PRIMARY KEY, created_at timestamptz NOT NULL DEFAULT now()); INSERT INTO trest_restore_drill_marker(id) VALUES (1) ON CONFLICT DO NOTHING;' >/dev/null
+"${C[@]}" exec -T postgres psql -U "${POSTGRES_USER:-trest}" -d "${POSTGRES_DB:-trest}" -c 'DROP TABLE IF EXISTS trest_restore_drill_marker;' >/dev/null
+cat "$BACKUP" | "${C[@]}" exec -T postgres psql -U "${POSTGRES_USER:-trest}" -d "${POSTGRES_DB:-trest}" >/dev/null
+"${C[@]}" exec -T postgres psql -U "${POSTGRES_USER:-trest}" -d "${POSTGRES_DB:-trest}" -tAc "SELECT to_regclass('public.trest_restore_drill_marker')" | grep -qx 'trest_restore_drill_marker'
+"${C[@]}" exec -T postgres psql -U "${POSTGRES_USER:-trest}" -d "${POSTGRES_DB:-trest}" -c 'DROP TABLE IF EXISTS trest_restore_drill_marker;' >/dev/null
+sha256sum "$BACKUP"
+echo "backup-drill: PASS"

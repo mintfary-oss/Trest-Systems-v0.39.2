@@ -1,0 +1,64 @@
+package converter
+
+import (
+	"bytes"
+	"encoding/binary"
+	"encoding/json"
+	"fmt"
+	"math"
+)
+
+// EncodeGLB writes a self-contained GLB 2.0 binary container for a triangle mesh.
+func EncodeGLB(w interface{ Write([]byte) (int, error) }, m Mesh) error {
+	var bin bytes.Buffer
+	put := func(v uint32) { _ = binary.Write(&bin, binary.LittleEndian, v) }
+	for _, v := range m.Positions {
+		put(math.Float32bits(float32(v)))
+	}
+	posBytes := bin.Len()
+	for _, v := range m.Indices {
+		put(v)
+	}
+	buf := bin.Bytes()
+	if rem := len(buf) % 4; rem != 0 {
+		buf = append(buf, bytes.Repeat([]byte{0}, 4-rem)...)
+	}
+	j := map[string]interface{}{"asset": map[string]string{"version": "2.0", "generator": "Trest Systems BIM Converter"}, "scene": 0, "scenes": []interface{}{map[string]interface{}{"nodes": []int{0}}}, "nodes": []interface{}{map[string]interface{}{"mesh": 0}}, "meshes": []interface{}{map[string]interface{}{"primitives": []interface{}{map[string]interface{}{"attributes": map[string]int{"POSITION": 0}, "indices": 1, "mode": 4}}}}, "buffers": []interface{}{map[string]interface{}{"byteLength": len(buf)}}, "bufferViews": []interface{}{map[string]interface{}{"buffer": 0, "byteOffset": 0, "byteLength": posBytes, "target": 34962}, map[string]interface{}{"buffer": 0, "byteOffset": posBytes, "byteLength": len(buf) - posBytes, "target": 34963}}, "accessors": []interface{}{map[string]interface{}{"bufferView": 0, "componentType": 5126, "count": len(m.Positions) / 3, "type": "VEC3"}, map[string]interface{}{"bufferView": 1, "componentType": 5125, "count": len(m.Indices), "type": "SCALAR"}}}
+	jb, _ := json.Marshal(j)
+	if rem := len(jb) % 4; rem != 0 {
+		jb = append(jb, bytes.Repeat([]byte{' '}, 4-rem)...)
+	}
+	length := 12 + 8 + len(jb) + 8 + len(buf)
+	h := make([]byte, 12)
+	copy(h, "glTF")
+	binary.LittleEndian.PutUint32(h[4:], 2)
+	binary.LittleEndian.PutUint32(h[8:], uint32(length))
+	if _, e := w.Write(h); e != nil {
+		return e
+	}
+	ch := make([]byte, 8)
+	binary.LittleEndian.PutUint32(ch, uint32(len(jb)))
+	binary.LittleEndian.PutUint32(ch[4:], 0x4E4F534A)
+	if _, e := w.Write(ch); e != nil {
+		return e
+	}
+	if _, e := w.Write(jb); e != nil {
+		return e
+	}
+	binary.LittleEndian.PutUint32(ch, uint32(len(buf)))
+	binary.LittleEndian.PutUint32(ch[4:], 0x004E4942)
+	if _, e := w.Write(ch); e != nil {
+		return e
+	}
+	_, e := w.Write(buf)
+	return e
+}
+func ValidateGLBHeader(b []byte) error {
+	if len(b) < 12 {
+		return fmt.Errorf("GLB too short")
+	}
+	if string(b[:4]) != "glTF" || binary.LittleEndian.Uint32(b[4:8]) != 2 {
+		return fmt.Errorf("invalid GLB header")
+	}
+	return nil
+}

@@ -1,0 +1,14 @@
+# Binary
+output/gencad
+gencad
+
+# Generated output (regenerate with go run)
+output/*.dxf
+
+# Go
+*.test
+
+# Editor
+.idea/
+.vscode/
+*.swp

@@ -1,0 +1,37 @@
+TREST SYSTEMS v0.39 — АВТОМАТИЧЕСКАЯ УСТАНОВКА
+
+LINUX-СЕРВЕР С ПУБЛИЧНЫМ ДОМЕНОМ:
+
+  sudo ./install.sh --domain app.example.com --email admin@example.com --non-interactive
+
+Замените app.example.com и admin@example.com своими значениями.
+DNS домена должен указывать на публичный IP сервера, а внешние порты 80 и 443 должны быть разрешены у хостинг-провайдера.
+
+ЛОКАЛЬНАЯ УСТАНОВКА БЕЗ ДОМЕНА:
+
+  sudo ./install.sh --tls off --non-interactive
+
+ЧТО ПРОИСХОДИТ АВТОМАТИЧЕСКИ:
+- проверка ОС, архитектуры, CPU, RAM, диска, сети, DNS и портов;
+- установка/обновление системных компонентов, Docker Engine и Compose v2;
+- создание безопасных случайных паролей и секретов;
+- проверка готовых Go-бинарников и их SHA-256;
+- запуск PostgreSQL, Redis, MinIO и прикладных сервисов;
+- применение миграций до запуска API/Worker;
+- настройка Caddy и доверенного HTTPS при наличии домена;
+- проверка контейнеров, портов, сайта, TLS и журналов;
+- smoke/full E2E и backup/restore runtime drill;
+- полный TXT/JSON-отчёт.
+
+Установка успешна только когда все обязательные этапы имеют PASS и в отчёте указано «ОШИБКИ: нет».
+
+ОТЧЁТЫ:
+  /var/log/trest-systems/
+  /var/lib/trest-systems/last-install-report.json
+
+НАЧАЛЬНЫЙ ПАРОЛЬ АДМИНИСТРАТОРА:
+  /var/lib/trest-systems/credentials/admin.txt
+  Файл доступен только root и имеет права 0600.
+
+ДИАГНОСТИКА ПОСЛЕ УСТАНОВКИ:
+  sudo ./install.sh --doctor --install-dir /opt/trest-systems

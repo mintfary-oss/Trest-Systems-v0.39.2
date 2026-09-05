@@ -1,0 +1,676 @@
+// Package dxf implements a DXF R2000 (AC1015) file writer.
+// Produces files compatible with AutoCAD 2000+, KOMPAS-3D, NanoCAD, ZWCAD, BricsCAD.
+//
+// Standards: ГОСТ 2.303-68 (line types), ГОСТ 2.304-81 (text styles)
+package dxf
+
+import (
+	"fmt"
+	"io"
+	"math"
+	"os"
+	"strings"
+)
+
+// LineWeight constants in hundredths of mm (DXF standard values).
+const (
+	LW013 = 13  // 0.13 mm — dimension lines, hatches
+	LW018 = 18  // 0.18 mm — axis lines, thin
+	LW025 = 25  // 0.25 mm — normal lines
+	LW035 = 35  // 0.35 mm — medium
+	LW050 = 50  // 0.50 mm — thick
+	LW070 = 70  // 0.70 mm — walls, frame (основная линия по ГОСТ 2.303-68)
+)
+
+// Color ACI constants (AutoCAD Color Index).
+const (
+	ColorByLayer = 256
+	ColorBlack   = 7   // black/white
+	ColorRed     = 1   // red (axes)
+	ColorYellow  = 2   // yellow
+	ColorGreen   = 3   // green (dimensions)
+	ColorCyan    = 4
+	ColorBlue    = 5   // blue (elevations)
+	ColorGray    = 8   // gray
+	ColorLtGray  = 9
+	Color254     = 254 // dark gray (hatches)
+)
+
+// LineType names.
+const (
+	LTContinuous = "Continuous"
+	LTCenter     = "CENTER"      // штрихпунктирная (оси)
+	LTDashed     = "DASHED"      // штриховая
+	LTHidden     = "HIDDEN"      // скрытые линии
+)
+
+// Layer defines a DXF layer.
+type Layer struct {
+	Name       string
+	Color      int
+	LineWeight int
+	LineType   string
+	Off        bool
+}
+
+// Standard layers for construction drawings.
+var StandardLayers = []Layer{
+	{"РАМКА",           ColorBlack,  LW070, LTContinuous, false},
+	{"ШТАМП",           ColorBlack,  LW035, LTContinuous, false},
+	{"СТЕНЫ_НЕСУЩИЕ",   ColorBlack,  LW070, LTContinuous, false},
+	{"СТЕНЫ_НЕНЕСУЩИЕ", ColorBlack,  LW035, LTContinuous, false},
+	{"ПЕРЕГОРОДКИ",     ColorBlack,  LW025, LTContinuous, false},
+	{"ПРОЕМЫ",          ColorBlack,  LW025, LTContinuous, false},
+	{"ШТРИХОВКА",       Color254,    LW013, LTContinuous, false},
+	{"ОСИ",             ColorRed,    LW018, LTCenter,     false},
+	{"РАЗМЕРЫ",         ColorGreen,  LW013, LTContinuous, false},
+	{"ТЕКСТ_ОСЕЙ",      ColorRed,    LW018, LTContinuous, false},
+	{"ТЕКСТ",           ColorBlack,  LW025, LTContinuous, false},
+	{"ОТМЕТКИ",         ColorBlue,   LW018, LTContinuous, false},
+	{"МЕБЕЛЬ",          ColorGray,   LW013, LTContinuous, false},
+	{"ЛЕСТНИЦЫ",        ColorBlack,  LW025, LTContinuous, false},
+	{"САНУЗЛЫ",         ColorBlack,  LW018, LTContinuous, false},
+	{"ГЕНПЛАН",         ColorBlack,  LW035, LTContinuous, false},
+	{"РАСТИТЕЛЬНОСТЬ",  ColorGreen,  LW013, LTContinuous, false},
+	{"ДОРОГИ",          ColorGray,   LW035, LTContinuous, false},
+}
+
+// Document represents a DXF document being written.
+type Document struct {
+	w       io.Writer
+	handle  int
+	layers  map[string]Layer
+	ltypes  map[string]bool
+	styles  map[string]bool
+	dimstyles map[string]bool
+}
+
+// New creates a new DXF document writing to w.
+func New(w io.Writer) *Document {
+	d := &Document{
+		w:         w,
+		handle:    0x100, // start above reserved DXF handles (1-FF)
+		layers:    make(map[string]Layer),
+		ltypes:    make(map[string]bool),
+		styles:    make(map[string]bool),
+		dimstyles: make(map[string]bool),
+	}
+	for _, l := range StandardLayers {
+		d.layers[l.Name] = l
+		d.ltypes[l.LineType] = true
+	}
+	return d
+}
+
+// NewFile creates a DXF document writing to a file.
+func NewFile(path string) (*Document, *os.File, error) {
+	f, err := os.Create(path)
+	if err != nil {
+		return nil, nil, err
+	}
+	return New(f), f, nil
+}
+
+// nextHandle returns a unique handle string.
+func (d *Document) nextHandle() string {
+	d.handle++
+	return fmt.Sprintf("%X", d.handle)
+}
+
+// group writes a DXF group code and value.
+func (d *Document) g(code int, value interface{}) {
+	fmt.Fprintf(d.w, "%3d\n%v\n", code, value)
+}
+
+// gf writes a float with 6 decimal places.
+func (d *Document) gf(code int, value float64) {
+	fmt.Fprintf(d.w, "%3d\n%.6f\n", code, value)
+}
+
+// WriteHeader writes the complete DXF file header.
+func (d *Document) WriteHeader() {
+	d.g(0, "SECTION")
+	d.g(2, "HEADER")
+
+	// DXF version: R2000 = AC1015
+	d.g(9, "$ACADVER")
+	d.g(1, "AC1015")
+
+	// Units: 4 = millimeters
+	d.g(9, "$INSUNITS")
+	d.g(70, 4)
+
+	// Metric
+	d.g(9, "$MEASUREMENT")
+	d.g(70, 1)
+
+	// Angular units: degrees
+	d.g(9, "$ANGBASE")
+	d.gf(50, 0.0)
+	d.g(9, "$ANGDIR")
+	d.g(70, 0)
+
+	// Drawing limits (A1 landscape: 841 x 594 mm)
+	d.g(9, "$LIMMIN")
+	d.gf(10, 0.0)
+	d.gf(20, 0.0)
+	d.g(9, "$LIMMAX")
+	d.gf(10, 841.0)
+	d.gf(20, 594.0)
+
+	// Text height default (mm)
+	d.g(9, "$TEXTSIZE")
+	d.gf(40, 3.5)
+
+	// Dimension settings
+	d.g(9, "$DIMSCALE")
+	d.gf(40, 1.0)
+	d.g(9, "$DIMTXT")
+	d.gf(40, 2.5)
+	d.g(9, "$DIMASZ")
+	d.gf(40, 2.5)
+	d.g(9, "$DIMDEC")
+	d.g(70, 0)
+
+	d.g(0, "ENDSEC")
+}
+
+// WriteClasses writes the CLASSES section (required for R2000).
+func (d *Document) WriteClasses() {
+	d.g(0, "SECTION")
+	d.g(2, "CLASSES")
+	d.g(0, "ENDSEC")
+}
+
+// WriteTables writes TABLES section with layers, linetypes, text styles.
+func (d *Document) WriteTables() {
+	d.g(0, "SECTION")
+	d.g(2, "TABLES")
+
+	d.writeVportTable()
+	d.writeLtypeTable()
+	d.writeLayerTable()
+	d.writeStyleTable()
+	d.writeDimStyleTable()
+	d.writeBlockRecordTable()
+
+	d.g(0, "ENDSEC")
+}
+
+func (d *Document) writeVportTable() {
+	d.g(0, "TABLE")
+	d.g(2, "VPORT")
+	d.g(5, d.nextHandle())
+	d.g(100, "AcDbSymbolTable")
+	d.g(70, 1)
+
+	d.g(0, "VPORT")
+	d.g(5, d.nextHandle())
+	d.g(100, "AcDbSymbolTableRecord")
+	d.g(100, "AcDbViewportTableRecord")
+	d.g(2, "*Active")
+	d.g(70, 0)
+	d.gf(10, 0.0); d.gf(20, 0.0)   // lower-left corner
+	d.gf(11, 1.0); d.gf(21, 1.0)   // upper-right corner
+	d.gf(12, 420.5); d.gf(22, 297.0) // center
+	d.gf(13, 0.0); d.gf(23, 0.0)
+	d.gf(14, 10.0); d.gf(24, 10.0)
+	d.gf(15, 10.0); d.gf(25, 10.0)
+	d.gf(16, 0.0); d.gf(26, 0.0); d.gf(36, 1.0)
+	d.gf(17, 0.0); d.gf(27, 0.0); d.gf(37, 0.0)
+	d.gf(40, 594.0) // view height
+	d.gf(41, 1.4141) // aspect ratio
+	d.gf(42, 50.0)
+	d.gf(43, 0.0)
+	d.gf(44, 0.0)
+	d.gf(50, 0.0)
+	d.gf(51, 0.0)
+	d.g(71, 0); d.g(72, 1000); d.g(73, 1)
+	d.g(74, 3); d.g(75, 0); d.g(76, 0)
+	d.g(77, 0); d.g(78, 0)
+
+	d.g(0, "ENDTAB")
+}
+
+func (d *Document) writeLtypeTable() {
+	d.g(0, "TABLE")
+	d.g(2, "LTYPE")
+	d.g(5, d.nextHandle())
+	d.g(100, "AcDbSymbolTable")
+	d.g(70, 5)
+
+	// ByLayer
+	d.writeLtype("ByLayer", "ByLayer", []float64{})
+	// ByBlock
+	d.writeLtype("ByBlock", "ByBlock", []float64{})
+	// Continuous
+	d.writeLtype("Continuous", "Solid line ——————", []float64{})
+	// CENTER (штрихпунктирная — осевая линия)
+	d.writeLtype("CENTER", "Center __ _ __ _ __", []float64{31.75, -6.35, 6.35, -6.35})
+	// DASHED (штриховая)
+	d.writeLtype("DASHED", "Dashed _ _ _ _ _", []float64{12.7, -6.35})
+	// HIDDEN (скрытые линии)
+	d.writeLtype("HIDDEN", "Hidden _ _ _ _ _", []float64{6.35, -3.175})
+
+	d.g(0, "ENDTAB")
+}
+
+func (d *Document) writeLtype(name, desc string, pattern []float64) {
+	d.g(0, "LTYPE")
+	d.g(5, d.nextHandle())
+	d.g(100, "AcDbSymbolTableRecord")
+	d.g(100, "AcDbLinetypeTableRecord")
+	d.g(2, name)
+	d.g(70, 0)
+	d.g(3, desc)
+	d.g(72, 65)
+	d.g(73, len(pattern))
+
+	total := 0.0
+	for _, v := range pattern {
+		total += math.Abs(v)
+	}
+	d.gf(40, total)
+	for _, v := range pattern {
+		d.gf(49, v)
+		d.g(74, 0)
+	}
+}
+
+func (d *Document) writeLayerTable() {
+	d.g(0, "TABLE")
+	d.g(2, "LAYER")
+	d.g(5, d.nextHandle())
+	d.g(100, "AcDbSymbolTable")
+	d.g(70, len(d.layers)+1)
+
+	// Layer 0 (required)
+	d.g(0, "LAYER")
+	d.g(5, d.nextHandle())
+	d.g(100, "AcDbSymbolTableRecord")
+	d.g(100, "AcDbLayerTableRecord")
+	d.g(2, "0")
+	d.g(70, 0)
+	d.g(62, 7)
+	d.g(6, "Continuous")
+	d.g(370, -3)
+
+	for _, layer := range d.layers {
+		d.g(0, "LAYER")
+		d.g(5, d.nextHandle())
+		d.g(100, "AcDbSymbolTableRecord")
+		d.g(100, "AcDbLayerTableRecord")
+		d.g(2, layer.Name)
+		d.g(70, 0)
+		d.g(62, layer.Color)
+		d.g(6, layer.LineType)
+		d.g(370, layer.LineWeight)
+	}
+
+	d.g(0, "ENDTAB")
+}
+
+func (d *Document) writeStyleTable() {
+	styles := []struct {
+		name, font string
+		width      float64
+	}{
+		{"Standard", "txt.shx", 1.0},
+		{"GOST", "isocpeur.ttf", 0.85},
+		{"STAMP", "Arial", 1.0},
+	}
+
+	d.g(0, "TABLE")
+	d.g(2, "STYLE")
+	d.g(5, d.nextHandle())
+	d.g(100, "AcDbSymbolTable")
+	d.g(70, len(styles))
+
+	for _, s := range styles {
+		d.g(0, "STYLE")
+		d.g(5, d.nextHandle())
+		d.g(100, "AcDbSymbolTableRecord")
+		d.g(100, "AcDbTextStyleTableRecord")
+		d.g(2, s.name)
+		d.g(70, 0)
+		d.gf(40, 0.0) // height (0 = variable)
+		d.gf(41, s.width)
+		d.gf(50, 0.0) // oblique angle
+		d.g(71, 0)
+		d.gf(42, 3.5) // last height used
+		d.g(3, s.font)
+		d.g(4, "")
+	}
+
+	d.g(0, "ENDTAB")
+}
+
+func (d *Document) writeDimStyleTable() {
+	d.g(0, "TABLE")
+	d.g(2, "DIMSTYLE")
+	d.g(5, d.nextHandle())
+	d.g(100, "AcDbSymbolTable")
+	d.g(70, 1)
+
+	d.g(0, "DIMSTYLE")
+	d.g(105, d.nextHandle())
+	d.g(100, "AcDbSymbolTableRecord")
+	d.g(100, "AcDbDimStyleTableRecord")
+	d.g(2, "GOST_DIM")
+	d.g(70, 0)
+	d.gf(40, 1.0)  // DIMSCALE
+	d.gf(41, 2.5)  // DIMASZ arrow size
+	d.gf(42, 1.0)  // DIMEXO extension offset
+	d.gf(43, 4.0)  // DIMDLI baseline spacing
+	d.gf(44, 1.5)  // DIMEXE extension beyond
+	d.gf(46, 0.0)
+	d.gf(47, 0.0)
+	d.gf(48, 0.0)
+	d.g(71, 0)
+	d.g(72, 0)
+	d.g(73, 0)
+	d.g(74, 0)
+	d.g(75, 0)
+	d.g(76, 0)
+	d.g(77, 1)   // DIMTAD: text above dimension line
+	d.g(78, 0)
+	d.gf(140, 2.5) // DIMTXT: text height
+	d.gf(141, 2.5) // DIMCEN
+	d.gf(142, 0.0)
+	d.gf(143, 25.4)
+	d.gf(144, 1.0)
+	d.gf(145, 0.0)
+	d.gf(146, 1.0)
+	d.gf(147, 1.0)
+	d.g(170, 0)
+	d.g(171, 3)  // DIMDEC: decimal places
+	d.g(172, 0)
+	d.g(173, 0)
+	d.g(174, 0)
+	d.g(175, 0)
+	d.g(176, 0)
+	d.g(177, 0)
+	d.g(178, 0)
+	d.g(270, 2)  // DIMLUNIT: decimal
+	d.g(271, 0)
+	d.g(272, 0)
+	d.g(273, 2)
+	d.g(274, 2)
+	d.g(340, "11") // DIMTXSTY handle
+	d.g(275, 0)
+	d.g(276, 0)
+	d.g(277, 2)
+	d.g(278, 44)  // ',' separator
+	d.g(279, 0)
+	d.g(280, 0)
+	d.g(281, 0)
+	d.g(282, 0)
+	d.g(283, 1)
+	d.g(284, 0)
+	d.g(285, 0)
+	d.g(286, 0)
+	d.g(287, 3)
+	d.g(288, 0)
+
+	d.g(0, "ENDTAB")
+}
+
+func (d *Document) writeBlockRecordTable() {
+	d.g(0, "TABLE")
+	d.g(2, "BLOCK_RECORD")
+	d.g(5, d.nextHandle())
+	d.g(100, "AcDbSymbolTable")
+	d.g(70, 2)
+
+	for _, name := range []string{"*Model_Space", "*Paper_Space"} {
+		d.g(0, "BLOCK_RECORD")
+		d.g(5, d.nextHandle())
+		d.g(100, "AcDbSymbolTableRecord")
+		d.g(100, "AcDbBlockTableRecord")
+		d.g(2, name)
+	}
+
+	d.g(0, "ENDTAB")
+}
+
+// WriteBlocks writes the BLOCKS section (required even if empty).
+func (d *Document) WriteBlocks() {
+	d.g(0, "SECTION")
+	d.g(2, "BLOCKS")
+
+	// *Model_Space block
+	d.g(0, "BLOCK")
+	d.g(5, d.nextHandle())
+	d.g(100, "AcDbEntity")
+	d.g(8, "0")
+	d.g(100, "AcDbBlockBegin")
+	d.g(2, "*Model_Space")
+	d.g(70, 0)
+	d.gf(10, 0.0); d.gf(20, 0.0); d.gf(30, 0.0)
+	d.g(3, "*Model_Space")
+	d.g(1, "")
+	d.g(0, "ENDBLK")
+	d.g(5, d.nextHandle())
+	d.g(100, "AcDbEntity")
+	d.g(8, "0")
+	d.g(100, "AcDbBlockEnd")
+
+	// *Paper_Space block
+	d.g(0, "BLOCK")
+	d.g(5, d.nextHandle())
+	d.g(100, "AcDbEntity")
+	d.g(8, "0")
+	d.g(100, "AcDbBlockBegin")
+	d.g(2, "*Paper_Space")
+	d.g(70, 0)
+	d.gf(10, 0.0); d.gf(20, 0.0); d.gf(30, 0.0)
+	d.g(3, "*Paper_Space")
+	d.g(1, "")
+	d.g(0, "ENDBLK")
+	d.g(5, d.nextHandle())
+	d.g(100, "AcDbEntity")
+	d.g(8, "0")
+	d.g(100, "AcDbBlockEnd")
+
+	d.g(0, "ENDSEC")
+}
+
+// BeginEntities starts the ENTITIES section.
+func (d *Document) BeginEntities() {
+	d.g(0, "SECTION")
+	d.g(2, "ENTITIES")
+}
+
+// EndEntities closes the ENTITIES section and writes EOF.
+func (d *Document) EndEntities() {
+	d.g(0, "ENDSEC")
+	d.g(0, "SECTION")
+	d.g(2, "OBJECTS")
+	d.g(0, "DICTIONARY")
+	d.g(5, "C")
+	d.g(100, "AcDbDictionary")
+	d.g(0, "ENDSEC")
+	d.g(0, "EOF")
+}
+
+// Write writes the complete DXF preamble (call before adding entities).
+func (d *Document) WritePreamble() {
+	d.WriteHeader()
+	d.WriteClasses()
+	d.WriteTables()
+	d.WriteBlocks()
+	d.BeginEntities()
+}
+
+// Finalize writes the DXF closing (call after all entities).
+func (d *Document) Finalize() {
+	d.EndEntities()
+}
+
+// ─── ENTITY WRITERS ────────────────────────────────────────────────────────
+
+// Line writes a DXF LINE entity.
+func (d *Document) Line(layer string, lw int, x1, y1, x2, y2 float64) {
+	d.g(0, "LINE")
+	d.g(5, d.nextHandle())
+	d.g(100, "AcDbEntity")
+	d.g(8, layer)
+	d.g(370, lw)
+	d.g(100, "AcDbLine")
+	d.gf(10, x1); d.gf(20, y1); d.gf(30, 0.0)
+	d.gf(11, x2); d.gf(21, y2); d.gf(31, 0.0)
+}
+
+// Polyline writes a closed or open LW polyline.
+func (d *Document) Polyline(layer string, lw int, closed bool, pts [][2]float64) {
+	if len(pts) < 2 {
+		return
+	}
+	flag := 0
+	if closed {
+		flag = 1
+	}
+	d.g(0, "LWPOLYLINE")
+	d.g(5, d.nextHandle())
+	d.g(100, "AcDbEntity")
+	d.g(8, layer)
+	d.g(370, lw)
+	d.g(100, "AcDbPolyline")
+	d.g(90, len(pts))
+	d.g(70, flag)
+	d.gf(43, 0.0) // constant width
+	for _, p := range pts {
+		d.gf(10, p[0])
+		d.gf(20, p[1])
+	}
+}
+
+// Circle writes a DXF CIRCLE entity.
+func (d *Document) Circle(layer string, lw int, cx, cy, r float64) {
+	d.g(0, "CIRCLE")
+	d.g(5, d.nextHandle())
+	d.g(100, "AcDbEntity")
+	d.g(8, layer)
+	d.g(370, lw)
+	d.g(100, "AcDbCircle")
+	d.gf(10, cx); d.gf(20, cy); d.gf(30, 0.0)
+	d.gf(40, r)
+}
+
+// Arc writes a DXF ARC entity (angles in degrees, counter-clockwise).
+func (d *Document) Arc(layer string, lw int, cx, cy, r, startDeg, endDeg float64) {
+	d.g(0, "ARC")
+	d.g(5, d.nextHandle())
+	d.g(100, "AcDbEntity")
+	d.g(8, layer)
+	d.g(370, lw)
+	d.g(100, "AcDbCircle")
+	d.gf(10, cx); d.gf(20, cy); d.gf(30, 0.0)
+	d.gf(40, r)
+	d.g(100, "AcDbArc")
+	d.gf(50, startDeg)
+	d.gf(51, endDeg)
+}
+
+// Text writes a DXF TEXT entity.
+func (d *Document) Text(layer, style string, h, x, y float64, text string) {
+	// Sanitize text (DXF doesn't support newlines in TEXT)
+	text = strings.ReplaceAll(text, "\n", " ")
+	d.g(0, "TEXT")
+	d.g(5, d.nextHandle())
+	d.g(100, "AcDbEntity")
+	d.g(8, layer)
+	d.g(370, LW025)
+	d.g(100, "AcDbText")
+	d.gf(10, x); d.gf(20, y); d.gf(30, 0.0)
+	d.gf(40, h)
+	d.g(1, text)
+	d.gf(50, 0.0) // rotation
+	d.g(7, style)
+	d.g(100, "AcDbText")
+}
+
+// TextRotated writes a rotated DXF TEXT entity.
+func (d *Document) TextRotated(layer, style string, h, x, y, angleDeg float64, text string) {
+	text = strings.ReplaceAll(text, "\n", " ")
+	d.g(0, "TEXT")
+	d.g(5, d.nextHandle())
+	d.g(100, "AcDbEntity")
+	d.g(8, layer)
+	d.g(370, LW025)
+	d.g(100, "AcDbText")
+	d.gf(10, x); d.gf(20, y); d.gf(30, 0.0)
+	d.gf(40, h)
+	d.g(1, text)
+	d.gf(50, angleDeg)
+	d.g(7, style)
+	d.g(100, "AcDbText")
+}
+
+// Hatch writes a DXF HATCH entity with a polyline boundary.
+// pattern: "ANSI31" (diagonal), "SOLID", "ANSI37" (cross-hatch for soil), etc.
+func (d *Document) Hatch(layer, pattern string, angle, scale float64, color int, pts [][2]float64) {
+	if len(pts) < 3 {
+		return
+	}
+	d.g(0, "HATCH")
+	d.g(5, d.nextHandle())
+	d.g(100, "AcDbEntity")
+	d.g(8, layer)
+	d.g(62, color)
+	d.g(100, "AcDbHatch")
+	d.gf(10, 0.0); d.gf(20, 0.0); d.gf(30, 0.0) // elevation
+	d.gf(210, 0.0); d.gf(220, 0.0); d.gf(230, 1.0) // normal
+
+	isSolid := 0
+	if pattern == "SOLID" {
+		isSolid = 1
+	}
+	d.g(2, pattern)
+	d.g(70, isSolid) // solid fill flag
+	d.g(71, 0)       // associativity
+
+	// Boundary paths: 1 = external
+	d.g(91, 1) // number of boundary paths
+
+	// Polyline boundary
+	d.g(92, 2) // boundary path type: 2 = polyline
+	d.g(72, 0) // has bulge
+	d.g(73, 1) // is closed
+	d.g(93, len(pts))
+	for _, p := range pts {
+		d.gf(10, p[0])
+		d.gf(20, p[1])
+	}
+	d.g(97, 0) // source boundary objects
+
+	d.g(75, 0)  // hatch style: normal
+	d.g(76, 1)  // hatch pattern type: 1 = predefined
+	if pattern != "SOLID" {
+		d.gf(52, angle)  // pattern angle
+		d.gf(41, scale)  // pattern scale
+		d.g(77, 0)       // double hatch
+		d.g(78, 1)       // number of pattern lines
+
+		// Pattern line data for ANSI31-like hatch
+		d.gf(53, 45.0)    // line angle
+		d.gf(43, 0.0)     // base point X
+		d.gf(44, 0.0)     // base point Y
+		d.gf(45, -scale)  // offset X
+		d.gf(46, scale)   // offset Y
+		d.g(79, 0)        // number of dash length items
+	}
+
+	d.gf(47, 1.0) // pixel size
+	d.g(98, 0)    // number of seed points
+}
+
+// SolidHatch writes a solid-filled hatch.
+func (d *Document) SolidHatch(layer string, color int, pts [][2]float64) {
+	d.Hatch(layer, "SOLID", 0, 1, color, pts)
+}
+
+// Rect is a helper that creates a [][2]float64 rectangle.
+func Rect(x0, y0, x1, y1 float64) [][2]float64 {
+	return [][2]float64{{x0, y0}, {x1, y0}, {x1, y1}, {x0, y1}}
+}

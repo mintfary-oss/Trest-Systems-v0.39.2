@@ -1,0 +1,6 @@
+repo/
+report.json
+report.html
+.trest_state.json
+error_log.txt
+*.log

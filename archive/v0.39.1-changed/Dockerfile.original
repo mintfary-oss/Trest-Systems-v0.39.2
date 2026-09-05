@@ -1,0 +1,8 @@
+FROM alpine:3.20
+ARG TARGETARCH=amd64
+RUN apk add --no-cache ca-certificates tzdata && addgroup -S trest && adduser -S -G trest trest
+WORKDIR /app
+COPY release/bin/linux/${TARGETARCH}/trest /usr/local/bin/trest
+RUN chmod 0755 /usr/local/bin/trest
+USER trest
+ENTRYPOINT ["/usr/local/bin/trest"]

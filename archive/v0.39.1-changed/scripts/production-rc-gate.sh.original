@@ -1,0 +1,28 @@
+#!/usr/bin/env bash
+set -euo pipefail
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+cd "$ROOT"
+status=0
+for f in scripts/*.sh; do bash -n "$f" || status=1; done
+./scripts/security-baseline.sh || status=1
+./scripts/validate-compose.sh || status=1
+./scripts/release-check.sh || status=1
+if command -v go >/dev/null 2>&1; then
+  go test ./... || status=1
+  go vet ./... || status=1
+else
+  echo 'FAIL: Go toolchain missing' >&2; status=1
+fi
+if command -v docker >/dev/null 2>&1 && docker compose version >/dev/null 2>&1; then
+  docker compose -f deployments/docker-compose.yml config >/dev/null || status=1
+  echo 'Docker Compose config: PASS'
+else
+  echo 'Docker/Compose runtime: SKIPPED (must run on CI Docker host)'
+fi
+if command -v govulncheck >/dev/null 2>&1; then govulncheck ./... || status=1; else echo 'Dependency audit: SKIPPED (govulncheck unavailable)'; fi
+if [[ -f magasin-777/frontend/package-lock.json ]] && command -v npm >/dev/null 2>&1; then
+  (cd magasin-777/frontend && npm audit --omit=dev) || status=1
+else
+  echo 'Frontend dependency audit: SKIPPED (npm lock/tool unavailable)'
+fi
+exit "$status"

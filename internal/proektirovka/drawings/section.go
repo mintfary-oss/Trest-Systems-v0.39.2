@@ -1,0 +1,243 @@
+package drawings
+
+import (
+	"fmt"
+
+	"github.com/mintfary-oss/trest-sistems/internal/proektirovka/building"
+	"github.com/mintfary-oss/trest-sistems/internal/proektirovka/dxf"
+	"github.com/mintfary-oss/trest-sistems/internal/proektirovka/gost"
+)
+
+// SectionConfig controls how a section drawing is generated.
+type SectionConfig struct {
+	Scale  int    // e.g. 100
+	Label  string // "1-1", "2-2", etc.
+	CutDir string // "x" — section cuts across Y depth (shows cross-section)
+	Title  string
+}
+
+// DrawSection generates a longitudinal/transverse building section.
+// ГОСТ 21.501-2018: разрезы, перекрытия, кровля, фундамент, отметки.
+func DrawSection(d *dxf.Document, b *building.Building, cfg SectionConfig) {
+	scale := cfg.Scale
+	if scale == 0 {
+		scale = 100
+	}
+
+	// ── Paper layout ──
+	ox := gost.ContentX0 + 90.0 // left wall
+	oy := gost.ContentY0 + 55.0 // ±0.000 ground level
+
+	// Section cuts across building depth (Y)
+	secLen := b.Axes.TotalDepth()
+	axisCoords := b.Axes.YCoords()
+	axisLabels := b.Axes.YLabels
+	if cfg.CutDir == "y" {
+		secLen = b.Axes.TotalWidth()
+		axisCoords = b.Axes.XCoords()
+		axisLabels = b.Axes.XLabels
+	}
+
+	secMM := px(secLen, scale)
+	ew := px(b.Dims.WallExtM, scale)
+	iw := px(b.Dims.WallIntM, scale)
+	fh := px(b.Dims.FloorHM, scale)
+	bsmH := px(b.Dims.BasementHM, scale)
+	slabH := px(b.Dims.SlabHM, scale)
+	totH := float64(b.NFloors) * fh
+
+	// ── Ground line ──
+	d.Line("СТЕНЫ_НЕСУЩИЕ", dxf.LW070,
+		ox-px(2.0, scale), oy, ox+secMM+px(2.0, scale), oy)
+
+	// Ground hatch
+	soilH := px(0.8, scale)
+	soilPts := dxf.Rect(ox-ew, oy-soilH, ox+secMM+ew, oy)
+	d.Hatch("ШТРИХОВКА", "ANSI37", 45, 0.5, dxf.Color254, soilPts)
+
+	// ── Basement ──
+	if b.Basement {
+		bsmPts := dxf.Rect(ox-ew, oy-bsmH, ox+secMM+ew, oy)
+		d.Polyline("СТЕНЫ_НЕСУЩИЕ", dxf.LW070, true, bsmPts)
+
+		// Basement floor slab (фундаментная плита)
+		fndSlabH := px(0.3, scale)
+		d.Polyline("СТЕНЫ_НЕНЕСУЩИЕ", dxf.LW035, true,
+			dxf.Rect(ox-ew, oy-bsmH-fndSlabH, ox+secMM+ew, oy-bsmH))
+		// Foundation slab hatch
+		fndPts := dxf.Rect(ox-ew, oy-bsmH-fndSlabH, ox+secMM+ew, oy-bsmH)
+		d.Hatch("ШТРИХОВКА", "ANSI31", 45, 0.3, dxf.Color254, fndPts)
+
+		// Basement labels
+		d.Text("ТЕКСТ", "GOST", 2.3,
+			ox+px(2.0, scale), oy-bsmH/2-1.0,
+			"Подвал (техн. помещения)")
+		d.Text("ТЕКСТ", "GOST", 2.0,
+			ox+px(2.0, scale), oy-bsmH-fndSlabH-4.0,
+			"Монолитная ж/б плита B25, W8, h=300мм")
+	}
+
+	// ── External walls ──
+	DrawWallV(d, "СТЕНЫ_НЕСУЩИЕ", ox, oy, oy+totH, ew)
+	DrawWallV(d, "СТЕНЫ_НЕСУЩИЕ", ox+secMM, oy, oy+totH, ew)
+
+	// ── Internal bearing walls (transverse axes) ──
+	for i := 1; i < len(axisCoords)-1; i++ {
+		x := ox + px(axisCoords[i], scale)
+		DrawWallV(d, "СТЕНЫ_НЕСУЩИЕ", x, oy, oy+totH, iw)
+	}
+
+	// ── Floor slabs ──
+	for fl := 1; fl <= b.NFloors; fl++ {
+		yfl := oy + float64(fl)*fh
+		// Slab
+		slabPts := dxf.Rect(ox-ew, yfl, ox+secMM+ew, yfl+slabH)
+		d.Polyline("СТЕНЫ_НЕНЕСУЩИЕ", dxf.LW035, true, slabPts)
+		d.Hatch("ШТРИХОВКА", "ANSI31", 45, 0.3, dxf.Color254, slabPts)
+
+		if fl < b.NFloors {
+			d.Text("ТЕКСТ", "GOST", 2.2,
+				ox+secMM+ew+px(2.0, scale), yfl+slabH/2,
+				fmt.Sprintf("Монолитная ж/б плита h=%.0fмм",
+					b.Dims.SlabHM*1000))
+		}
+	}
+
+	// ── Roof construction ──
+	roofY := oy + totH
+	roofSlabH := px(0.2, scale)
+	parH := px(0.7, scale)
+
+	// Roof slab
+	roofPts := dxf.Rect(ox-ew, roofY, ox+secMM+ew, roofY+roofSlabH)
+	d.Polyline("СТЕНЫ_НЕСУЩИЕ", dxf.LW070, true, roofPts)
+	d.Hatch("ШТРИХОВКА", "ANSI31", 45, 0.3, dxf.Color254, roofPts)
+
+	// Parapet
+	// West parapet
+	d.Polyline("СТЕНЫ_НЕСУЩИЕ", dxf.LW070, true,
+		dxf.Rect(ox-ew, roofY+roofSlabH, ox+ew, roofY+roofSlabH+parH))
+	// East parapet
+	d.Polyline("СТЕНЫ_НЕСУЩИЕ", dxf.LW070, true,
+		dxf.Rect(ox+secMM-ew, roofY+roofSlabH, ox+secMM+ew, roofY+roofSlabH+parH))
+
+	// Roof slope (уклон 1.5%)
+	slopeH := secMM * 0.015 / 2.0
+	midX := ox + secMM/2.0
+	d.Line("СТЕНЫ_НЕНЕСУЩИЕ", dxf.LW035,
+		ox-ew, roofY+roofSlabH+slopeH,
+		midX, roofY+roofSlabH)
+	d.Line("СТЕНЫ_НЕНЕСУЩИЕ", dxf.LW035,
+		ox+secMM+ew, roofY+roofSlabH+slopeH,
+		midX, roofY+roofSlabH)
+
+	// Roof annotation
+	d.Text("ТЕКСТ", "GOST", 2.3, midX-30.0, roofY+roofSlabH+slopeH+3.0,
+		"Кровля плоская. Уклон i=1,5%")
+	d.Text("ТЕКСТ", "GOST", 2.0, midX-30.0, roofY+roofSlabH+slopeH-4.0,
+		"ТПО-мембрана Logicroof 1,5мм + утеплитель PIR 200мм")
+
+	// ── Windows in section ──
+	winH := px(1.8, scale)
+	sill := px(0.9, scale)
+	winD := px(0.2, scale) // window depth (frame)
+	for fl := 0; fl < b.NFloors; fl++ {
+		ySill := oy + float64(fl)*fh + sill
+		// West window
+		d.Polyline("ПРОЕМЫ", dxf.LW025, true,
+			dxf.Rect(ox-ew, ySill, ox-ew+winD, ySill+winH))
+		// East window
+		d.Polyline("ПРОЕМЫ", dxf.LW025, true,
+			dxf.Rect(ox+secMM+ew-winD, ySill, ox+secMM+ew, ySill+winH))
+	}
+
+	// ── Axis labels ──
+	axBubR := px(0.35, scale)
+	for i, axX := range axisCoords {
+		x := ox + px(axX, scale)
+		d.Line("ОСИ", dxf.LW018, x, oy-px(1.0, scale), x, oy)
+		cy := oy - px(1.0, scale) - axBubR*1.3
+		d.Circle("ТЕКСТ_ОСЕЙ", dxf.LW018, x, cy, axBubR)
+		lbl := ""
+		if i < len(axisLabels) {
+			lbl = axisLabels[i]
+		}
+		d.Text("ТЕКСТ_ОСЕЙ", "GOST", 2.5, x-1.2, cy-1.3, lbl)
+	}
+
+	// ── Elevation marks ──
+	markX := ox + secMM + ew + px(3.0, scale)
+
+	if b.Basement {
+		AddElevationMark(d, markX, oy-bsmH, -b.Dims.BasementHM)
+		d.Text("ТЕКСТ", "GOST", 2.3, markX+px(0.8, scale), oy-bsmH+0.5,
+			fmt.Sprintf("Пол подвала  %+.3f", -b.Dims.BasementHM))
+	}
+	AddElevationMark(d, markX, oy, 0.0)
+	d.Text("ТЕКСТ", "GOST", 2.3, markX+px(0.8, scale), oy+0.5, "±0,000")
+
+	for fl := 1; fl <= b.NFloors; fl++ {
+		elev := float64(fl) * b.Dims.FloorHM
+		ya := oy + float64(fl)*fh
+		AddElevationMark(d, markX, ya, elev)
+		lbl := fmt.Sprintf("%+.3f", elev)
+		if fl == b.NFloors {
+			lbl = fmt.Sprintf("%+.3f  (кровля)", elev)
+		}
+		d.Text("ТЕКСТ", "GOST", 2.3, markX+px(0.8, scale), ya+0.5, lbl)
+		// Dashed reference line
+		d.Line("ОТМЕТКИ", dxf.LW013, ox-ew, ya, markX, ya)
+	}
+
+	// Parapet top
+	parTopElev := float64(b.NFloors)*b.Dims.FloorHM + 0.7
+	ya := oy + px(parTopElev, scale)
+	AddElevationMark(d, markX, ya, parTopElev)
+	d.Text("ТЕКСТ", "GOST", 2.3, markX+px(0.8, scale), ya+0.5,
+		fmt.Sprintf("%+.3f  Верх парапета", parTopElev))
+
+	// ── Floor height dimensions (left side) ──
+	for fl := 0; fl < b.NFloors; fl++ {
+		y1 := oy + float64(fl)*fh
+		y2 := oy + float64(fl+1)*fh
+		drawLinearDimV(d, ox-px(4.0, scale), y1, ox-px(4.0, scale), y2,
+			ox-px(6.5, scale), scale)
+		d.Text("РАЗМЕРЫ", "GOST", 2.2,
+			ox-px(13.0, scale), (y1+y2)/2.0-1.0,
+			fmt.Sprintf("h=%gм", b.Dims.FloorHM))
+	}
+
+	// ── Chain dimensions (horizontal) ──
+	axPts := make([]float64, len(axisCoords))
+	for i, v := range axisCoords {
+		axPts[i] = ox + px(v, scale)
+	}
+	DrawChainDimsH(d, axPts, oy, 18.0, scale)
+	DrawTotalDimH(d, axPts[0], oy, axPts[len(axPts)-1], 30.0, scale)
+
+	// ── Labels ──
+	for fl := 0; fl < b.NFloors; fl++ {
+		yMid := oy + float64(fl)*fh + fh*0.5
+		lbl := fmt.Sprintf("%d эт.", fl+1)
+		if fl == 0 {
+			lbl = "1 этаж  ±0,000"
+		}
+		d.Text("ТЕКСТ", "GOST", 2.5, ox+px(1.0, scale), yMid, lbl)
+	}
+	if b.Basement {
+		d.Text("ТЕКСТ", "GOST", 2.5,
+			ox+px(1.0, scale), oy-bsmH/2.0, "Подвал")
+	}
+
+	// ── Title ──
+	title := cfg.Title
+	label := cfg.Label
+	if label == "" {
+		label = "1-1"
+	}
+	if title == "" {
+		title = fmt.Sprintf("РАЗРЕЗ %s", label)
+	}
+	gost.DrawSheetTitle(d, title, fmt.Sprintf("1:%d", scale))
+	gost.DrawNote(d, "Примечание: отметки в метрах, размеры в мм.")
+}

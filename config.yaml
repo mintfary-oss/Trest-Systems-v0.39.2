@@ -1,0 +1,18 @@
+repo_url: https://github.com/mintfary-oss/Trest-sistems.git
+branch: main
+audit_port: 9091
+projects:
+  - name: magasin-777
+    type: compose
+    path: magasin-777
+    compose_file: docker-compose.yml
+    ports: [5432, 6379, 9000, 9001, 8001, 3000, 8080, 11434, 3001]
+  - name: proektirovka-sdaniy
+    type: go-build
+    path: .
+    build_cmd: [go, build, -o, bin/gencad, ./internal/proektirovka/generator]
+  - name: super-sistema
+    type: compose
+    path: super-sistema
+    compose_file: docker-compose.yml
+    ports: [11434, 3001]

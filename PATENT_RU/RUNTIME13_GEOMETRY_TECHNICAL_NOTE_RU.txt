@@ -1,0 +1,10 @@
+Trest Systems — Runtime 13 Geometry Technical Note
+
+Дата: 2026-09-03
+Версия: v0.27
+
+Runtime 13 реализует self-hosted IFC geometry extraction foundation для ограниченного подмножества IFC. Поддерживаются FacetedBrep и TriangulatedFaceSet с преобразованием в deterministic triangle mesh. Геометрический результат предназначен для существующего mesh/GLB/manifest pipeline.
+
+Это не заявление о полной поддержке IFC geometry. Полноценные ProductDefinitionShape/ShapeRepresentation integration, ObjectPlacement/world coordinates, swept solids, CSG, mapped representations, curved geometry, advanced BRep, complete schema coverage, production tessellation и accelerated picking остаются отдельными задачами.
+
+Данная запись описывает техническое состояние реализации и не является юридическим заключением о патентоспособности.

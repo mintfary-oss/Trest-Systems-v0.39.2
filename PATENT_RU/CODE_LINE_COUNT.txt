@@ -1,0 +1,8 @@
+{
+  "project": "Trest Systems",
+  "version": "v0.10-stage9",
+  "go_files": 101,
+  "go_lines": 14158,
+  "total_files": 304,
+  "basis": "physical newline count across .go files in release archive"
+}

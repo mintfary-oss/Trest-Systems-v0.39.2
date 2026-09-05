@@ -1,0 +1,80 @@
+#!/usr/bin/env bash
+# Runtime-only acceptance gate. It does not compile Go on the customer host.
+set -Eeuo pipefail
+IFS=$'\n\t'
+ROOT="${1:-/opt/trest-systems}"
+cd "$ROOT"
+[[ -f .env ]] || { echo "ERROR: .env not found" >&2; exit 1; }
+COMPOSE=(docker compose --env-file .env -f deployments/docker-compose.yml)
+LOG_DIR="${TREST_ACCEPTANCE_LOG_DIR:-/var/log/trest-systems/runtime-acceptance-$(date -u +%Y%m%dT%H%M%SZ)}"
+mkdir -p "$LOG_DIR"
+exec > >(tee -a "$LOG_DIR/acceptance.log") 2>&1
+trap 'rc=$?; echo "RUNTIME ACCEPTANCE: FAIL rc=$rc"; "${COMPOSE[@]}" ps -a >"$LOG_DIR/compose-ps.txt" 2>&1 || true; "${COMPOSE[@]}" logs --no-color --tail=2000 >"$LOG_DIR/compose-logs.txt" 2>&1 || true; exit $rc' ERR
+
+echo "Trest Systems runtime acceptance"
+echo "Root: $ROOT"
+echo "Logs: $LOG_DIR"
+"${COMPOSE[@]}" config -q
+"${COMPOSE[@]}" ps -a | tee "$LOG_DIR/compose-ps-before.txt"
+
+# All runtime services must remain running/healthy.
+if "${COMPOSE[@]}" ps -a | grep -Ei 'Restarting|unhealthy|Exited \([1-9][0-9]*\)|Exit [1-9][0-9]*'; then
+  echo "ERROR: failed/unhealthy container" >&2
+  exit 1
+fi
+
+# Public edge and application endpoints.
+set -a; source ./.env; set +a
+HTTP_PORT="${HTTP_PORT:-80}"; HTTPS_PORT="${HTTPS_PORT:-443}"
+PUBLIC_URL="${PUBLIC_URL:-http://127.0.0.1:$HTTP_PORT}"
+for path in / /health /ready; do
+  code="$(curl -k -sS -o /dev/null -w '%{http_code}' --max-time 20 "$PUBLIC_URL$path" || true)"
+  case "$path:$code" in
+    /:2*|/:3*|/health:2*|/ready:2*) echo "PASS $PUBLIC_URL$path HTTP $code";;
+    /health:404|/ready:404) echo "WARN optional endpoint $path returned 404";;
+    *) echo "ERROR $PUBLIC_URL$path HTTP $code" >&2; exit 1;;
+  esac
+done
+
+# A public TLS install must pass normal CA validation; -k is forbidden here.
+if [[ "$PUBLIC_URL" == https://* && "${TLS_MODE:-auto}" != internal ]]; then
+  curl -fsS --max-time 30 "$PUBLIC_URL/" >/dev/null
+  host="${DOMAIN:-${PUBLIC_URL#https://}}"; host="${host%%/*}"; host="${host%%:*}"
+  echo | openssl s_client -connect "$host:$HTTPS_PORT" -servername "$host" -verify_return_error >"$LOG_DIR/tls.txt" 2>&1
+fi
+
+run_required() {
+  local name="$1" script="$2"
+  [[ -f "$script" ]] || { echo "ERROR: required gate missing: $script" >&2; exit 1; }
+  echo "=== $name ==="
+  bash "$script" 2>&1 | tee "$LOG_DIR/$name.log"
+  rc=${PIPESTATUS[0]}
+  ((rc==0)) || { echo "ERROR: $name failed with $rc" >&2; exit "$rc"; }
+}
+
+# These scripts validate the running stack. They must not require Go compilation.
+run_required e2e-smoke "$ROOT/scripts/e2e-smoke.sh"
+run_required e2e-full "$ROOT/scripts/e2e-full.sh"
+run_required backup-restore "$ROOT/scripts/backup-restore-drill.sh"
+# Some disposable E2E/drill scripts may restart the stack; restore the declared final state.
+"${COMPOSE[@]}" up -d --remove-orphans
+for _ in {1..60}; do
+  curl -kfsS --max-time 5 "$PUBLIC_URL/" >/dev/null 2>&1 && break
+  sleep 2
+done
+curl -kfsS --max-time 10 "$PUBLIC_URL/" >/dev/null
+
+# Runtime security assertions independent of source compilation.
+[[ "$(stat -c '%a' .env 2>/dev/null || stat -f '%Lp' .env)" =~ ^(600|640)$ ]] || { echo "ERROR: unsafe .env permissions" >&2; exit 1; }
+! grep -RIn --exclude-dir=.git --exclude='*.zip' --exclude='*.pdf' -E '(ADMIN_PASSWORD.{0,40}[REMOVED_INSECURE_DEFAULT]|[REMOVED_INSECURE_DEFAULT].{0,40}ADMIN_PASSWORD)' .
+"${COMPOSE[@]}" logs --no-color --tail=2000 >"$LOG_DIR/compose-logs-final.txt" 2>&1 || true
+if grep -Ein 'panic:|fatal:|segmentation fault|traceback \(most recent call last\)|uncaught exception|permission denied' "$LOG_DIR/compose-logs-final.txt" >"$LOG_DIR/critical-log-hits.txt"; then
+  cat "$LOG_DIR/critical-log-hits.txt"
+  echo "ERROR: critical signatures in logs" >&2
+  exit 1
+fi
+"${COMPOSE[@]}" ps -a | tee "$LOG_DIR/compose-ps-final.txt"
+if "${COMPOSE[@]}" ps -a | grep -Ei 'Restarting|unhealthy|Exited \([1-9][0-9]*\)|Exit [1-9][0-9]*'; then exit 1; fi
+
+echo "RUNTIME ACCEPTANCE: PASS"
+echo "Errors: none"

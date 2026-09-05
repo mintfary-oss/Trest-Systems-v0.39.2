@@ -1,0 +1,12 @@
+{
+  "product": "Trest Systems",
+  "release": "v0.10-stage9",
+  "artifacts": {
+    "go_binaries": "release/bin/",
+    "oci_images": "release/images/",
+    "checksums": "release/checksums.sha256"
+  },
+  "production_install": "prebuilt",
+  "compile_on_customer_server": false,
+  "training": "GPU host required for actual LoRA/QLoRA execution"
+}

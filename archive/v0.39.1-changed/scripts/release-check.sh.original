@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+set -euo pipefail
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+cd "$ROOT"
+
+go test ./internal/auth ./internal/orders ./internal/state ./internal/diagnostics ./internal/errorlog ./internal/contractors ./internal/suppliers ./internal/ratings ./internal/ai ./internal/bim ./internal/bim/storage ./internal/bim/ifc ./internal/bim/ifcsemantic ./internal/bim/importer ./internal/bim/converter ./internal/bim/diff
+if command -v docker >/dev/null 2>&1; then
+  ./scripts/validate-compose.sh
+else
+  echo "compose runtime: SKIPPED (Docker unavailable)"
+fi
+./scripts/security-baseline.sh
+./scripts/backup-verify.sh /dev/null 2>/dev/null || true
+if command -v docker >/dev/null 2>&1; then
+  docker compose -f deployments/docker-compose.yml config >/dev/null
+  echo "compose runtime: PASS"
+else
+  echo "compose runtime: SKIPPED (Docker unavailable)"
+fi
+echo "release-check: PASS (static checks complete)"

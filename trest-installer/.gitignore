@@ -1,0 +1,10 @@
+# Compiled orchestrator binary (built via `go build ./cmd/trest`).
+/trest
+/trest-installer
+
+# Runtime artifacts written by `trest run`/`trest audit`.
+/repo/
+/report.json
+/report.html
+/.trest_state.json
+/error_log.txt

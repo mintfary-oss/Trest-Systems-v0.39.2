@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+set -Eeuo pipefail
+ROOT="${1:-/opt/trest-systems}"
+cd "$ROOT"
+COMPOSE=(docker compose --env-file .env -f deployments/docker-compose.yml)
+"${COMPOSE[@]}" config -q
+"${COMPOSE[@]}" ps -a
+bash scripts/e2e-smoke.sh
+bash scripts/e2e-full.sh
+bash scripts/security-release-gate.sh
+bash scripts/backup-restore-drill.sh
+bash scripts/production-rc-gate.sh

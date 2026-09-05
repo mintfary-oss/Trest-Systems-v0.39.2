@@ -1,0 +1,20 @@
+{
+  "project": "Trest Systems",
+  "version": "v0.10-stage9",
+  "rights_holder_declaration": "All included original projects were independently written by the rights holder; the accounts and repositories used for them are owned/controlled by the rights holder, according to the rights holder's declaration.",
+  "ai_assistance": true,
+  "third_party_code": true,
+  "third_party_policy": "third-party components remain under their applicable licenses",
+  "full_sbom_required_before_final_legal_release": true,
+  "patent_note": "Patentability must be assessed for specific technical solutions under applicable jurisdiction.",
+  "documents": [
+    "AUTHORSHIP_AND_OWNERSHIP_DECLARATION_RU.md",
+    "IP_PROVENANCE_AND_RIGHTS_RU.md",
+    "LEGAL_EVIDENCE_CHECKLIST_RU.md",
+    "THIRD_PARTY_LICENSES.md",
+    "SOURCE_AND_AI_METHOD_RU.md",
+    "PROVENANCE_MANIFEST.md",
+    "READINESS_REPORT_RU.md",
+    "CODE_LINE_COUNT.json"
+  ]
+}

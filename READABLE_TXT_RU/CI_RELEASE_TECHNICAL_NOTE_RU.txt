@@ -1,0 +1,5 @@
+Trest Systems — CI/CD release gate
+
+Добавлена воспроизводимая CI/CD-конфигурация для проверки релиза: go test, go vet, сборка release-бинарников, проверка Docker Compose, упаковка артефакта и публикация OCI-образов API/Worker при version tag.
+
+Это инженерная инфраструктура проекта. Фактический green-run GitHub Actions должен быть получен после запуска workflow в репозитории.

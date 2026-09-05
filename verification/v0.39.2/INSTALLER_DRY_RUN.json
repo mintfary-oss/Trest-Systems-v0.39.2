@@ -1,0 +1,29 @@
+{
+  "version": "0.39.2",
+  "started_at": "2026-09-05T07:59:52.249555+00:00",
+  "finished_at": "2026-09-05T07:59:52.316324+00:00",
+  "exit_code": 0,
+  "success": true,
+  "dry_run": true,
+  "scope": "package validation",
+  "full_product_e2e": false,
+  "external_browser_verified": false,
+  "install_dir": "/tmp/trest-v0392-package-only",
+  "public_url": "",
+  "steps": [
+    {
+      "name": "Проверка системы",
+      "started_at": "2026-09-05T07:59:52.249628+00:00",
+      "status": "PASS",
+      "finished_at": "2026-09-05T07:59:52.249971+00:00"
+    },
+    {
+      "name": "Целостность полного пакета",
+      "started_at": "2026-09-05T07:59:52.249978+00:00",
+      "status": "PASS",
+      "finished_at": "2026-09-05T07:59:52.316148+00:00"
+    }
+  ],
+  "warnings": [],
+  "errors": []
+}

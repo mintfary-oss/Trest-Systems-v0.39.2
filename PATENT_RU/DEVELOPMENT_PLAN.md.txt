@@ -1,0 +1,269 @@
+# DEVELOPMENT_PLAN.md — подробный план Trest Systems до завершения проекта
+
+## Принцип
+Разработка идет поэтапно. Каждый этап должен закончиться кодом, миграциями (если нужны), API, тестами, документацией и обновлением continuity-файлов. Следующий этап не должен уничтожать функциональность предыдущего.
+
+## Stage 0 — Подготовка
+- [x] Архитектура.
+- [x] AGENTS/development rules.
+- [x] Domain model/documentation foundation.
+- [ ] Проверка истории Git на секреты на реальном Git-host.
+- [ ] Branch protection/CI hardening.
+
+## Stage 1 — Unified trestctl
+- [x] CLI foundation.
+- [x] version/status/doctor foundation.
+- [x] install plan/state/report.
+- [ ] Full idempotent install steps.
+- [ ] start/stop/restart.
+- [ ] logs/logs --follow.
+- [ ] backup/restore.
+- [ ] update/repair.
+- [ ] production diagnostics/reporting.
+
+## Stage 2 — Unified infrastructure
+- [x] PostgreSQL.
+- [x] Redis.
+- [x] MinIO.
+- [x] Go API.
+- [x] Worker.
+- [x] Real marketplace API/web preserved.
+- [x] Ollama/Open WebUI preserved.
+- [x] Nginx unified entrypoint.
+- [ ] Runtime verification on Docker-capable Linux host.
+
+## Stage 3 — Identity
+- [x] Auth.
+- [x] Users.
+- [x] Organizations.
+- [x] Memberships.
+- [x] Roles/permissions.
+- [x] Organization verification.
+- [x] Authorization tests.
+
+## Stage 4 — Constructor
+- [x] Object types.
+- [x] Materials.
+- [x] Engineering systems.
+- [x] Finishes.
+- [x] Project parameters.
+- [x] Architecture version snapshots.
+- [x] Version status workflow.
+- [x] Owner/admin authorization.
+
+## Stage 5 — Estimates & Orders
+- [x] Estimates.
+- [x] Estimate versions.
+- [x] Specification items.
+- [x] Approval.
+- [x] Orders.
+- [x] Idempotency key.
+- [x] Schedule fields.
+- [x] Contractor/supplier links prepared.
+- [x] Order state machine.
+
+## Stage 6 — Contractors
+- [x] Contractor applications.
+- [x] Contractor profiles.
+- [x] Competencies.
+- [x] Service areas/geography.
+- [x] Verification.
+- [x] Deterministic eligibility baseline.
+- [x] Tests and documentation.
+
+## Stage 7 — Suppliers
+**Completed in v0.8-stage7.**
+
+### Database
+- [x] `0008_suppliers.sql`.
+- [x] Supplier applications/profile/status.
+- [x] Product/material offers.
+- [x] Prices/currencies/units.
+- [x] Stock and lead time.
+- [x] Certificates/document metadata.
+- [x] Delivery regions/terms.
+- [x] Constraints/indexes/uniqueness.
+
+### API
+- [x] Supplier registration/application.
+- [x] Profile management.
+- [x] Admin verification.
+- [x] Supplier catalog/offers.
+- [x] Offer publication.
+- [x] Search/filter/matching.
+- [x] Attach offer to estimate/order.
+- [x] Financial/idempotency protections.
+
+### Quality
+- [x] Domain tests.
+- [x] API tests.
+- [x] Migration validation.
+- [x] Stage report.
+- [x] Continuity update.
+
+## Stage 8 — Ratings
+### Goal
+Build trusted marketplace reputation.
+- [x] Ratings for contractors.
+- [x] Ratings for suppliers.
+- [x] Rating aggregation with version/history.
+- [x] Bonuses.
+- [x] Sanctions.
+- [x] Dispute records.
+- [x] Dispute resolution workflow.
+- [x] Anti-abuse constraints.
+- [x] Rating visibility rules.
+- [x] Tests/audit.
+
+## Stage 9 — AI + Agents + Training Center
+### Goal
+Make AI a controlled assistant inside the unified Trest platform.
+
+### AI infrastructure
+- [x] Unified model/provider/version registry migration.
+- [x] Model capability metadata and default model support.
+- [x] Controlled Ollama HTTP client.
+- [x] Prompt/template registry schema.
+- [x] AI request/result/audit schema.
+- [x] Confidence and model-version fields.
+
+### AI capabilities
+- [ ] Estimate generation/review.
+- [ ] Material recommendation.
+- [ ] Contractor matching.
+- [ ] Supplier matching.
+- [ ] Schedule forecasting.
+- [ ] Risk detection.
+- [ ] Quality-control assistance.
+- [ ] Document analysis.
+- [ ] Project assistant.
+- [ ] Marketplace assistant.
+
+### Agents
+- [x] Agent registry.
+- [x] Agent profiles/instructions.
+- [x] Tools/permissions policy.
+- [x] Execution history schema.
+- [x] Human approval gates schema.
+- [x] Sandbox/memory policy fields.
+
+### Training Center
+- [x] Dataset registry/versioning.
+- [x] JSONL instruction/chat dataset preparation script.
+- [x] LoRA/QLoRA GPU training runner with local-only base-model loading.
+- [x] Training job registry.
+- [x] Evaluation/model promotion schema.
+- [ ] Actual GPU training run (requires target GPU host and installed training stack).
+- [ ] Agent execution history.
+- [ ] Agent memory/context policy.
+- [ ] Human approval gates.
+- [ ] Agent sandbox.
+- [ ] Agent creation UI.
+- [ ] Agent testing/evaluation.
+
+### Training/configuration
+- [ ] Dataset registry.
+- [ ] Dataset versioning.
+- [ ] Evaluation datasets.
+- [ ] Fine-tuning/job orchestration where supported by local infrastructure.
+- [ ] Model promotion workflow.
+- [ ] Rollback.
+- [ ] Resource/GPU monitoring.
+
+### Safety rule
+AI may recommend and calculate, but must not autonomously change legal/financial/contractual records. Sensitive mutations require explicit authorization.
+
+## Stage 10 — 3D/BIM
+- [ ] Unified building model representation.
+- [ ] 3D generation pipeline.
+- [ ] BIM import/export strategy.
+- [ ] Web 3D viewer.
+- [ ] Version comparison.
+- [ ] Link BIM model to project architecture versions.
+- [ ] Compare planned vs actual where data exists.
+- [ ] Construction progress visualization.
+
+## Stage 11 — Production
+### Reliability
+- [ ] Full Docker runtime validation.
+- [ ] Health/readiness checks.
+- [ ] Load testing.
+- [ ] Performance profiling.
+- [ ] DB indexing review.
+- [ ] Redis/cache review.
+
+### Backup / recovery
+- [ ] Automated DB backup.
+- [ ] MinIO/object backup.
+- [ ] Restore procedure.
+- [ ] Restore test.
+- [ ] Disaster recovery runbook.
+
+### Security
+- [ ] Secret management review.
+- [ ] Authentication hardening.
+- [ ] Authorization audit.
+- [ ] Rate limiting.
+- [ ] Security headers.
+- [ ] Dependency audit.
+- [ ] Container/image audit.
+- [ ] Git history secret review.
+
+### Operations
+- [ ] Monitoring.
+- [ ] Logs.
+- [ ] Metrics.
+- [ ] Alerting.
+- [ ] Admin diagnostics.
+- [ ] Incident runbook.
+- [ ] Release procedure.
+
+### Release
+- [ ] CI pipeline.
+- [ ] Automated tests.
+- [ ] Migration gate.
+- [ ] Versioning.
+- [ ] Release notes.
+- [ ] Production deployment checklist.
+- [ ] Final documentation.
+
+## Product UI roadmap
+В конечном unified Web UI должны быть единый стиль и единый контекст:
+- Dashboard
+- Projects
+- Constructor
+- Estimates
+- Store/Marketplace
+- Orders
+- Contractors
+- Suppliers
+- Ratings
+- Documents
+- AI
+- Agents
+- Create Agent
+- Models
+- Training/Configuration
+- 3D/BIM
+- Notifications
+- Admin
+
+Существующий LocalMarket и Super Sistema не должны визуально оставаться отдельными несвязанными продуктами в финальном пользовательском интерфейсе; интеграционный слой должен привести их к единой навигации и стилю.
+
+## Финальный критерий проекта
+Проект считается готовым только когда:
+1. все основные доменные этапы реализованы;
+2. API и web связаны с единым auth/context;
+3. AI интегрирован с контролем прав;
+4. 3D/BIM подключен к проектам;
+5. backup/restore проверены;
+6. monitoring/audit/security закрыты;
+7. тесты и runtime validation выполнены на подходящей среде;
+8. continuity-файлы позволяют продолжить работу из любого нового ZIP без потери контекста.
+
+## Stage 10 — 3D/BIM
+Implement the unified BIM registry, model versioning, element metadata, IFC/glTF/OBJ/DXF exchange job tracking, web 3D viewer integration, architecture-version linkage and planned-vs-actual progress visualization.
+
+
+### Stage 10 BIM API expansion
+Model versions, element registry и exchange queue/history интегрированы в unified API.

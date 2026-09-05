@@ -1,0 +1,58 @@
+{
+  "version": "v0.39.1-stage11-prebuilt-auto-install",
+  "method": "physical lines; tests included; dependencies, docs, patent/readable mirrors, verification logs and binaries excluded",
+  "languages": {
+    "Batch": {
+      "files": 1,
+      "lines": 151
+    },
+    "CSS": {
+      "files": 2,
+      "lines": 730
+    },
+    "Dockerfile": {
+      "files": 7,
+      "lines": 121
+    },
+    "Go": {
+      "files": 172,
+      "lines": 20604
+    },
+    "HTML": {
+      "files": 2,
+      "lines": 400
+    },
+    "JavaScript": {
+      "files": 26,
+      "lines": 2066
+    },
+    "Makefile": {
+      "files": 1,
+      "lines": 17
+    },
+    "NSIS": {
+      "files": 1,
+      "lines": 199
+    },
+    "PowerShell": {
+      "files": 2,
+      "lines": 457
+    },
+    "Python": {
+      "files": 31,
+      "lines": 3002
+    },
+    "SQL": {
+      "files": 19,
+      "lines": 688
+    },
+    "Shell": {
+      "files": 30,
+      "lines": 2878
+    }
+  },
+  "total": {
+    "files": 294,
+    "lines": 31313
+  }
+}

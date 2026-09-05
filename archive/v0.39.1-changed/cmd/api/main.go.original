@@ -1,0 +1,48 @@
+package main
+
+import (
+	"context"
+	"log"
+	"net/http"
+	"os"
+	"time"
+
+	"github.com/mintfary-oss/trest-sistems/internal/api"
+	"github.com/mintfary-oss/trest-sistems/internal/auth"
+	"github.com/mintfary-oss/trest-sistems/internal/db"
+)
+
+func main() {
+	secret := os.Getenv("JWT_SECRET")
+	if secret == "" {
+		secret = os.Getenv("TREST_AUTH_SECRET")
+	}
+	if secret == "" {
+		log.Fatal("JWT_SECRET is required")
+	}
+
+	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+	defer cancel()
+	database, err := db.Open(ctx)
+	if err != nil {
+		log.Fatalf("database: %v", err)
+	}
+	defer database.Close()
+	migrations := getenv("MIGRATIONS_DIR", "/app/migrations")
+	if err := db.Migrate(ctx, database, migrations); err != nil {
+		log.Fatalf("migrations: %v", err)
+	}
+	addr := getenv("API_ADDR", ":8080")
+	log.Printf("trest api listening on %s", addr)
+	authSvc := auth.New(secret)
+	if err := http.ListenAndServe(addr, api.NewServer(database, authSvc).Handler()); err != nil {
+		log.Fatal(err)
+	}
+}
+
+func getenv(k, fallback string) string {
+	if v := os.Getenv(k); v != "" {
+		return v
+	}
+	return fallback
+}

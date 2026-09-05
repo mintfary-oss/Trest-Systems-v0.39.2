@@ -1,0 +1,121 @@
+package auth
+
+import (
+	"crypto/hmac"
+	"crypto/rand"
+	"crypto/sha256"
+	"encoding/base64"
+	"encoding/hex"
+	"errors"
+	"fmt"
+	"hash"
+	"strings"
+	"time"
+)
+
+type Service struct {
+	Secret     []byte
+	Iterations int
+}
+
+type Claims struct {
+	UserID, Role string
+	ExpiresAt    time.Time
+}
+
+func New(secret string) *Service {
+	if secret == "" {
+		panic("authentication secret is required")
+	}
+	return &Service{Secret: []byte(secret), Iterations: 120000}
+}
+
+func (s *Service) HashPassword(password string) (string, error) {
+	if len(password) < 8 {
+		return "", errors.New("password must be at least 8 characters")
+	}
+	salt := make([]byte, 16)
+	if _, err := rand.Read(salt); err != nil {
+		return "", err
+	}
+	dk := pbkdf2(sha256.New, []byte(password), salt, s.Iterations, 32)
+	return fmt.Sprintf("pbkdf2-sha256$%d$%s$%s", s.Iterations, hex.EncodeToString(salt), hex.EncodeToString(dk)), nil
+}
+func (s *Service) VerifyPassword(password, encoded string) bool {
+	p := strings.Split(encoded, "$")
+	if len(p) != 4 || p[0] != "pbkdf2-sha256" {
+		return false
+	}
+	var it int
+	if _, err := fmt.Sscanf(p[1], "%d", &it); err != nil || it < 10000 || it > 2000000 {
+		return false
+	}
+	salt, err := hex.DecodeString(p[2])
+	if err != nil {
+		return false
+	}
+	want, err := hex.DecodeString(p[3])
+	if err != nil {
+		return false
+	}
+	got := pbkdf2(sha256.New, []byte(password), salt, it, len(want))
+	return hmac.Equal(got, want)
+}
+
+func (s *Service) Issue(c Claims) (string, error) {
+	exp := c.ExpiresAt.Unix()
+	payload := base64.RawURLEncoding.EncodeToString([]byte(c.UserID + "|" + c.Role + "|" + fmt.Sprint(exp)))
+	sig := sign(s.Secret, payload)
+	return payload + "." + sig, nil
+}
+func (s *Service) Parse(token string) (Claims, error) {
+	p := strings.Split(token, ".")
+	if len(p) != 2 {
+		return Claims{}, errors.New("invalid token")
+	}
+	if !hmac.Equal([]byte(sign(s.Secret, p[0])), []byte(p[1])) {
+		return Claims{}, errors.New("invalid token signature")
+	}
+	raw, err := base64.RawURLEncoding.DecodeString(p[0])
+	if err != nil {
+		return Claims{}, errors.New("invalid token payload")
+	}
+	parts := strings.Split(string(raw), "|")
+	if len(parts) != 3 {
+		return Claims{}, errors.New("invalid token claims")
+	}
+	var unix int64
+	if _, err := fmt.Sscanf(parts[2], "%d", &unix); err != nil {
+		return Claims{}, errors.New("invalid token expiry")
+	}
+	exp := time.Unix(unix, 0)
+	if time.Now().After(exp) {
+		return Claims{}, errors.New("token expired")
+	}
+	return Claims{UserID: parts[0], Role: parts[1], ExpiresAt: exp}, nil
+}
+func sign(secret []byte, value string) string {
+	h := hmac.New(sha256.New, secret)
+	_, _ = h.Write([]byte(value))
+	return base64.RawURLEncoding.EncodeToString(h.Sum(nil))
+}
+func pbkdf2(h func() hash.Hash, password, salt []byte, iter, keyLen int) []byte {
+	out := make([]byte, 0, keyLen)
+	for block := 1; len(out) < keyLen; block++ {
+		mac := hmac.New(h, password)
+		mac.Write(salt)
+		mac.Write([]byte{byte(block >> 24), byte(block >> 16), byte(block >> 8), byte(block)})
+		u := mac.Sum(nil)
+		t := append([]byte(nil), u...)
+		for i := 1; i < iter; i++ {
+			mac = hmac.New(h, password)
+			mac.Write(u)
+			u = mac.Sum(nil)
+			for j := range t {
+				t[j] ^= u[j]
+			}
+		}
+		out = append(out, t...)
+	}
+	return out[:keyLen]
+}

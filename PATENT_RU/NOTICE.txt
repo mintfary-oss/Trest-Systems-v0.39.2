@@ -1,0 +1,12 @@
+TREST SYSTEMS — NOTICE
+
+The Trest Systems repository contains original materials of its rights holder
+and third-party open-source components. Original Trest Systems materials are
+proprietary unless expressly stated otherwise. Third-party components remain
+under their respective licenses.
+
+See:
+- docs/legal/AUTHORSHIP_AND_OWNERSHIP_DECLARATION_RU.md
+- docs/legal/IP_PROVENANCE_AND_RIGHTS_RU.md
+- docs/legal/THIRD_PARTY_LICENSES.md
+- docs/legal/LEGAL_EVIDENCE_CHECKLIST_RU.md

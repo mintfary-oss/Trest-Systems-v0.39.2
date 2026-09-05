@@ -1,0 +1,361 @@
+{
+  "release": "v0.39.1-stage11-prebuilt-auto-install",
+  "generated_at_utc": "2026-09-04T22:23:59.439484+00:00",
+  "source_archive": "Trest-Systems-v0.39-FULL-AUTO-INSTALL(2).zip",
+  "classification": "INSTALLATION PACKAGE VALIDATED OFFLINE; TARGET-HOST RUNTIME ACCEPTANCE REQUIRED",
+  "production_ready_certified": false,
+  "installation_package_ready_for_linux_amd64": true,
+  "checks": [
+    {
+      "name": "gofmt check",
+      "status": "PASS",
+      "detail": "all Go files formatted",
+      "command": "gofmt -l",
+      "log": "verification/v0.39.1/gofmt-check.log"
+    },
+    {
+      "name": "root go test",
+      "status": "PASS",
+      "detail": "all root packages passed offline",
+      "command": "GOPROXY=off go test -count=1 ./...",
+      "log": "verification/v0.39.1/root-go-test.log"
+    },
+    {
+      "name": "root go vet",
+      "status": "PASS",
+      "detail": "all root packages passed vet offline",
+      "command": "GOPROXY=off go vet ./...",
+      "log": "verification/v0.39.1/root-go-vet.log"
+    },
+    {
+      "name": "root go build",
+      "status": "PASS",
+      "detail": "all root packages built offline",
+      "command": "GOPROXY=off go build ./...",
+      "log": "verification/v0.39.1/root-go-build.log"
+    },
+    {
+      "name": "trest-installer test/vet/build",
+      "status": "PASS",
+      "detail": "nested module passed offline",
+      "command": "go test; go vet; go build",
+      "log": "verification/v0.39.1/trest-installer-go.log"
+    },
+    {
+      "name": "proektirovka-sdaniy test/vet/build",
+      "status": "PASS",
+      "detail": "nested module passed offline",
+      "command": "go test; go vet; go build",
+      "log": "verification/v0.39.1/proektirovka-sdaniy-go.log"
+    },
+    {
+      "name": "bootstrap-installer test/vet/build",
+      "status": "PASS",
+      "detail": "nested module passed offline",
+      "command": "go test; go vet; go build",
+      "log": "verification/v0.39.1/bootstrap-installer-go.log"
+    },
+    {
+      "name": "local Cobra compatibility module",
+      "status": "PASS",
+      "detail": "test/vet passed",
+      "command": "go test; go vet",
+      "log": "verification/v0.39.1/third-party-cobra.log"
+    },
+    {
+      "name": "local YAML compatibility module",
+      "status": "PASS",
+      "detail": "test/vet passed",
+      "command": "go test; go vet",
+      "log": "verification/v0.39.1/third-party-yamlv3.log"
+    },
+    {
+      "name": "local pgx/libpq compatibility module",
+      "status": "PASS",
+      "detail": "test/vet passed",
+      "command": "go test; go vet",
+      "log": "verification/v0.39.1/third-party-pgx.log"
+    },
+    {
+      "name": "shell syntax",
+      "status": "PASS",
+      "detail": "all shell scripts passed bash -n",
+      "command": "bash -n",
+      "log": "verification/v0.39.1/shell-syntax.log"
+    },
+    {
+      "name": "Python compile",
+      "status": "PASS",
+      "detail": "Python sources compiled; generated pyc removed",
+      "command": "python3 -m compileall",
+      "log": "verification/v0.39.1/python-compile.log"
+    },
+    {
+      "name": "installer isolated dry-run",
+      "status": "PASS",
+      "detail": "resource/network/package/checksum/report path passed without system mutation",
+      "command": "install.sh --dry-run",
+      "log": "verification/v0.39.1/installer-dry-run.log"
+    },
+    {
+      "name": "prebuilt runtime smoke",
+      "status": "PASS",
+      "detail": "CLI, API fail-closed, worker health, DXF UTF-8 and checksums passed",
+      "command": "prebuilt smoke suite",
+      "log": "verification/v0.39.1/prebuilt-runtime-smoke.log"
+    },
+    {
+      "name": "JSON syntax",
+      "status": "PASS",
+      "detail": "26 valid; invalid=0",
+      "command": "json.loads on all *.json",
+      "log": ""
+    },
+    {
+      "name": "YAML syntax",
+      "status": "PASS",
+      "detail": "12 valid; invalid=0",
+      "command": "yaml.safe_load on operational YAML",
+      "log": ""
+    },
+    {
+      "name": "Secret shape scan",
+      "status": "PASS",
+      "detail": "hits=0",
+      "command": "",
+      "log": ""
+    },
+    {
+      "name": "Merge conflict scan",
+      "status": "PASS",
+      "detail": "hits=0",
+      "command": "",
+      "log": ""
+    },
+    {
+      "name": "Compose required services",
+      "status": "PASS",
+      "detail": "services=11; missing=[]",
+      "command": "",
+      "log": ""
+    },
+    {
+      "name": "Compose build paths",
+      "status": "PASS",
+      "detail": "all build contexts and Dockerfiles exist",
+      "command": "",
+      "log": ""
+    },
+    {
+      "name": "Public port policy",
+      "status": "PASS",
+      "detail": "only edge may bind publicly",
+      "command": "",
+      "log": ""
+    },
+    {
+      "name": "Compose secret fail-closed policy",
+      "status": "PASS",
+      "detail": "unsafe fallbacks=[]",
+      "command": "",
+      "log": ""
+    },
+    {
+      "name": "Worker mandatory DB/Redis configuration",
+      "status": "PASS",
+      "detail": "{'WORKER_ADDR': ':8090', 'DATABASE_URL': '${DATABASE_URL:?DATABASE_URL is required}', 'REDIS_URL': '${REDIS_URL:?REDIS_URL is required}'}",
+      "command": "",
+      "log": ""
+    },
+    {
+      "name": "Linux amd64 prebuilt binaries",
+      "status": "PASS",
+      "detail": "missing=[]; present=7",
+      "command": "",
+      "log": ""
+    },
+    {
+      "name": "Prebuilt SHA-256 verification",
+      "status": "PASS",
+      "detail": "release/bin/linux/amd64/generate-dxf: OK\nrelease/bin/linux/amd64/trest: OK\nrelease/bin/linux/amd64/trest-api: OK\nrelease/bin/linux/amd64/trest-install: OK\nrelease/bin/linux/amd64/trest-installer: OK\nrelease/bin/linux/amd64/trest-worker: OK\nrelease/bin/linux/amd64/trestctl: OK",
+      "command": "sha256sum -c release/bin/SHA256SUMS",
+      "log": "verification/v0.39.1/prebuilt-checksums.log"
+    },
+    {
+      "name": "Binary shared-library linkage",
+      "status": "PASS",
+      "detail": "no missing shared libraries reported",
+      "command": "",
+      "log": "verification/v0.39.1/binary-linkage.log"
+    },
+    {
+      "name": "Original source/data preservation",
+      "status": "PASS",
+      "detail": "input=930; source/data missing=0; generated pyc removed=31",
+      "command": "",
+      "log": ""
+    },
+    {
+      "name": "Required project content",
+      "status": "PASS",
+      "detail": "missing=[]",
+      "command": "",
+      "log": ""
+    }
+  ],
+  "check_counts": {
+    "PASS": 28
+  },
+  "failed_checks": [],
+  "target_host_required_checks": [
+    {
+      "name": "Docker Compose runtime config",
+      "status": "NOT_EXECUTED_TARGET_HOST",
+      "reason": "Docker runtime unavailable in build environment"
+    },
+    {
+      "name": "Full container stack startup",
+      "status": "NOT_EXECUTED_TARGET_HOST",
+      "reason": "requires target Linux host with Docker/Compose and network"
+    },
+    {
+      "name": "PostgreSQL/Redis/MinIO/API/Web E2E",
+      "status": "NOT_EXECUTED_TARGET_HOST",
+      "reason": "installer runtime acceptance executes this on target server"
+    },
+    {
+      "name": "Public DNS/ACME/TLS/browser trust",
+      "status": "NOT_EXECUTED_TARGET_HOST",
+      "reason": "requires real domain, IP and ports 80/443"
+    },
+    {
+      "name": "Backup/restore drill",
+      "status": "NOT_EXECUTED_TARGET_HOST",
+      "reason": "requires running disposable database/container environment"
+    }
+  ],
+  "original_input": {
+    "files": 930,
+    "source_data_missing": [],
+    "generated_pyc_removed": 31
+  },
+  "code": {
+    "version": "v0.39.1-stage11-prebuilt-auto-install",
+    "method": "physical lines; tests included; dependencies, docs, patent/readable mirrors, verification logs and binaries excluded",
+    "languages": {
+      "Batch": {
+        "files": 1,
+        "lines": 151
+      },
+      "CSS": {
+        "files": 2,
+        "lines": 730
+      },
+      "Dockerfile": {
+        "files": 7,
+        "lines": 121
+      },
+      "Go": {
+        "files": 172,
+        "lines": 20604
+      },
+      "HTML": {
+        "files": 2,
+        "lines": 400
+      },
+      "JavaScript": {
+        "files": 26,
+        "lines": 2066
+      },
+      "Makefile": {
+        "files": 1,
+        "lines": 17
+      },
+      "NSIS": {
+        "files": 1,
+        "lines": 199
+      },
+      "PowerShell": {
+        "files": 2,
+        "lines": 457
+      },
+      "Python": {
+        "files": 31,
+        "lines": 3002
+      },
+      "SQL": {
+        "files": 19,
+        "lines": 688
+      },
+      "Shell": {
+        "files": 30,
+        "lines": 2878
+      }
+    },
+    "total": {
+      "files": 294,
+      "lines": 31313
+    }
+  },
+  "prebuilt": {
+    "release": "v0.39.1-stage11-prebuilt-auto-install",
+    "generated_at_utc": "2026-09-04T22:23:59.434958+00:00",
+    "build_host_go": "go version go1.23.2 linux/amd64",
+    "target": "linux/amd64",
+    "strategy": "prebuilt; no Go compilation during normal server installation",
+    "binaries": [
+      {
+        "path": "release/bin/linux/amd64/generate-dxf",
+        "size": 1921176,
+        "sha256": "2a270d348996ff6d817bf98aa9b6f9e27439192c819485af06d4e0ee622cb224"
+      },
+      {
+        "path": "release/bin/linux/amd64/trest",
+        "size": 7840004,
+        "sha256": "4eaed37c4e8ef25b9b314bb7b3ff160fdb988330057fce2d5226e09b1e83abe5"
+      },
+      {
+        "path": "release/bin/linux/amd64/trest-api",
+        "size": 6910560,
+        "sha256": "50dccc3a00e16b1c4e0c3e7f8130e0ca820592fee6ba50be9712ff6fb8c244dd"
+      },
+      {
+        "path": "release/bin/linux/amd64/trest-install",
+        "size": 2441476,
+        "sha256": "fc90cd9a0362bef94630e12022beddb07d5434cf66cda0f138b159f4eae91908"
+      },
+      {
+        "path": "release/bin/linux/amd64/trest-installer",
+        "size": 7627012,
+        "sha256": "b6a336f570d32f0530855025a88b9081c36b41cc4dd1bed6e17957b19af6e165"
+      },
+      {
+        "path": "release/bin/linux/amd64/trest-worker",
+        "size": 5552896,
+        "sha256": "d5782954a951c342be574d4d09462910f3dd94c945e724460750293659e48db4"
+      },
+      {
+        "path": "release/bin/linux/amd64/trestctl",
+        "size": 3836128,
+        "sha256": "68b5dbd4364dd28cc0ada3f3e338a70c1248a7ed8754a219b950ee257a04dd73"
+      }
+    ],
+    "database_driver": "local pgx-compatible API backed by system libpq",
+    "required_runtime_packages": [
+      "glibc >= 2.34",
+      "libpq5 and dependencies",
+      "ca-certificates",
+      "tzdata"
+    ]
+  },
+  "security": {
+    "secret_shape_hits": [],
+    "merge_conflict_hits": []
+  },
+  "static_details": {
+    "bad_json": [],
+    "bad_yaml": [],
+    "compose_build_errors": [],
+    "public_port_errors": []
+  }
+}

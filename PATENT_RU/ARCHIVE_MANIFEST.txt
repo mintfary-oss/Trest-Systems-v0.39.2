@@ -1,0 +1,15 @@
+{
+  "project": "Trest Systems",
+  "repository": "mintfary-oss/Trest-sistems",
+  "generated": "2026-09-02",
+  "scope": "prepared documentation + trestctl skeleton + base Docker Compose",
+  "secrets_included": false,
+  "note": "Existing marketplace modules are not fabricated; only files supported by the prepared project context are included.",
+  "continuity_files": [
+    "PROJECT_HANDOFF.md",
+    "AI_CONVERSATION_LOG.md",
+    "CURRENT_STATE.md",
+    "DEVELOPMENT_PLAN.md",
+    "NEXT_STEPS.md"
+  ]
+}

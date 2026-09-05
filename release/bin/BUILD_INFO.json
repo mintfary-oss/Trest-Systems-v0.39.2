@@ -1,0 +1,59 @@
+{
+  "release": "0.39.2",
+  "classification": "release candidate",
+  "generated_at_utc": "2026-09-05T08:04:48.941073+00:00",
+  "build_host_go": "go version go1.23.2 linux/amd64",
+  "target": "linux/amd64; Windows/amd64 bootstrap launcher only",
+  "strategy": "prebuilt Go; Docker images/model weights NOT included",
+  "binaries": [
+    {
+      "path": "release/bin/linux/amd64/trest-api",
+      "size": 6993200,
+      "sha256": "612f4849d94b643960ad6d3ee28170f144d94267d6e20fbb856bddb5eeae8aad"
+    },
+    {
+      "path": "release/bin/linux/amd64/trest-worker",
+      "size": 5552816,
+      "sha256": "a65ce170809f2f0f443abecbdc9caaecb5450a64f2be97fba1ebbbea93a3c55b"
+    },
+    {
+      "path": "release/bin/linux/amd64/trest",
+      "size": 7844083,
+      "sha256": "5866984ac22d01bd7a4832c5568b9ad1325358c43ab3ac0256975404326227cc"
+    },
+    {
+      "path": "release/bin/linux/amd64/trestctl",
+      "size": 1654919,
+      "sha256": "3782279220474f642b5a69fc1c20189cd59e534f14906b7e1493b159eda1daab"
+    },
+    {
+      "path": "release/bin/linux/amd64/trest-install",
+      "size": 2392199,
+      "sha256": "b3abd18072e20eb5199fe43e0530137d909234469f57f5f284b2b6d5c4d15dea"
+    },
+    {
+      "path": "release/bin/linux/amd64/trest-installer",
+      "size": 7585927,
+      "sha256": "d63f1b515a11602b2a3f8d7d473985918448e97944f1f11e9fc6ae9457aa8a21"
+    },
+    {
+      "path": "release/bin/linux/amd64/generate-dxf",
+      "size": 1921159,
+      "sha256": "1fd315e880848a1c4a15c8133105b7e5d1a95de1507a048b31d4a4575aba4a3d"
+    },
+    {
+      "path": "release/bin/windows/amd64/trest-install.exe",
+      "size": 2548224,
+      "sha256": "c90b4309ffa365d76a71f4d8139eba97604d51e205253ff25ec16dee9d80687e"
+    }
+  ],
+  "database_driver": "inherited pgx-compatible API using system libpq; NOT full upstream pgx",
+  "required_runtime_packages": [
+    "glibc >= 2.34",
+    "libpq5 and dependencies",
+    "ca-certificates",
+    "tzdata"
+  ],
+  "docker_runtime_verified": false,
+  "windows_runtime_verified": false
+}

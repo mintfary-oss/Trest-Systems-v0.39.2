@@ -1,0 +1,1 @@
+Stage 10 Runtime 11: MinIO/S3-compatible storage, multipart IFC import API, SHA-256 object manifest, atomic semantic import, project access enforcement, import audit.

@@ -1,0 +1,135 @@
+// Package config loads the orchestrator's config.yaml, which describes the
+// repository to track and the sub-projects to install, run, and monitor.
+package config
+
+import (
+	"fmt"
+	"os"
+
+	"gopkg.in/yaml.v3"
+)
+
+// ProjectType identifies how a project is started and monitored.
+type ProjectType string
+
+const (
+	// ProjectTypeCompose starts a project via `docker compose up -d`.
+	ProjectTypeCompose ProjectType = "compose"
+	// ProjectTypeGoBuild builds a project via `go build` and runs the
+	// resulting binary on demand rather than as a long-lived service.
+	ProjectTypeGoBuild ProjectType = "go-build"
+)
+
+// Project describes a single sub-project managed by the orchestrator.
+type Project struct {
+	// Name is the human-readable identifier used in logs, state, and the
+	// web dashboard.
+	Name string `yaml:"name"`
+	// Type selects the start/monitor strategy for this project.
+	Type ProjectType `yaml:"type"`
+	// Path is the project directory, relative to the repository root.
+	Path string `yaml:"path"`
+	// ComposeFile is the docker-compose file name, relative to Path.
+	// Only used when Type is ProjectTypeCompose. Defaults to
+	// "docker-compose.yml" when empty.
+	ComposeFile string `yaml:"compose_file,omitempty"`
+	// BuildCmd is the command used to build the project, split into
+	// argv-style tokens. Only used when Type is ProjectTypeGoBuild.
+	BuildCmd []string `yaml:"build_cmd,omitempty"`
+	// Ports lists TCP ports this project is expected to bind, used for
+	// pre-flight availability checks.
+	Ports []int `yaml:"ports,omitempty"`
+}
+
+// Config is the top-level orchestrator configuration.
+type Config struct {
+	// RepoURL is the git remote to clone/update.
+	RepoURL string `yaml:"repo_url"`
+	// Branch is the branch to track. Defaults to "main" when empty.
+	Branch string `yaml:"branch"`
+	// AuditPort is the port the web dashboard listens on.
+	AuditPort int `yaml:"audit_port"`
+	// Projects lists the sub-projects to install and monitor, in the
+	// order they should be started.
+	Projects []Project `yaml:"projects"`
+}
+
+// defaultBranch is used when a config omits the branch field.
+const Version = "v0.28-stage11-installer-hardening"
+
+const defaultBranch = "main"
+
+// defaultComposeFile is used when a compose project omits compose_file.
+const defaultComposeFile = "docker-compose.yml"
+
+// Load reads and parses the orchestrator config from path, applying
+// defaults and validating required fields.
+func Load(path string) (*Config, error) {
+	data, err := os.ReadFile(path)
+	if err != nil {
+		return nil, fmt.Errorf("read config %q: %w", path, err)
+	}
+
+	var cfg Config
+	if err := yaml.Unmarshal(data, &cfg); err != nil {
+		return nil, fmt.Errorf("parse config %q: %w", path, err)
+	}
+
+	if cfg.Branch == "" {
+		cfg.Branch = defaultBranch
+	}
+
+	for i := range cfg.Projects {
+		p := &cfg.Projects[i]
+		if p.Type == ProjectTypeCompose && p.ComposeFile == "" {
+			p.ComposeFile = defaultComposeFile
+		}
+	}
+
+	if err := cfg.validate(); err != nil {
+		return nil, fmt.Errorf("validate config %q: %w", path, err)
+	}
+
+	return &cfg, nil
+}
+
+// validate checks that the config is internally consistent.
+func (c *Config) validate() error {
+	if c.RepoURL == "" {
+		return fmt.Errorf("repo_url is required")
+	}
+	if c.AuditPort <= 0 || c.AuditPort > 65535 {
+		return fmt.Errorf("audit_port must be between 1 and 65535, got %d", c.AuditPort)
+	}
+	if len(c.Projects) == 0 {
+		return fmt.Errorf("at least one project is required")
+	}
+
+	seen := make(map[string]bool, len(c.Projects))
+	for _, p := range c.Projects {
+		if p.Name == "" {
+			return fmt.Errorf("project name is required")
+		}
+		if seen[p.Name] {
+			return fmt.Errorf("duplicate project name %q", p.Name)
+		}
+		seen[p.Name] = true
+
+		if p.Path == "" {
+			return fmt.Errorf("project %q: path is required", p.Name)
+		}
+
+		switch p.Type {
+		case ProjectTypeCompose:
+			// compose_file always has a default applied above.
+		case ProjectTypeGoBuild:
+			if len(p.BuildCmd) == 0 {
+				return fmt.Errorf("project %q: build_cmd is required for type go-build", p.Name)
+			}
+		default:
+			return fmt.Errorf("project %q: unknown type %q", p.Name, p.Type)
+		}
+	}
+
+	return nil
+}

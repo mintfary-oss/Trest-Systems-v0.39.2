@@ -1,0 +1,400 @@
+{
+  "release": "v0.38.1-verified-release",
+  "generated_at_utc": "2026-09-04T16:54:21.199256+00:00",
+  "source_work_tree": "/mnt/data/Trest-sistems-unified-v0.38-stage10-runtime15-PATENT-RU-FULL(1).zip",
+  "classification": "ENGINEERING BUILD WITH FAILED GATES",
+  "production_ready_certified": false,
+  "checks": [
+    {
+      "name": "gofmt",
+      "command": "gofmt -w /mnt/data/trest_systems_v0381_final_work/proektirovka-sdaniy/pkg/dxf/document.go /mnt/data/trest_systems_v0381_final_work/proektirovka-sdaniy/pkg/drawings/facade.go /mnt/data/trest_systems_v0381_final_work/proektirovka-sdaniy/pkg/drawings/roofplan.go /mnt/data/trest_systems_v0381_final_work/proektirovka-sdaniy/pkg/drawings/helpers.go /mnt/data/trest_systems_v0381_final_work/proektirovka-sdaniy/pkg/drawings/section.go /mnt/data/trest_systems_v0381_final_work/proektirovka-sdaniy/pkg/drawings/floorplan.go /mnt/data/trest_systems_v0381_final_work/proektirovka-sdaniy/pkg/drawings/siteplan.go /mnt/data/trest_systems_v0381_final_work/proektirovka-sdaniy/pkg/building/model.go /mnt/data/trest_systems_v0381_final_work/proektirovka-sdaniy/pkg/gost/frame.go /mnt/data/trest_systems_v0381_final_work/proektirovka-sdaniy/cmd/generate/main.go /mnt/data/trest_systems_v0381_final_work/internal/orchestrator/orchestrator_test.go /mnt/data/trest_systems_v0381_final_work/internal/orchestrator/orchestrator.go /mnt/data/trest_systems_v0381_final_work/internal/doctor/doctor.go /mnt/data/trest_systems_v0381_final_work/internal/ratings/rating_test.go /mnt/data/trest_systems_v0381_final_work/internal/ratings/rating.go /mnt/data/trest_systems_v0381_final_work/internal/diagnostics/diagnostics.go /mnt/data/trest_systems_v0381_final_work/internal/diagnostics/diagnostics_test.go /mnt/data/trest_systems_v0381_final_work/internal/orders/state.go /mnt/data/trest_systems_v0381_final_work/internal/orders/state_test.go /mnt/data/trest_systems_v0381_final_work/internal/cli/api.go /mnt/data/trest_systems_v0381_final_work/internal/cli/process.go /mnt/data/trest_systems_v0381_final_work/internal/cli/install.go /mnt/data/trest_systems_v0381_final_work/internal/cli/lifecycle.go /mnt/data/trest_systems_v0381_final_work/internal/cli/migrate.go /mnt/data/trest_systems_v0381_final_work/internal/cli/cli.go /mnt/data/trest_systems_v0381_final_work/internal/contractors/eligibility.go /mnt/data/trest_systems_v0381_final_work/internal/contractors/eligibility_test.go /mnt/data/trest_systems_v0381_final_work/internal/web/web_test.go /mnt/data/trest_systems_v0381_final_work/internal/web/web.go /mnt/data/trest_systems_v0381_final_work/internal/gitrepo/gitrepo_test.go /mnt/data/trest_systems_v0381_final_work/internal/gitrepo/gitrepo.go /mnt/data/trest_systems_v0381_final_work/internal/domain/models.go /mnt/data/trest_systems_v0381_final_work/internal/auth/auth.go /mnt/data/trest_systems_v0381_final_work/internal/installer/install.go /mnt/data/trest_systems_v0381_final_work/internal/errorlog/errorlog.go /mnt/data/trest_systems_v0381_final_work/internal/errorlog/errorlog_test.go /mnt/data/trest_systems_v0381_final_work/internal/config/config_test.go /mnt/data/trest_systems_v0381_final_work/internal/config/config.go /mnt/data/trest_systems_v0381_final_work/internal/suppliers/eligibility.go /mnt/data/trest_systems_v0381_final_work/internal/suppliers/eligibility_test.go /mnt/data/trest_systems_v0381_final_work/internal/state/state.go /mnt/data/trest_systems_v0381_final_work/internal/state/state_test.go /mnt/data/trest_systems_v0381_final_work/internal/report/report_test.go /mnt/data/trest_systems_v0381_final_work/internal/report/report.go /mnt/data/trest_systems_v0381_final_work/internal/ai/ollama.go /mnt/data/trest_systems_v0381_final_work/internal/ai/agent.go /mnt/data/trest_systems_v0381_final_work/internal/ai/types.go /mnt/data/trest_systems_v0381_final_work/internal/ai/agent_test.go /mnt/data/trest_systems_v0381_final_work/internal/api/bim_auth.go /mnt/data/trest_systems_v0381_final_work/internal/api/ratings_stage8.go /mnt/data/trest_systems_v0381_final_work/internal/api/security.go /mnt/data/trest_systems_v0381_final_work/internal/api/security_test.go /mnt/data/trest_systems_v0381_final_work/internal/api/ai_stage9.go /mnt/data/trest_systems_v0381_final_work/internal/api/bim_stage10_extended.go /mnt/data/trest_systems_v0381_final_work/internal/api/orders_stage5.go /mnt/data/trest_systems_v0381_final_work/internal/api/marketplace.go /mnt/data/trest_systems_v0381_final_work/internal/api/constructor_test.go /mnt/data/trest_systems_v0381_final_work/internal/api/bim_runtime11_test.go /mnt/data/trest_systems_v0381_final_work/internal/api/bim_exchange_runtime4.go /mnt/data/trest_systems_v0381_final_work/internal/api/bim_diff_stage10.go /mnt/data/trest_systems_v0381_final_work/internal/api/constructor.go /mnt/data/trest_systems_v0381_final_work/internal/api/bim_stage10.go /mnt/data/trest_systems_v0381_final_work/internal/api/bim_runtime11.go /mnt/data/trest_systems_v0381_final_work/internal/api/contractors_stage6.go /mnt/data/trest_systems_v0381_final_work/internal/api/bim_runtime12.go /mnt/data/trest_systems_v0381_final_work/internal/api/suppliers_stage7.go /mnt/data/trest_systems_v0381_final_work/internal/api/identity_test.go /mnt/data/trest_systems_v0381_final_work/internal/api/identity.go /mnt/data/trest_systems_v0381_final_work/internal/api/auth.go /mnt/data/trest_systems_v0381_final_work/internal/api/bim_runtime10.go /mnt/data/trest_systems_v0381_final_work/internal/api/server.go /mnt/data/trest_systems_v0381_final_work/internal/bim/meshmanifest_test.go /mnt/data/trest_systems_v0381_final_work/internal/bim/meshmanifest_runtime12.go /mnt/data/trest_systems_v0381_final_work/internal/bim/meshmanifest_runtime12_test.go /mnt/data/trest_systems_v0381_final_work/internal/bim/model.go /mnt/data/trest_systems_v0381_final_work/internal/bim/meshmanifest.go /mnt/data/trest_systems_v0381_final_work/internal/bim/model_test.go /mnt/data/trest_systems_v0381_final_work/internal/db/db.go /mnt/data/trest_systems_v0381_final_work/internal/db/migrate.go /mnt/data/trest_systems_v0381_final_work/internal/appflow/appflow.go /mnt/data/trest_systems_v0381_final_work/internal/appflow/appflow_test.go /mnt/data/trest_systems_v0381_final_work/internal/proektirovka/dxf/document.go /mnt/data/trest_systems_v0381_final_work/internal/proektirovka/generator/generator.go /mnt/data/trest_systems_v0381_final_work/internal/proektirovka/drawings/facade.go /mnt/data/trest_systems_v0381_final_work/internal/proektirovka/drawings/roofplan.go /mnt/data/trest_systems_v0381_final_work/internal/proektirovka/drawings/helpers.go /mnt/data/trest_systems_v0381_final_work/internal/proektirovka/drawings/section.go /mnt/data/trest_systems_v0381_final_work/internal/proektirovka/drawings/floorplan.go /mnt/data/trest_systems_v0381_final_work/internal/proektirovka/drawings/siteplan.go /mnt/data/trest_systems_v0381_final_work/internal/proektirovka/building/model.go /mnt/data/trest_systems_v0381_final_work/internal/proektirovka/gost/frame.go /mnt/data/trest_systems_v0381_final_work/internal/bim/ifcgeometry/bvh.go /mnt/data/trest_systems_v0381_final_work/internal/bim/ifcgeometry/scene.go /mnt/data/trest_systems_v0381_final_work/internal/bim/ifcgeometry/bvh_test.go /mnt/data/trest_systems_v0381_final_work/internal/bim/ifcgeometry/product_test.go /mnt/data/trest_systems_v0381_final_work/internal/bim/ifcgeometry/scene_test.go /mnt/data/trest_systems_v0381_final_work/internal/bim/ifcgeometry/mesh.go /mnt/data/trest_systems_v0381_final_work/internal/bim/ifcgeometry/placement.go /mnt/data/trest_systems_v0381_final_work/internal/bim/ifcgeometry/placement_test.go /mnt/data/trest_systems_v0381_final_work/internal/bim/ifcgeometry/product.go /mnt/data/trest_systems_v0381_final_work/internal/bim/ifcgeometry/mesh_test.go /mnt/data/trest_systems_v0381_final_work/internal/bim/ifcgeometry/mesh_runtime15_test.go /mnt/data/trest_systems_v0381_final_work/internal/bim/diff/semantic_test.go /mnt/data/trest_systems_v0381_final_work/internal/bim/diff/mesh.go /mnt/data/trest_systems_v0381_final_work/internal/bim/diff/semantic.go /mnt/data/trest_systems_v0381_final_work/internal/bim/diff/mesh_test.go /mnt/data/trest_systems_v0381_final_work/internal/bim/ifc/step.go /mnt/data/trest_systems_v0381_final_work/internal/bim/ifc/step_test.go /mnt/data/trest_systems_v0381_final_work/internal/bim/ifcsemantic/semantic_test.go /mnt/data/trest_systems_v0381_final_work/internal/bim/ifcsemantic/mapping.go /mnt/data/trest_systems_v0381_final_work/internal/bim/ifcsemantic/mapping_test.go /mnt/data/trest_systems_v0381_final_work/internal/bim/ifcsemantic/relations_test.go /mnt/data/trest_systems_v0381_final_work/internal/bim/ifcsemantic/graph_test.go /mnt/data/trest_systems_v0381_final_work/internal/bim/ifcsemantic/graph.go /mnt/data/trest_systems_v0381_final_work/internal/bim/ifcsemantic/schema.go /mnt/data/trest_systems_v0381_final_work/internal/bim/ifcsemantic/properties_test.go /mnt/data/trest_systems_v0381_final_work/internal/bim/ifcsemantic/relations.go /mnt/data/trest_systems_v0381_final_work/internal/bim/ifcsemantic/properties.go /mnt/data/trest_systems_v0381_final_work/internal/bim/ifcsemantic/semantic.go /mnt/data/trest_systems_v0381_final_work/internal/bim/converter/glb_test.go /mnt/data/trest_systems_v0381_final_work/internal/bim/converter/obj.go /mnt/data/trest_systems_v0381_final_work/internal/bim/converter/glb.go /mnt/data/trest_systems_v0381_final_work/internal/bim/converter/dxf.go /mnt/data/trest_systems_v0381_final_work/internal/bim/converter/dxf_test.go /mnt/data/trest_systems_v0381_final_work/internal/bim/converter/obj_test.go /mnt/data/trest_systems_v0381_final_work/internal/bim/importer/import.go /mnt/data/trest_systems_v0381_final_work/internal/bim/importer/import_test.go /mnt/data/trest_systems_v0381_final_work/internal/bim/queue/processor_test.go /mnt/data/trest_systems_v0381_final_work/internal/bim/queue/processor.go /mnt/data/trest_systems_v0381_final_work/internal/bim/storage/local.go /mnt/data/trest_systems_v0381_final_work/internal/bim/storage/s3_test.go /mnt/data/trest_systems_v0381_final_work/internal/bim/storage/s3.go /mnt/data/trest_systems_v0381_final_work/internal/bim/storage/local_test.go /mnt/data/trest_systems_v0381_final_work/internal/bim/storage/object_test.go /mnt/data/trest_systems_v0381_final_work/internal/bim/storage/object.go /mnt/data/trest_systems_v0381_final_work/cmd/worker/main.go /mnt/data/trest_systems_v0381_final_work/cmd/trest/run.go /mnt/data/trest_systems_v0381_final_work/cmd/trest/status.go /mnt/data/trest_systems_v0381_final_work/cmd/trest/main.go /mnt/data/trest_systems_v0381_final_work/cmd/trest/audit.go /mnt/data/trest_systems_v0381_final_work/cmd/api/main.go /mnt/data/trest_systems_v0381_final_work/cmd/trestctl/main.go /mnt/data/trest_systems_v0381_final_work/trest-installer/internal/orchestrator/orchestrator_test.go /mnt/data/trest_systems_v0381_final_work/trest-installer/internal/orchestrator/orchestrator.go /mnt/data/trest_systems_v0381_final_work/trest-installer/internal/diagnostics/diagnostics.go /mnt/data/trest_systems_v0381_final_work/trest-installer/internal/diagnostics/diagnostics_test.go /mnt/data/trest_systems_v0381_final_work/trest-installer/internal/web/web_test.go /mnt/data/trest_systems_v0381_final_work/trest-installer/internal/web/web.go /mnt/data/trest_systems_v0381_final_work/trest-installer/internal/gitrepo/gitrepo_test.go /mnt/data/trest_systems_v0381_final_work/trest-installer/internal/gitrepo/gitrepo.go /mnt/data/trest_systems_v0381_final_work/trest-installer/internal/errorlog/errorlog.go /mnt/data/trest_systems_v0381_final_work/trest-installer/internal/errorlog/errorlog_test.go /mnt/data/trest_systems_v0381_final_work/trest-installer/internal/config/config_test.go /mnt/data/trest_systems_v0381_final_work/trest-installer/internal/config/config.go /mnt/data/trest_systems_v0381_final_work/trest-installer/internal/state/state.go /mnt/data/trest_systems_v0381_final_work/trest-installer/internal/state/state_test.go /mnt/data/trest_systems_v0381_final_work/trest-installer/internal/report/report_test.go /mnt/data/trest_systems_v0381_final_work/trest-installer/internal/report/report.go /mnt/data/trest_systems_v0381_final_work/trest-installer/internal/appflow/appflow.go /mnt/data/trest_systems_v0381_final_work/trest-installer/internal/appflow/appflow_test.go /mnt/data/trest_systems_v0381_final_work/trest-installer/cmd/trest/run.go /mnt/data/trest_systems_v0381_final_work/trest-installer/cmd/trest/status.go /mnt/data/trest_systems_v0381_final_work/trest-installer/cmd/trest/main.go /mnt/data/trest_systems_v0381_final_work/trest-installer/cmd/trest/audit.go",
+      "cwd": "/mnt/data/trest_systems_v0381_final_work",
+      "status": "PASS",
+      "exit_code": 0,
+      "seconds": 0.03
+    },
+    {
+      "name": "go mod verify [root]",
+      "command": "go mod verify",
+      "cwd": "/mnt/data/trest_systems_v0381_final_work",
+      "status": "FAIL",
+      "exit_code": 1,
+      "seconds": 0.01
+    },
+    {
+      "name": "go test [root]",
+      "command": "go test -count=1 ./...",
+      "cwd": "/mnt/data/trest_systems_v0381_final_work",
+      "status": "FAIL",
+      "exit_code": 1,
+      "seconds": 0.12
+    },
+    {
+      "name": "go vet [root]",
+      "command": "go vet ./...",
+      "cwd": "/mnt/data/trest_systems_v0381_final_work",
+      "status": "FAIL",
+      "exit_code": 1,
+      "seconds": 0.06
+    },
+    {
+      "name": "go build [root]",
+      "command": "go build ./...",
+      "cwd": "/mnt/data/trest_systems_v0381_final_work",
+      "status": "FAIL",
+      "exit_code": 1,
+      "seconds": 0.08
+    },
+    {
+      "name": "go mod verify [proektirovka-sdaniy]",
+      "command": "go mod verify",
+      "cwd": "/mnt/data/trest_systems_v0381_final_work/proektirovka-sdaniy",
+      "status": "FAIL",
+      "exit_code": 1,
+      "seconds": 0.0
+    },
+    {
+      "name": "go test [proektirovka-sdaniy]",
+      "command": "go test -count=1 ./...",
+      "cwd": "/mnt/data/trest_systems_v0381_final_work/proektirovka-sdaniy",
+      "status": "FAIL",
+      "exit_code": 1,
+      "seconds": 0.0
+    },
+    {
+      "name": "go vet [proektirovka-sdaniy]",
+      "command": "go vet ./...",
+      "cwd": "/mnt/data/trest_systems_v0381_final_work/proektirovka-sdaniy",
+      "status": "FAIL",
+      "exit_code": 1,
+      "seconds": 0.01
+    },
+    {
+      "name": "go build [proektirovka-sdaniy]",
+      "command": "go build ./...",
+      "cwd": "/mnt/data/trest_systems_v0381_final_work/proektirovka-sdaniy",
+      "status": "FAIL",
+      "exit_code": 1,
+      "seconds": 0.0
+    },
+    {
+      "name": "go mod verify [trest-installer]",
+      "command": "go mod verify",
+      "cwd": "/mnt/data/trest_systems_v0381_final_work/trest-installer",
+      "status": "FAIL",
+      "exit_code": 1,
+      "seconds": 0.0
+    },
+    {
+      "name": "go test [trest-installer]",
+      "command": "go test -count=1 ./...",
+      "cwd": "/mnt/data/trest_systems_v0381_final_work/trest-installer",
+      "status": "FAIL",
+      "exit_code": 1,
+      "seconds": 0.0
+    },
+    {
+      "name": "go vet [trest-installer]",
+      "command": "go vet ./...",
+      "cwd": "/mnt/data/trest_systems_v0381_final_work/trest-installer",
+      "status": "FAIL",
+      "exit_code": 1,
+      "seconds": 0.01
+    },
+    {
+      "name": "go build [trest-installer]",
+      "command": "go build ./...",
+      "cwd": "/mnt/data/trest_systems_v0381_final_work/trest-installer",
+      "status": "FAIL",
+      "exit_code": 1,
+      "seconds": 0.0
+    },
+    {
+      "name": "go race critical packages",
+      "command": "go test -race -count=1 ./internal/...",
+      "cwd": "/mnt/data/trest_systems_v0381_final_work",
+      "status": "FAIL",
+      "exit_code": 1,
+      "seconds": 0.08
+    },
+    {
+      "name": "prebuilt worker linux/amd64",
+      "command": "go build -trimpath -ldflags=-s -w -o /mnt/data/trest_systems_v0381_final_work/release/bin/worker-linux-amd64 ./cmd/worker",
+      "cwd": "/mnt/data/trest_systems_v0381_final_work",
+      "status": "FAIL",
+      "exit_code": 1,
+      "seconds": 0.02
+    },
+    {
+      "name": "prebuilt worker windows/amd64",
+      "command": "go build -trimpath -ldflags=-s -w -o /mnt/data/trest_systems_v0381_final_work/release/bin/worker-windows-amd64.exe ./cmd/worker",
+      "cwd": "/mnt/data/trest_systems_v0381_final_work",
+      "status": "FAIL",
+      "exit_code": 1,
+      "seconds": 0.02
+    },
+    {
+      "name": "prebuilt trest linux/amd64",
+      "command": "go build -trimpath -ldflags=-s -w -o /mnt/data/trest_systems_v0381_final_work/release/bin/trest-linux-amd64 ./cmd/trest",
+      "cwd": "/mnt/data/trest_systems_v0381_final_work",
+      "status": "FAIL",
+      "exit_code": 1,
+      "seconds": 0.03
+    },
+    {
+      "name": "prebuilt trest windows/amd64",
+      "command": "go build -trimpath -ldflags=-s -w -o /mnt/data/trest_systems_v0381_final_work/release/bin/trest-windows-amd64.exe ./cmd/trest",
+      "cwd": "/mnt/data/trest_systems_v0381_final_work",
+      "status": "FAIL",
+      "exit_code": 1,
+      "seconds": 0.03
+    },
+    {
+      "name": "prebuilt api linux/amd64",
+      "command": "go build -trimpath -ldflags=-s -w -o /mnt/data/trest_systems_v0381_final_work/release/bin/api-linux-amd64 ./cmd/api",
+      "cwd": "/mnt/data/trest_systems_v0381_final_work",
+      "status": "FAIL",
+      "exit_code": 1,
+      "seconds": 0.03
+    },
+    {
+      "name": "prebuilt api windows/amd64",
+      "command": "go build -trimpath -ldflags=-s -w -o /mnt/data/trest_systems_v0381_final_work/release/bin/api-windows-amd64.exe ./cmd/api",
+      "cwd": "/mnt/data/trest_systems_v0381_final_work",
+      "status": "FAIL",
+      "exit_code": 1,
+      "seconds": 0.03
+    },
+    {
+      "name": "prebuilt trestctl linux/amd64",
+      "command": "go build -trimpath -ldflags=-s -w -o /mnt/data/trest_systems_v0381_final_work/release/bin/trestctl-linux-amd64 ./cmd/trestctl",
+      "cwd": "/mnt/data/trest_systems_v0381_final_work",
+      "status": "FAIL",
+      "exit_code": 1,
+      "seconds": 0.03
+    },
+    {
+      "name": "prebuilt trestctl windows/amd64",
+      "command": "go build -trimpath -ldflags=-s -w -o /mnt/data/trest_systems_v0381_final_work/release/bin/trestctl-windows-amd64.exe ./cmd/trestctl",
+      "cwd": "/mnt/data/trest_systems_v0381_final_work",
+      "status": "FAIL",
+      "exit_code": 1,
+      "seconds": 0.05
+    },
+    {
+      "name": "prebuilt generate-dxf linux/amd64",
+      "command": "go build -trimpath -ldflags=-s -w -o /mnt/data/trest_systems_v0381_final_work/release/bin/generate-dxf-linux-amd64 ./cmd/generate",
+      "cwd": "/mnt/data/trest_systems_v0381_final_work/proektirovka-sdaniy",
+      "status": "FAIL",
+      "exit_code": 1,
+      "seconds": 0.0
+    },
+    {
+      "name": "prebuilt trest-installer linux/amd64",
+      "command": "go build -trimpath -ldflags=-s -w -o /mnt/data/trest_systems_v0381_final_work/release/bin/trest-installer-linux-amd64 ./cmd/trest",
+      "cwd": "/mnt/data/trest_systems_v0381_final_work/trest-installer",
+      "status": "FAIL",
+      "exit_code": 1,
+      "seconds": 0.0
+    },
+    {
+      "name": "Python AST validation",
+      "command": "ast.parse(all Python sources)",
+      "cwd": "/mnt/data/trest_systems_v0381_final_work",
+      "status": "PASS",
+      "exit_code": 0,
+      "seconds": 0
+    },
+    {
+      "name": "Python compileall",
+      "command": "/opt/pyvenv/bin/python -m compileall -q /mnt/data/trest_systems_v0381_final_work",
+      "cwd": "/mnt/data/trest_systems_v0381_final_work",
+      "status": "PASS",
+      "exit_code": 0,
+      "seconds": 0.64
+    },
+    {
+      "name": "Python pytest",
+      "command": "pytest -q",
+      "cwd": "/mnt/data/trest_systems_v0381_final_work",
+      "status": "SKIP",
+      "exit_code": 0,
+      "seconds": 0
+    },
+    {
+      "name": "JSON validation",
+      "command": "json.loads(all JSON)",
+      "cwd": "/mnt/data/trest_systems_v0381_final_work",
+      "status": "PASS",
+      "exit_code": 0,
+      "seconds": 0
+    },
+    {
+      "name": "npm reproducible install/build [magasin-777/frontend]",
+      "command": "npm ci && npm run build",
+      "cwd": "/mnt/data/trest_systems_v0381_final_work/magasin-777/frontend",
+      "status": "SKIP",
+      "exit_code": 0,
+      "seconds": 0
+    },
+    {
+      "name": "JS/TS source integrity",
+      "command": "conflict/NUL/static integrity scan",
+      "cwd": "/mnt/data/trest_systems_v0381_final_work",
+      "status": "PASS",
+      "exit_code": 0,
+      "seconds": 0
+    },
+    {
+      "name": "Legacy shop authentication regression",
+      "command": "static auth security rules",
+      "cwd": "/mnt/data/trest_systems_v0381_final_work",
+      "status": "FAIL",
+      "exit_code": 1,
+      "seconds": 0
+    },
+    {
+      "name": "Shell syntax",
+      "command": "bash -n all *.sh",
+      "cwd": "/mnt/data/trest_systems_v0381_final_work",
+      "status": "PASS",
+      "exit_code": 0,
+      "seconds": 0
+    },
+    {
+      "name": "YAML parse",
+      "command": "yaml.safe_load(all YAML)",
+      "cwd": "/mnt/data/trest_systems_v0381_final_work",
+      "status": "PASS",
+      "exit_code": 0,
+      "seconds": 0
+    },
+    {
+      "name": "Compose structural validation",
+      "command": "service/dependency/build-context/environment checks",
+      "cwd": "/mnt/data/trest_systems_v0381_final_work",
+      "status": "FAIL",
+      "exit_code": 1,
+      "seconds": 0
+    },
+    {
+      "name": "Docker Compose runtime config",
+      "command": "docker compose config",
+      "cwd": "/mnt/data/trest_systems_v0381_final_work",
+      "status": "SKIP",
+      "exit_code": 127,
+      "seconds": 0
+    },
+    {
+      "name": "SQL migration integrity",
+      "command": "version/order/basic SQL integrity",
+      "cwd": "/mnt/data/trest_systems_v0381_final_work/migrations",
+      "status": "PASS",
+      "exit_code": 0,
+      "seconds": 0
+    },
+    {
+      "name": "Merge conflict scan",
+      "command": "scan text sources",
+      "cwd": "/mnt/data/trest_systems_v0381_final_work",
+      "status": "FAIL",
+      "exit_code": 1,
+      "seconds": 0
+    },
+    {
+      "name": "Credential secret scan",
+      "command": "scan known high-confidence token/key formats",
+      "cwd": "/mnt/data/trest_systems_v0381_final_work",
+      "status": "PASS",
+      "exit_code": 0,
+      "seconds": 0
+    },
+    {
+      "name": "GitHub workflows hygiene",
+      "command": "only *.yml/*.yaml under .github/workflows",
+      "cwd": "/mnt/data/trest_systems_v0381_final_work/.github/workflows",
+      "status": "PASS",
+      "exit_code": 0,
+      "seconds": 0
+    },
+    {
+      "name": "Full Docker E2E",
+      "command": "bash scripts/e2e-full.sh",
+      "cwd": "/mnt/data/trest_systems_v0381_final_work",
+      "status": "SKIP",
+      "exit_code": 127,
+      "seconds": 0
+    },
+    {
+      "name": "Backup/restore drill",
+      "command": "bash scripts/backup-restore-drill.sh",
+      "cwd": "/mnt/data/trest_systems_v0381_final_work",
+      "status": "SKIP",
+      "exit_code": 127,
+      "seconds": 0
+    }
+  ],
+  "check_counts": {
+    "PASS": 10,
+    "FAIL": 26,
+    "SKIP": 5
+  },
+  "failed_gates": [
+    "go mod verify [root]",
+    "go test [root]",
+    "go vet [root]",
+    "go build [root]",
+    "go mod verify [proektirovka-sdaniy]",
+    "go test [proektirovka-sdaniy]",
+    "go vet [proektirovka-sdaniy]",
+    "go build [proektirovka-sdaniy]",
+    "go mod verify [trest-installer]",
+    "go test [trest-installer]",
+    "go vet [trest-installer]",
+    "go build [trest-installer]",
+    "go race critical packages",
+    "prebuilt worker linux/amd64",
+    "prebuilt worker windows/amd64",
+    "prebuilt trest linux/amd64",
+    "prebuilt trest windows/amd64",
+    "prebuilt api linux/amd64",
+    "prebuilt api windows/amd64",
+    "prebuilt trestctl linux/amd64",
+    "prebuilt trestctl windows/amd64",
+    "prebuilt generate-dxf linux/amd64",
+    "prebuilt trest-installer linux/amd64",
+    "Legacy shop authentication regression",
+    "Compose structural validation",
+    "Merge conflict scan"
+  ],
+  "runtime_gates_not_executed": [
+    "Docker Compose runtime config",
+    "Full Docker E2E",
+    "Backup/restore drill"
+  ],
+  "redacted_secret_occurrences": [],
+  "source_lines": {
+    "Shell": 2023,
+    "SQL": 688,
+    "Python": 2988,
+    "HTML": 400,
+    "Go": 18787,
+    "JavaScript": 2066,
+    "CSS": 730
+  },
+  "source_files_by_language": {
+    "Shell": 23,
+    "SQL": 19,
+    "Python": 31,
+    "HTML": 2,
+    "Go": 164,
+    "JavaScript": 26,
+    "CSS": 2
+  },
+  "source_lines_total": 27682,
+  "go_modules": [
+    ".",
+    "proektirovka-sdaniy",
+    "trest-installer"
+  ]
+}

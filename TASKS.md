@@ -1,0 +1,105 @@
+# Задачи
+
+## Критические
+- [ ] Проверить секреты.
+- [ ] Очистить секреты из истории при необходимости.
+- [ ] Branch protection для main.
+- [ ] Проверить GitHub Actions permissions.
+
+## В работе
+- [x] Базовый `trestctl install` с plan/state/report.
+- [ ] Довести install до полного health-check всех сервисов и реальных миграций.
+- [x] Stage 2 Compose/API/web/worker wiring implemented; runtime check requires Docker host.
+- [ ] Расширить `trestctl doctor`.
+- [ ] API/web/worker в Compose.
+- [ ] Health-check.
+
+## Следующие
+- [x] users/organizations/projects/estimates/orders.
+- [x] Identity: organizations, memberships, permissions, verification.
+- [ ] state machine заказа.
+- [x] roles/permissions.
+- [x] миграции.
+- [ ] тесты доменных переходов.
+
+## Отложено
+- [ ] Полная BIM/3D.
+- [ ] Автономные решения AI без человека.
+- [ ] Мобильные приложения.
+- [ ] Международные платежи.
+
+## Stage 2 — выполнено в коде
+- [x] API/web/worker в Compose.
+- [x] Health-check API, web, worker, marketplace API, Ollama, PostgreSQL, Redis.
+- [x] Реальные `magasin-777` и `super-sistema` сохранены в едином стеке.
+- [ ] Запуск Docker Compose на Linux host с Docker.
+
+
+## Completed Stage 4
+- [x] Constructor catalogs and project version snapshots.
+- [x] Architecture version workflow and authorization.
+
+
+## Completed Stage 6
+- [x] Contractor applications, profiles and competencies.
+- [x] Service area and verification workflow.
+- [x] Matching eligibility baseline.
+
+
+## Stage 7 — Suppliers — DONE
+- [x] supplier application/profile
+- [x] verification
+- [x] supplier offers/SKU
+- [x] price/currency/unit/MOQ
+- [x] stock/lead time
+- [x] delivery regions/terms
+- [x] certificate/document metadata
+- [x] offer search/filter
+- [x] secure offer attachment to orders
+- [x] deterministic supplier eligibility
+- [x] tests/documentation/continuity
+
+## Stage 8 — Ratings — NEXT
+- [ ] ratings and dimensions
+- [ ] aggregation/history
+- [ ] bonuses/sanctions
+- [ ] disputes and resolution
+- [ ] anti-abuse rules
+- [ ] audit and tests
+
+
+## Stage 8 Ratings — completed
+- [x] Ratings, aggregation/history, bonuses, sanctions, disputes and anti-abuse.
+- [x] API + domain tests + migration + report + continuity.
+
+## Stage 9 AI + Agents — next
+- [ ] Model registry and versions.
+- [ ] Controlled Ollama integration.
+- [ ] AI request/result storage with confidence/model version.
+- [ ] Agent registry/tools/permissions/execution history.
+- [ ] Human approval gates and sandbox.
+- [ ] Dataset/evaluation/training configuration workflows.
+
+## Stage 10 — 3D/BIM
+- [x] BIM model registry and project linkage
+- [x] BIM model version metadata
+- [x] BIM element registry
+- [x] Import/export job schema
+- [x] Planned/actual progress snapshots
+- [x] BIM domain validation tests
+- [x] BIM API foundation
+- [ ] Real IFC/glTF/OBJ/DXF conversion workers
+- [ ] Web 3D viewer
+- [ ] Geometry diff/visual comparison
+
+### Stage 10 runtime continuation
+- [x] OBJ parser foundation
+- [x] glTF 2.0 JSON exporter foundation
+- [x] PostgreSQL BIM exchange queue processor foundation
+- [x] Self-hosted BIM viewer shell
+- [ ] Persist converter outputs as immutable BIM model versions
+- [ ] IFC adapter
+- [ ] DXF adapter
+- [ ] GLB adapter/export
+- [ ] Geometry diff
+- [ ] Full WebGL viewer

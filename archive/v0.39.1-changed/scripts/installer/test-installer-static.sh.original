@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+set -Eeuo pipefail
+ROOT="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/../.." && pwd)"
+bash -n "$ROOT/install.sh"
+bash -n "$ROOT/scripts/installer/auto-install.sh"
+bash -n "$ROOT/scripts/installer/apply-migrations.sh"
+bash -n "$ROOT/scripts/installer/post-install-verify.sh"
+bash -n "$ROOT/scripts/check-merge-conflicts.sh"
+grep -q -- '--domain' "$ROOT/scripts/installer/auto-install.sh"
+grep -q 'write_report' "$ROOT/scripts/installer/auto-install.sh"
+grep -q 'scan_logs' "$ROOT/scripts/installer/auto-install.sh"
+grep -q 'check_tls_and_web' "$ROOT/scripts/installer/auto-install.sh"
+grep -q 'DATABASE_URL' "$ROOT/deployments/docker-compose.yml"
+! grep -RIn --exclude-dir=.git --exclude='*.zip' --exclude='*.pdf' -E '(ADMIN_PASSWORD.{0,40}[REMOVED_INSECURE_DEFAULT]|[REMOVED_INSECURE_DEFAULT].{0,40}ADMIN_PASSWORD)' "$ROOT"
+"$ROOT/scripts/check-merge-conflicts.sh" "$ROOT"
+echo 'Installer static tests: PASS'

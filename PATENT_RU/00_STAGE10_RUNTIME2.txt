@@ -1,0 +1,1 @@
+Stage 10 Runtime 2: DXF 3DFACE adapter, GLB 2.0 encoder, geometry diff, migration 0012. Existing PATENT_RU files are preserved; new files are appended without deletion.

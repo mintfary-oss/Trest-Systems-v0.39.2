@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+set -euo pipefail
+ROOT="$(cd "$(dirname "$0")/.." && pwd)"
+VERSION="${VERSION:-v0.10-stage9}"
+DEST="${1:-$ROOT/dist}"
+mkdir -p "$DEST"
+
+if [ ! -d "$ROOT/release/bin/linux-amd64" ]; then
+  echo "ERROR: prebuilt binaries are missing. Run scripts/build-release.sh in CI first." >&2
+  exit 1
+fi
+
+ARCHIVE="$DEST/Trest-sistems-unified-${VERSION}-prebuilt.tar.gz"
+tar -C "$ROOT" -czf "$ARCHIVE" \
+  release migrations deployments docs scripts \
+  README.md PROJECT_HANDOFF.md CURRENT_STATE.md NEXT_STEPS.md DEVELOPMENT_PLAN.md \
+  DOMAIN_MODEL.md UNIFIED_ARCHITECTURE.md
+
+echo "$ARCHIVE"

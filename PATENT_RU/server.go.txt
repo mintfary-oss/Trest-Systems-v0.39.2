@@ -1,0 +1,182 @@
+package api
+
+import (
+	"encoding/json"
+	"net/http"
+	"strings"
+
+	"github.com/mintfary-oss/trest-sistems/internal/auth"
+	"github.com/mintfary-oss/trest-sistems/internal/db"
+)
+
+type Server struct {
+	DB   *db.DB
+	Auth *auth.Service
+}
+
+func NewServer(database *db.DB, a *auth.Service) *Server { return &Server{DB: database, Auth: a} }
+
+func (s *Server) Handler() http.Handler {
+	mux := http.NewServeMux()
+	mux.HandleFunc("GET /health", s.health)
+	mux.HandleFunc("GET /ready", s.ready)
+	mux.HandleFunc("GET /api/v1/users", s.users)
+	mux.HandleFunc("GET /api/v1/projects", s.projects)
+	mux.HandleFunc("GET /api/v1/orders", s.orders)
+	mux.HandleFunc("POST /api/v1/auth/register", s.register)
+	mux.HandleFunc("POST /api/v1/auth/login", s.login)
+	mux.Handle("GET /api/v1/ai/models", withAuth(s.Auth, http.HandlerFunc(s.aiModels)))
+	mux.Handle("GET /api/v1/agents", withAuth(s.Auth, http.HandlerFunc(s.agents)))
+	mux.Handle("POST /api/v1/agents", withAuth(s.Auth, http.HandlerFunc(s.createAgent)))
+	mux.Handle("POST /api/v1/ai/datasets", withAuth(s.Auth, http.HandlerFunc(s.createTrainingDataset)))
+	mux.Handle("POST /api/v1/ai/training/jobs", withAuth(s.Auth, http.HandlerFunc(s.createTrainingJob)))
+	mux.Handle("GET /api/v1/bim/models", withAuth(s.Auth, http.HandlerFunc(s.bimModels)))
+	mux.Handle("POST /api/v1/bim/models", withAuth(s.Auth, http.HandlerFunc(s.createBIMModel)))
+	mux.Handle("GET /api/v1/bim/progress", withAuth(s.Auth, http.HandlerFunc(s.bimProgress)))
+	mux.Handle("POST /api/v1/bim/progress", withAuth(s.Auth, http.HandlerFunc(s.createBIMProgress)))
+	mux.Handle("GET /api/v1/me", withAuth(s.Auth, http.HandlerFunc(s.me)))
+	mux.Handle("GET /api/v1/organizations", withAuth(s.Auth, http.HandlerFunc(s.organizations)))
+	mux.Handle("POST /api/v1/organizations", withAuth(s.Auth, http.HandlerFunc(s.createOrganization)))
+	mux.Handle("POST /api/v1/organizations/verify", withAuth(s.Auth, requireRole("admin", http.HandlerFunc(s.verifyOrganization))))
+	mux.Handle("POST /api/v1/contractors/applications", withAuth(s.Auth, http.HandlerFunc(s.createContractorApplication)))
+	mux.Handle("POST /api/v1/contractors/profile", withAuth(s.Auth, http.HandlerFunc(s.upsertContractorProfile)))
+	mux.Handle("GET /api/v1/contractors", withAuth(s.Auth, http.HandlerFunc(s.contractors)))
+	mux.Handle("POST /api/v1/contractors/{contractorID}/competencies", withAuth(s.Auth, http.HandlerFunc(s.addContractorCompetency)))
+	mux.Handle("POST /api/v1/contractors/verify", withAuth(s.Auth, requireRole("admin", http.HandlerFunc(s.verifyContractor))))
+	mux.Handle("POST /api/v1/suppliers/applications", withAuth(s.Auth, http.HandlerFunc(s.createSupplierApplication)))
+	mux.Handle("POST /api/v1/suppliers/profile", withAuth(s.Auth, http.HandlerFunc(s.upsertSupplierProfile)))
+	mux.Handle("GET /api/v1/suppliers", withAuth(s.Auth, http.HandlerFunc(s.suppliers)))
+	mux.Handle("POST /api/v1/suppliers/verify", withAuth(s.Auth, requireRole("admin", http.HandlerFunc(s.verifySupplier))))
+	mux.Handle("POST /api/v1/suppliers/offers", withAuth(s.Auth, http.HandlerFunc(s.createSupplierOffer)))
+	mux.Handle("GET /api/v1/suppliers/offers", withAuth(s.Auth, http.HandlerFunc(s.supplierOffers)))
+	mux.Handle("POST /api/v1/suppliers/offers/{offerID}/publish", withAuth(s.Auth, http.HandlerFunc(s.publishSupplierOffer)))
+	mux.Handle("POST /api/v1/orders/{id}/supplier-offer", withAuth(s.Auth, http.HandlerFunc(s.attachSupplierOfferToOrder)))
+	mux.Handle("POST /api/v1/ratings", withAuth(s.Auth, http.HandlerFunc(s.createRating)))
+	mux.Handle("GET /api/v1/ratings", withAuth(s.Auth, http.HandlerFunc(s.ratings)))
+	mux.Handle("GET /api/v1/ratings/aggregate", withAuth(s.Auth, http.HandlerFunc(s.ratingAggregate)))
+	mux.Handle("GET /api/v1/ratings/history", withAuth(s.Auth, http.HandlerFunc(s.ratingHistory)))
+	mux.Handle("POST /api/v1/ratings/disputes", withAuth(s.Auth, http.HandlerFunc(s.createRatingDispute)))
+	mux.Handle("POST /api/v1/ratings/disputes/resolve", withAuth(s.Auth, requireRole("admin", http.HandlerFunc(s.resolveRatingDispute))))
+	mux.Handle("POST /api/v1/reputation/actions", withAuth(s.Auth, requireRole("admin", http.HandlerFunc(s.createReputationAction))))
+	mux.Handle("GET /api/v1/permissions", withAuth(s.Auth, http.HandlerFunc(s.myPermissions)))
+	mux.Handle("GET /api/v1/catalog/object-types", withAuth(s.Auth, http.HandlerFunc(s.objectTypes)))
+	mux.Handle("POST /api/v1/estimates", withAuth(s.Auth, http.HandlerFunc(s.createEstimate)))
+	mux.Handle("POST /api/v1/estimates/approve", withAuth(s.Auth, http.HandlerFunc(s.approveEstimate)))
+	mux.Handle("POST /api/v1/orders", withAuth(s.Auth, http.HandlerFunc(s.createOrder)))
+	mux.Handle("POST /api/v1/orders/{id}/transition", withAuth(s.Auth, http.HandlerFunc(s.transitionOrder)))
+	mux.Handle("GET /api/v1/catalog/materials", withAuth(s.Auth, http.HandlerFunc(s.materials)))
+	mux.Handle("GET /api/v1/catalog/engineering-systems", withAuth(s.Auth, http.HandlerFunc(s.engineeringSystems)))
+	mux.Handle("GET /api/v1/catalog/finishes", withAuth(s.Auth, http.HandlerFunc(s.finishes)))
+	mux.Handle("GET /api/v1/projects/{projectID}/versions", withAuth(s.Auth, http.HandlerFunc(s.projectVersions)))
+	mux.Handle("POST /api/v1/projects/{projectID}/versions", withAuth(s.Auth, http.HandlerFunc(s.createProjectVersion)))
+	mux.Handle("POST /api/v1/projects/{projectID}/versions/{version}/status", withAuth(s.Auth, http.HandlerFunc(s.projectVersionAction)))
+	return loggingJSON(mux)
+}
+
+func (s *Server) health(w http.ResponseWriter, _ *http.Request) {
+	writeJSON(w, 200, map[string]string{"status": "ok"})
+}
+func (s *Server) ready(w http.ResponseWriter, r *http.Request) {
+	if err := s.DB.PingContext(r.Context()); err != nil {
+		writeJSON(w, 503, map[string]string{"status": "not_ready", "error": err.Error()})
+		return
+	}
+	writeJSON(w, 200, map[string]string{"status": "ready"})
+}
+
+func (s *Server) users(w http.ResponseWriter, r *http.Request) {
+	rows, err := s.DB.QueryContext(r.Context(), `SELECT id, email, name, role, created_at FROM users ORDER BY created_at DESC LIMIT 100`)
+	if err != nil {
+		writeError(w, err)
+		return
+	}
+	defer rows.Close()
+	out := make([]map[string]any, 0)
+	for rows.Next() {
+		var id, email, name, role string
+		var created any
+		if err := rows.Scan(&id, &email, &name, &role, &created); err != nil {
+			writeError(w, err)
+			return
+		}
+		out = append(out, map[string]any{"id": id, "email": email, "name": name, "role": role, "created_at": created})
+	}
+	if err := rows.Err(); err != nil {
+		writeError(w, err)
+		return
+	}
+	writeJSON(w, 200, out)
+}
+
+func (s *Server) projects(w http.ResponseWriter, r *http.Request) {
+	rows, err := s.DB.QueryContext(r.Context(), `SELECT id, owner_id, name, status, created_at FROM projects ORDER BY created_at DESC LIMIT 100`)
+	if err != nil {
+		writeError(w, err)
+		return
+	}
+	defer rows.Close()
+	out := make([]map[string]any, 0)
+	for rows.Next() {
+		var id, owner, name, status string
+		var created any
+		if err := rows.Scan(&id, &owner, &name, &status, &created); err != nil {
+			writeError(w, err)
+			return
+		}
+		out = append(out, map[string]any{"id": id, "owner_id": owner, "name": name, "status": status, "created_at": created})
+	}
+	if err := rows.Err(); err != nil {
+		writeError(w, err)
+		return
+	}
+	writeJSON(w, 200, out)
+}
+
+func (s *Server) orders(w http.ResponseWriter, r *http.Request) {
+	status := strings.TrimSpace(r.URL.Query().Get("status"))
+	q := `SELECT id, project_id, object_id, title, status, amount, created_at FROM orders`
+	args := []any{}
+	if status != "" {
+		q += ` WHERE status=$1`
+		args = append(args, status)
+	}
+	q += ` ORDER BY created_at DESC LIMIT 100`
+	rows, err := s.DB.QueryContext(r.Context(), q, args...)
+	if err != nil {
+		writeError(w, err)
+		return
+	}
+	defer rows.Close()
+	out := make([]map[string]any, 0)
+	for rows.Next() {
+		var id, project, title, status string
+		var objectID any
+		var amount any
+		var created any
+		if err := rows.Scan(&id, &project, &objectID, &title, &status, &amount, &created); err != nil {
+			writeError(w, err)
+			return
+		}
+		out = append(out, map[string]any{"id": id, "project_id": project, "object_id": objectID, "title": title, "status": status, "amount": amount, "created_at": created})
+	}
+	if err := rows.Err(); err != nil {
+		writeError(w, err)
+		return
+	}
+	writeJSON(w, 200, out)
+}
+
+func loggingJSON(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("X-Content-Type-Options", "nosniff")
+		next.ServeHTTP(w, r)
+	})
+}
+func writeJSON(w http.ResponseWriter, status int, v any) {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(status)
+	_ = json.NewEncoder(w).Encode(v)
+}
+func writeError(w http.ResponseWriter, err error) {
+	writeJSON(w, 500, map[string]string{"error": err.Error()})
+}

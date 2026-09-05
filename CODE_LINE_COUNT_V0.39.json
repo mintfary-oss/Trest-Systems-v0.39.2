@@ -1,0 +1,52 @@
+{
+  "version": "v0.39-stage11-automatic-installer",
+  "method": "physical lines; tests included; dependencies/caches excluded",
+  "languages": {
+    "Batch": {
+      "files": 1,
+      "lines": 151
+    },
+    "CSS": {
+      "files": 2,
+      "lines": 730
+    },
+    "Dockerfile": {
+      "files": 8,
+      "lines": 129
+    },
+    "Go": {
+      "files": 165,
+      "lines": 18914
+    },
+    "HTML": {
+      "files": 2,
+      "lines": 400
+    },
+    "JavaScript": {
+      "files": 26,
+      "lines": 2066
+    },
+    "NSIS": {
+      "files": 1,
+      "lines": 199
+    },
+    "PowerShell": {
+      "files": 2,
+      "lines": 457
+    },
+    "Python": {
+      "files": 31,
+      "lines": 3002
+    },
+    "SQL": {
+      "files": 19,
+      "lines": 688
+    },
+    "Shell": {
+      "files": 30,
+      "lines": 2832
+    }
+  },
+  "program_code_total": 28632,
+  "implementation_and_infrastructure_total": 29568
+}

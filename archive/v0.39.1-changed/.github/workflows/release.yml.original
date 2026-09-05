@@ -1,0 +1,117 @@
+name: Trest Systems Release
+
+on:
+  push:
+    tags: ['v*']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+          cache: true
+      - name: Test
+        run: go test ./...
+      - name: Vet
+        run: go vet ./...
+      - name: Build release binaries
+        env:
+          VERSION: ${{ github.ref_name }}
+        run: ./scripts/build-release.sh
+      - name: Compose config
+        run: docker compose -f deployments/docker-compose.yml config
+      - name: Package release
+        run: ./scripts/package-release.sh
+      - name: Upload release artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: trest-release
+          path: release/*.tar.gz
+
+  e2e:
+    needs: verify
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+          cache: true
+      - name: Full disposable E2E
+        run: ./scripts/e2e-full.sh
+      - name: Cleanup E2E
+        if: always()
+        run: docker compose -p trest-e2e -f deployments/docker-compose.yml down -v --remove-orphans || true
+
+  security: 
+    needs: verify
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+          cache: true
+      - name: Install govulncheck
+        run: go install golang.org/x/vuln/cmd/govulncheck@latest
+      - name: Production RC gate
+        env:
+          PATH: ${{ env.HOME }}/go/bin:${{ env.PATH }}
+        run: ./scripts/production-rc-gate.sh
+
+  restore-drill:
+    needs: e2e
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Backup and restore drill
+        env:
+          TREST_CONFIRM_RESTORE: YES
+        run: ./scripts/backup-restore-drill.sh
+      - name: Cleanup restore drill
+        if: always()
+        run: docker compose -p trest-restore-drill -f deployments/docker-compose.yml down -v --remove-orphans || true
+
+  clean-host:
+    needs: verify
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Clean-host release prerequisites
+        run: ./scripts/clean-host-check.sh
+
+  images:
+    needs: verify
+    if: startsWith(github.ref, 'refs/tags/')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: docker/setup-buildx-action@v3
+      - name: Login to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Build and push API
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: Dockerfile.api
+          push: true
+          tags: ghcr.io/${{ github.repository_owner }}/trest-api:${{ github.ref_name }}
+      - name: Build and push Worker
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: Dockerfile.worker
+          push: true
+          tags: ghcr.io/${{ github.repository_owner }}/trest-worker:${{ github.ref_name }}

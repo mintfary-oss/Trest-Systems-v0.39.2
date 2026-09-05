@@ -1,0 +1,10 @@
+# Следующий BIM runtime
+
+1. Добавить полноценный IFC parser/serializer.
+2. Добавить DXF reader/writer через существующий модуль proektirovka.
+3. Добавить GLB binary path и OBJ export из BIM element graph.
+4. Связать completed exchange с `bim_model_versions` и checksum/manifest.
+5. Добавить geometry diff между версиями.
+6. Заменить viewer shell на WebGL viewer без обязательного облака.
+7. Добавить camera controls, selection, properties panel, model tree и planned/actual overlays.
+8. Добавить API для статуса job и безопасной отмены queued jobs.

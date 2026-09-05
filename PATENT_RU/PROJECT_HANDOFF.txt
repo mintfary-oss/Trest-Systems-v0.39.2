@@ -1,0 +1,71 @@
+# PROJECT_HANDOFF.md — точка передачи проекта между сессиями AI
+
+## Порядок старта новой сессии
+1. Прочитать `PROJECT_HANDOFF.md`.
+2. Прочитать `CURRENT_STATE.md`.
+3. Прочитать `NEXT_STEPS.md`.
+4. Прочитать конец `AI_CONVERSATION_LOG.md`.
+5. Проверить фактические migrations/internal/cmd/deployments/web.
+6. Не повторять завершённые Runtime 1–13 без причины.
+7. Следовать Stage 11 P0/P1 из `NEXT_STEPS.md`.
+8. Перед каждым релизом обновлять continuity и `PATENT_RU`.
+
+## Проект
+**Trest Systems** — self-hosted строительная платформа с единым Go core/API/CLI, web, marketplace, constructor, estimates/orders, contractors, suppliers, ratings, AI/agents и BIM/IFC.
+
+## Сохранённые исходные подсистемы
+- `magasin-777/`
+- `proektirovka-sdaniy/`
+- `super-sistema/`
+- `trest-installer/`
+
+## Контрольная точка
+**Последний релиз:** `v0.31-stage11-e2e-hardening`.
+
+## Текущее состояние
+Engineering MVP / Pre-Beta, ориентировочно 60–65% общей готовности. Backend/domain значительно опережает productization. Production runtime не подтверждён.
+
+## Runtime 13
+IFC geometry extraction foundation реализована для FacetedBrep и TriangulatedFaceSet. Результат — deterministic triangle mesh. Это НЕ полный IFC geometry engine.
+
+## Ключевые ограничения
+- Docker/Compose E2E не выполнен в текущей среде.
+- Полный Go build/test/vet не подтверждён из-за окружения.
+- Реальное GPU training не выполнено здесь.
+- Installer ещё не полный production installer.
+- Unified production frontend ещё не завершён.
+- IFC placement/world coordinates/full tessellation ещё не завершены.
+
+## Следующий этап
+**Stage 11 — Production Hardening / Release Candidate.**
+Приоритет: runtime proof → installer → prebuilt release → clean-host → security → E2E → frontend integration → BIM hardening.
+
+## Архитектурные правила
+- Self-hosted first; no mandatory cloud.
+- Frontend → API, no direct DB.
+- Approved estimates versioned/immutable.
+- Contractual events auditable.
+- Financial operations idempotent.
+- AI recommendations stored with input/result/model version/confidence.
+- AI cannot autonomously modify legal/financial records.
+- Schema changes require migrations.
+- New API endpoints require docs/tests.
+- No secrets in source/docs.
+- Preserve real functionality.
+
+## Опасные операции
+Удаление/recreate DB или volumes, public exposure, firewall/SSH/domain/TLS changes и иные необратимые операции требуют подтверждения пользователя.
+
+## Release preservation rule
+`PATENT_RU/` — обязательная отдельная папка в каждом FULL ZIP. `презентация/` также сохраняется. Никакие существующие пути не удаляются молча.
+
+## Stage 11 — Security + Backup hardening
+- Latest stage: security baseline + backup/restore hardening. Read `STAGE11_SECURITY_BACKUP_REPORT_RU.md`.
+
+
+## v0.31 — E2E/Release hardening
+- `trestctl migrate` now exposed.
+- Root CI uses Go 1.23.x; release workflow uses root `go.mod`.
+- `scripts/e2e-smoke.sh` added for Docker Compose disposable smoke tests.
+- `docs/install/E2E_SMOKE_RU.md` added.
+- Docker E2E is not claimed as passed until executed on a host with Docker/Compose.

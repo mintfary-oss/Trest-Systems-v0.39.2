@@ -1,0 +1,133 @@
+#!/usr/bin/env bash
+set -euo pipefail
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+cd "$ROOT"
+
+command -v docker >/dev/null 2>&1 || { echo "e2e: Docker is required" >&2; exit 2; }
+docker compose version >/dev/null 2>&1 || { echo "e2e: Docker Compose is required" >&2; exit 2; }
+command -v curl >/dev/null 2>&1 || { echo "e2e: curl is required" >&2; exit 2; }
+command -v python3 >/dev/null 2>&1 || { echo "e2e: python3 is required" >&2; exit 2; }
+
+PORT="${HTTP_PORT:-8080}"
+BASE="http://127.0.0.1:${PORT}"
+PROJECT="trest-e2e-${E2E_RUN_ID:-$(date -u +%Y%m%d%H%M%S)}"
+EMAIL="e2e-${E2E_RUN_ID:-$(date -u +%s)}@trest.local"
+PASSWORD="${E2E_PASSWORD:-Trest-E2E-$(date +%s)-A1!}"
+COMPOSE=(docker compose -p "${COMPOSE_PROJECT_NAME:-trest-e2e}" -f deployments/docker-compose.yml)
+
+export SECRET_KEY="${SECRET_KEY:-$(python3 - <<'PY'
+import secrets
+print(secrets.token_urlsafe(48))
+PY
+)}"
+export ADMIN_PASSWORD="${ADMIN_PASSWORD:-$(python3 - <<'PY'
+import secrets
+print(secrets.token_urlsafe(24))
+PY
+)}"
+export WEBUI_SECRET_KEY="${WEBUI_SECRET_KEY:-$(python3 - <<'PY'
+import secrets
+print(secrets.token_urlsafe(48))
+PY
+)}"
+
+cleanup() {
+  if [[ "${TREST_E2E_KEEP:-NO}" != "YES" ]]; then
+    "${COMPOSE[@]}" down -v --remove-orphans >/dev/null 2>&1 || true
+  else
+    echo "e2e: keeping compose environment (TREST_E2E_KEEP=YES)"
+  fi
+}
+trap cleanup EXIT
+
+curl_json() {
+  local method="$1" url="$2" body="${3:-}" token="${4:-}"
+  local args=(-sS -X "$method" -H 'Content-Type: application/json')
+  [[ -n "$token" ]] && args+=(-H "Authorization: Bearer $token")
+  [[ -n "$body" ]] && args+=(--data "$body")
+  curl "${args[@]}" "$BASE$url"
+}
+
+expect_status() {
+  local expected="$1" method="$2" url="$3" body="${4:-}" token="${5:-}"
+  local args=(-sS -o /tmp/trest-e2e-body -w '%{http_code}' -X "$method" -H 'Content-Type: application/json')
+  [[ -n "$token" ]] && args+=(-H "Authorization: Bearer $token")
+  [[ -n "$body" ]] && args+=(--data "$body")
+  local code
+  code=$(curl "${args[@]}" "$BASE$url")
+  if [[ "$code" != "$expected" ]]; then
+    cat /tmp/trest-e2e-body >&2 || true
+    echo "e2e: expected HTTP $expected, got $code for $method $url" >&2
+    exit 1
+  fi
+  cat /tmp/trest-e2e-body
+}
+
+json_field() { python3 -c 'import json,sys; d=json.load(sys.stdin); print(d[sys.argv[1]])' "$1"; }
+
+"${COMPOSE[@]}" config >/dev/null
+"${COMPOSE[@]}" up -d --build
+
+for _ in $(seq 1 90); do
+  if curl -fsS "$BASE/ready" >/dev/null 2>&1; then break; fi
+  sleep 2
+done
+curl -fsS "$BASE/health" >/dev/null
+curl -fsS "$BASE/ready" >/dev/null
+"${COMPOSE[@]}" exec -T postgres pg_isready -U "${POSTGRES_USER:-trest}" -d "${POSTGRES_DB:-trest}"
+"${COMPOSE[@]}" exec -T redis redis-cli ping | grep -q PONG
+"${COMPOSE[@]}" exec -T marketplace-api python -c 'import urllib.request; urllib.request.urlopen("http://localhost:8000/health")'
+
+register=$(expect_status 201 POST /api/v1/auth/register "{\"email\":\"$EMAIL\",\"name\":\"Trest E2E\",\"password\":\"$PASSWORD\"}")
+login=$(expect_status 200 POST /api/v1/auth/login "{\"email\":\"$EMAIL\",\"password\":\"$PASSWORD\"}")
+TOKEN=$(printf '%s' "$login" | json_field access_token)
+[[ -n "$TOKEN" ]]
+expect_status 200 GET /api/v1/me '' "$TOKEN" >/dev/null
+
+project=$(expect_status 201 POST /api/v1/projects "{\"name\":\"$PROJECT\",\"location\":{\"city\":\"E2E\"},\"parameters\":{\"source\":\"ci\"}}" "$TOKEN")
+PROJECT_ID=$(printf '%s' "$project" | json_field id)
+[[ -n "$PROJECT_ID" ]]
+expect_status 200 GET /api/v1/projects '' '' >/dev/null
+
+estimate=$(expect_status 201 POST /api/v1/estimates "{\"project_id\":\"$PROJECT_ID\",\"title\":\"E2E Estimate\",\"currency\":\"RUB\",\"items\":[{\"name\":\"Concrete\",\"category\":\"material\",\"unit\":\"m3\",\"quantity\":2,\"unit_price\":1000}]}" "$TOKEN")
+ESTIMATE_VERSION_ID=$(printf '%s' "$estimate" | json_field version_id)
+ESTIMATE_ID=$(printf '%s' "$estimate" | json_field id)
+expect_status 200 POST /api/v1/estimates/approve "{\"estimate_id\":\"$ESTIMATE_ID\"}" "$TOKEN" >/dev/null
+
+order=$(expect_status 201 POST /api/v1/orders "{\"project_id\":\"$PROJECT_ID\",\"title\":\"E2E Order\",\"estimate_version_id\":\"$ESTIMATE_VERSION_ID\",\"amount\":2000,\"idempotency_key\":\"$PROJECT-e2e-order\"}" "$TOKEN")
+ORDER_ID=$(printf '%s' "$order" | json_field id)
+repeat=$(expect_status 200 POST /api/v1/orders "{\"project_id\":\"$PROJECT_ID\",\"title\":\"E2E Order\",\"estimate_version_id\":\"$ESTIMATE_VERSION_ID\",\"amount\":2000,\"idempotency_key\":\"$PROJECT-e2e-order\"}" "$TOKEN")
+REPEAT_ID=$(printf '%s' "$repeat" | json_field id)
+[[ "$ORDER_ID" == "$REPEAT_ID" ]]
+
+bim=$(expect_status 201 POST /api/v1/bim/models "{\"project_id\":\"$PROJECT_ID\",\"name\":\"E2E BIM\",\"format\":\"ifc\",\"schema_version\":\"IFC4\"}" "$TOKEN")
+BIM_ID=$(printf '%s' "$bim" | json_field id)
+bim_version=$(expect_status 201 POST /api/v1/bim/model-versions "{\"bim_model_id\":\"$BIM_ID\",\"version\":1,\"source_format\":\"ifc\",\"source_uri\":\"e2e://fixture.ifc\",\"manifest\":{\"test\":true}}" "$TOKEN")
+BIM_VERSION_ID=$(printf '%s' "$bim_version" | json_field id)
+[[ -n "$BIM_VERSION_ID" ]]
+expect_status 200 GET "/api/v1/bim/model-versions?bim_model_id=$BIM_ID" '' "$TOKEN" >/dev/null
+
+# Security regression: traversal filename must be rejected before storage/import.
+code=$(curl -sS -o /tmp/trest-e2e-traversal -w '%{http_code}' -X POST \
+  -H "Authorization: Bearer $TOKEN" \
+  -F "bim_model_version_id=$BIM_VERSION_ID" \
+  -F "file=@testdata/ifc-malicious/traversal-name.ifc;filename=../model.ifc" \
+  "$BASE/api/v1/bim/ifc/import")
+[[ "$code" == "400" ]] || { cat /tmp/trest-e2e-traversal >&2; echo "e2e: traversal filename was not rejected (HTTP $code)" >&2; exit 1; }
+
+# Security regression: payload larger than the 64 MiB upload limit must be rejected.
+OVERSIZED=/tmp/trest-e2e-oversized.ifc
+dd if=/dev/zero of="$OVERSIZED" bs=1M count=65 status=none
+code=$(curl -sS -o /tmp/trest-e2e-oversized -w '%{http_code}' -X POST \
+  -H "Authorization: Bearer $TOKEN" \
+  -F "bim_model_version_id=$BIM_VERSION_ID" \
+  -F "file=@$OVERSIZED;filename=oversized.ifc" \
+  "$BASE/api/v1/bim/ifc/import")
+rm -f "$OVERSIZED"
+[[ "$code" == "400" ]] || { cat /tmp/trest-e2e-oversized >&2; echo "e2e: oversized IFC was not rejected (HTTP $code)" >&2; exit 1; }
+
+"${COMPOSE[@]}" exec -T postgres pg_dump -U "${POSTGRES_USER:-trest}" -d "${POSTGRES_DB:-trest}" > /tmp/trest-e2e-backup.sql
+[[ -s /tmp/trest-e2e-backup.sql ]]
+grep -q 'CREATE TABLE' /tmp/trest-e2e-backup.sql
+
+printf 'e2e: PASS project=%s estimate=%s order=%s bim=%s\n' "$PROJECT_ID" "$ESTIMATE_ID" "$ORDER_ID" "$BIM_ID"

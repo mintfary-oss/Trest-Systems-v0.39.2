@@ -1,0 +1,79 @@
+# NEXT_STEPS.md — следующий этап разработки
+
+## Текущая контрольная точка
+**Версия:** `v0.28-stage11-installer-hardening`  
+**Статус:** Engineering MVP / Pre-Beta  
+**Оценка общей готовности:** 60–65%  
+**Production:** НЕ подтверждён.
+
+## Runtime 13 завершён
+- IFC geometry extraction foundation.
+- `IfcFacetedBrep` subset.
+- `IfcTriangulatedFaceSet` subset.
+- Deterministic triangle mesh.
+- Unit tests.
+- Ограничения явно зафиксированы.
+
+## Следующий приоритет: Stage 11 — Production Hardening
+
+### P0 — runtime доказательство
+1. Получить Linux host с Docker/Compose и доступом к Go modules.
+2. Выполнить `git status` и `git diff --check`.
+3. Выполнить `go test ./...`.
+4. Выполнить `go vet ./...`.
+5. Выполнить `go build ./...`.
+6. Выполнить `docker compose config`.
+7. Запустить полный Compose stack.
+8. Выполнить все migrations на чистой PostgreSQL.
+9. Проверить API health/auth/project/estimate/order/BIM/IFC flows.
+10. Проверить worker queues и object storage.
+
+### P0 — installer/release
+11. Завершить `trestctl install`.
+12. Завершить `start/stop/restart`.
+13. Завершить `logs`.
+14. Завершить `backup/restore`.
+15. Завершить `update/repair`.
+16. Собрать prebuilt Go binaries в CI.
+17. Собрать OCI/Docker images в CI.
+18. Проверить clean-host install без Go.
+19. Проверить rollback.
+
+### P1 — security
+20. Secret scan текущей и Git history.
+21. Auth/IDOR tests.
+22. Upload/path traversal tests.
+23. IFC malicious/oversized input tests.
+24. Rate limiting.
+25. Dependency vulnerability audit.
+26. Audit log review.
+
+### P1 — frontend
+27. Unified dashboard.
+28. Project workspace.
+29. Constructor → BIM → estimate → order flow.
+30. Contractor/supplier workflows.
+31. AI workspace with permission/approval UX.
+
+### P1 — BIM
+32. `IfcProductDefinitionShape`.
+33. `IfcShapeRepresentation`.
+34. `IfcObjectPlacement` chain.
+35. Local → world coordinates.
+36. GlobalId → mesh ranges.
+37. Real ray-triangle picking.
+38. BVH/spatial acceleration.
+39. Large-model tests.
+
+### P2 — scale
+40. LOD/streaming.
+41. GPU instancing.
+42. Advanced geometry.
+43. Distributed workers.
+44. Advanced AI evaluation/training.
+
+## Release gate
+Не называть систему `v1.0 Production Ready`, пока не пройдены P0 runtime, installer, clean-host, security baseline, backup/restore и E2E gates.
+
+## Обязательное правило архивов
+Каждый следующий FULL ZIP должен сохранять все существующие пути v0.28+, отдельную папку `PATENT_RU/` и `презентация/`. Перед выпуском: ZIP integrity, duplicate-path check, сравнение путей с предыдущим архивом, SHA-256.

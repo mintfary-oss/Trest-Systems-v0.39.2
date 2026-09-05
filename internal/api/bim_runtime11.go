@@ -1,0 +1,146 @@
+package api
+
+import (
+	"fmt"
+	"io"
+	"net/http"
+	"os"
+	"strings"
+
+	"github.com/mintfary-oss/trest-sistems/internal/bim/ifc"
+	"github.com/mintfary-oss/trest-sistems/internal/bim/importer"
+	"github.com/mintfary-oss/trest-sistems/internal/bim/storage"
+)
+
+// POST /api/v1/bim/ifc/import accepts a multipart field named file and imports its semantic IFC data atomically.
+func (s *Server) importIFC(w http.ResponseWriter, r *http.Request) {
+	if s.DB == nil {
+		writeJSON(w, 500, map[string]string{"error": "database unavailable"})
+		return
+	}
+	versionID := strings.TrimSpace(r.FormValue("bim_model_version_id"))
+	if versionID == "" {
+		writeJSON(w, 400, map[string]string{"error": "bim_model_version_id is required"})
+		return
+	}
+	var projectID string
+	if err := s.DB.QueryRowContext(r.Context(), `SELECT bm.project_id::text FROM bim_model_versions bmv JOIN bim_models bm ON bm.id=bmv.bim_model_id WHERE bmv.id=$1`, versionID).Scan(&projectID); err != nil {
+		writeJSON(w, 404, map[string]string{"error": "model version not found"})
+		return
+	}
+	if err := s.requireProjectAccess(r.Context(), projectID, claimsUserID(r.Context())); err != nil {
+		writeJSON(w, 403, map[string]string{"error": "forbidden"})
+		return
+	}
+	const maxIFCUpload = 64 << 20
+	r.Body = http.MaxBytesReader(w, r.Body, maxIFCUpload)
+	if err := r.ParseMultipartForm(maxIFCUpload); err != nil {
+		writeJSON(w, 400, map[string]string{"error": "invalid multipart form"})
+		return
+	}
+	f, h, err := r.FormFile("file")
+	if err != nil {
+		writeJSON(w, 400, map[string]string{"error": "file is required"})
+		return
+	}
+	defer f.Close()
+	filename, err := validateIFCFilename(h.Filename)
+	if err != nil {
+		writeJSON(w, 400, map[string]string{"error": err.Error()})
+		return
+	}
+	tmp, err := os.CreateTemp("", "trest-ifc-*.ifc")
+	if err != nil {
+		writeError(w, err)
+		return
+	}
+	tmpName := tmp.Name()
+	defer os.Remove(tmpName)
+	if _, err = io.Copy(tmp, f); err != nil {
+		tmp.Close()
+		writeError(w, err)
+		return
+	}
+	if err = tmp.Close(); err != nil {
+		writeError(w, err)
+		return
+	}
+	in, err := os.Open(tmpName)
+	if err != nil {
+		writeError(w, err)
+		return
+	}
+	defer in.Close()
+	entities, err := ifc.ParseSTEP(in)
+	if err != nil {
+		writeJSON(w, 400, map[string]string{"error": "invalid IFC STEP: " + err.Error()})
+		return
+	}
+	obj, err := os.Open(tmpName)
+	if err != nil {
+		writeError(w, err)
+		return
+	}
+	defer obj.Close()
+	store, err := runtimeBIMStore()
+	if err != nil {
+		writeJSON(w, 500, map[string]string{"error": err.Error()})
+		return
+	}
+	key := fmt.Sprintf("projects/%s/bim/%s/%s", projectID, versionID, filename)
+	stored, err := store.Put(r.Context(), key, obj)
+	if err != nil {
+		writeJSON(w, 502, map[string]string{"error": "object storage upload failed: " + err.Error()})
+		return
+	}
+	result, err := importer.ImportIFC(r.Context(), s.DB.DB, versionID, entities)
+	status := "completed"
+	errText := ""
+	if err != nil {
+		status = "failed"
+		errText = err.Error()
+	}
+	_, auditErr := s.DB.ExecContext(r.Context(), `INSERT INTO bim_import_audits(project_id,bim_model_version_id,source_key,source_sha256,inserted_count,updated_count,status,error,created_by) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9)`, projectID, versionID, stored.Key, stored.SHA256, result.Inserted, result.Updated, status, errText, claimsUserID(r.Context()))
+	if auditErr != nil {
+		writeError(w, auditErr)
+		return
+	}
+	if err != nil {
+		writeJSON(w, 500, map[string]any{"error": "IFC import failed", "detail": err.Error(), "source": stored})
+		return
+	}
+	if _, err = s.DB.ExecContext(r.Context(), `UPDATE bim_model_versions SET source_uri=$1,object_storage_key=$2,source_sha256=$3,source_size=$4 WHERE id=$5`, stored.Key, stored.Key, stored.SHA256, stored.Size, versionID); err != nil {
+		writeError(w, err)
+		return
+	}
+	writeJSON(w, 200, map[string]any{"status": "completed", "version_id": versionID, "source": stored, "entities": len(entities), "inserted": result.Inserted, "updated": result.Updated})
+}
+
+func validateIFCFilename(raw string) (string, error) {
+	filename := strings.TrimSpace(raw)
+	if filename == "" || filename == "." || strings.ContainsRune(filename, 0) || strings.ContainsAny(filename, `/\\`) {
+		return "", fmt.Errorf("invalid IFC filename")
+	}
+	if !strings.HasSuffix(strings.ToLower(filename), ".ifc") {
+		return "", fmt.Errorf("only .ifc files are accepted")
+	}
+	return filename, nil
+}
+
+func runtimeBIMStore() (storage.Store, error) {
+	endpoint := strings.TrimSpace(os.Getenv("S3_ENDPOINT"))
+	bucket := strings.TrimSpace(os.Getenv("S3_BUCKET"))
+	access := strings.TrimSpace(os.Getenv("S3_ACCESS_KEY"))
+	secret := strings.TrimSpace(os.Getenv("S3_SECRET_KEY"))
+	if endpoint != "" || bucket != "" || access != "" || secret != "" {
+		if endpoint == "" || bucket == "" || access == "" || secret == "" {
+			return nil, fmt.Errorf("S3 configuration is incomplete")
+		}
+		return storage.S3Store{Endpoint: endpoint, Bucket: bucket, Region: os.Getenv("S3_REGION"), AccessKey: access, SecretKey: secret}, nil
+	}
+	root := os.Getenv("BIM_STORAGE_ROOT")
+	if root == "" {
+		root = "./data/bim"
+	}
+	return storage.LocalStore{Root: root}, nil
+}

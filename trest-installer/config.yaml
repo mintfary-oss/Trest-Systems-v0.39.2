@@ -1,0 +1,33 @@
+# trest-installer configuration.
+#
+# Copy to config.local.yaml and adjust if you need to override values
+# without editing the tracked default.
+
+repo_url: https://github.com/mintfary-oss/Trest-sistems.git
+branch: main
+audit_port: 9091
+
+projects:
+  # LocalMarket e-commerce platform (Next.js frontend + FastAPI backend),
+  # started via its own docker-compose.yml.
+  - name: magasin-777
+    type: compose
+    path: magasin-777
+    compose_file: docker-compose.yml
+    ports: [3000, 8080, 8001]
+
+  # DXF architectural drawing generator. Built on demand rather than run as
+  # a long-lived service; the orchestrator only compiles the binary and
+  # reports build health.
+  - name: proektirovka-sdaniy
+    type: go-build
+    path: proektirovka-sdaniy
+    build_cmd: ["go", "build", "-o", "gencad", "./cmd/generate"]
+
+  # Local AI chat assistant (Ollama + Open WebUI), started via its own
+  # docker-compose.yml.
+  - name: super-sistema
+    type: compose
+    path: super-sistema
+    compose_file: docker-compose.yml
+    ports: [3000, 11434]

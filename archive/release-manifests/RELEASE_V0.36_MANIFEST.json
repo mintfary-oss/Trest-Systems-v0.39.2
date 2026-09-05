@@ -1,0 +1,9 @@
+{
+  "version": "v0.36-stage11-production-rc-gate",
+  "sha256": "22b3f3bb0b2199e8c03a843aee8d4d651368803f5eedd5183420ee98f774f540",
+  "files": 808,
+  "go_files": 155,
+  "patent_files": 359,
+  "duplicate_paths": 0,
+  "zip_integrity": true
+}

@@ -1,0 +1,14 @@
+{
+  "version": "v0.32-stage11-full-e2e",
+  "sha256": "0eed87206115fc1a7721cc4d93ff522704c62dbe228d899271ece92521bfe795",
+  "stats": {
+    "entries": 781,
+    "go_files": 152,
+    "patent_files": 356,
+    "presentation_files": 3,
+    "old_paths_normalized": 777,
+    "new_paths": 781,
+    "missing_old_paths": 0
+  },
+  "preserved_all_previous_paths": true
+}

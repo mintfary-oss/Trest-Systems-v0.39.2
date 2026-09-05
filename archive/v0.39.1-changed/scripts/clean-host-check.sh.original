@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+set -euo pipefail
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+cd "$ROOT"
+command -v docker >/dev/null 2>&1 || { echo "clean-host: Docker is required" >&2; exit 2; }
+docker compose version >/dev/null 2>&1 || { echo "clean-host: Docker Compose is required" >&2; exit 2; }
+if command -v go >/dev/null 2>&1; then
+  echo "clean-host: WARNING Go is installed; this is not a strict no-Go host" >&2
+else
+  echo "clean-host: Go toolchain absent (desired)"
+fi
+for f in deployments/docker-compose.yml Dockerfile.api Dockerfile.worker scripts/package-release.sh; do
+  [[ -f "$f" ]] || { echo "clean-host: missing $f" >&2; exit 1; }
+done
+SECRET_KEY="${SECRET_KEY:-clean-host-check-$(date +%s)-A1}" ADMIN_PASSWORD="${ADMIN_PASSWORD:-clean-host-admin-$(date +%s)-A1}" WEBUI_SECRET_KEY="${WEBUI_SECRET_KEY:-clean-host-webui-$(date +%s)-A1}" docker compose -f deployments/docker-compose.yml config >/dev/null
+echo "clean-host: Compose release prerequisites PASS"

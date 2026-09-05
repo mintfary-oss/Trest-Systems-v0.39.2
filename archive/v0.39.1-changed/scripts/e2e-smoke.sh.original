@@ -1,0 +1,32 @@
+#!/usr/bin/env bash
+set -euo pipefail
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+cd "$ROOT"
+
+command -v docker >/dev/null 2>&1 || { echo "e2e: Docker is required" >&2; exit 2; }
+docker compose version >/dev/null 2>&1 || { echo "e2e: Docker Compose is required" >&2; exit 2; }
+
+COMPOSE=(docker compose -f deployments/docker-compose.yml)
+cleanup() { "${COMPOSE[@]}" down >/dev/null 2>&1 || true; }
+trap cleanup EXIT
+
+"${COMPOSE[@]}" config >/dev/null
+"${COMPOSE[@]}" up -d --build
+"${COMPOSE[@]}" ps
+
+for url in http://127.0.0.1:${HTTP_PORT:-8080}/ready http://127.0.0.1:${HTTP_PORT:-8080}/; do
+  for _ in $(seq 1 60); do
+    if curl -fsS "$url" >/dev/null 2>&1; then
+      echo "e2e: ready $url"
+      break
+    fi
+    sleep 2
+  done
+  curl -fsS "$url" >/dev/null
+done
+
+"${COMPOSE[@]}" exec -T postgres pg_isready -U "${POSTGRES_USER:-trest}" -d "${POSTGRES_DB:-trest}"
+"${COMPOSE[@]}" exec -T redis redis-cli ping | grep -q PONG
+"${COMPOSE[@]}" exec -T marketplace-api python -c 'import urllib.request; urllib.request.urlopen("http://localhost:8000/health")'
+
+echo "e2e: PASS"

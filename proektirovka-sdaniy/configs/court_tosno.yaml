@@ -1,0 +1,122 @@
+# Конфигурация объекта: Здание Тосненского городского суда Ленинградской области
+# ТЗ: Задание на корректировку проекта, утв. АО «Трест №68» / УСД ЛО, 2025 г.
+
+meta:
+  object_name: "Строительство здания для размещения Тосненского городского суда Ленинградской области"
+  address: "Ленинградская обл., Тосненский р-н, г. Тосно, ул. Радищева, около д.20, к/н 47:26:0608002:17"
+  stage: "П"
+  year: "2026"
+  doc_prefix: "68-2026"
+
+organization:
+  name: "ООО «Аксиома СПб»"
+  designer: "Архипов А.В."
+  checker: "Соколов Б.С."
+  norm_ctrl: "Лебедев В.И."
+  chief_eng: "Морозов Д.Г."
+  approver: "Волков П.И."
+
+client:
+  name: "Управление Судебного департамента в Ленинградской области"
+  address: "190000, г. Санкт-Петербург, ул. Большая Морская, д. 35"
+
+# Координатные оси здания
+axes:
+  x_spans: [6.0, 6.0, 6.0, 6.0, 6.0, 6.0, 6.0, 6.0]   # оси 1-9 (48м)
+  y_spans: [6.0, 6.0, 6.0, 6.0, 6.0]                    # оси А-Е (30м)
+  x_labels: ["1", "2", "3", "4", "5", "6", "7", "8", "9"]
+  y_labels: ["А", "Б", "В", "Г", "Д", "Е"]
+
+# Конструктивные характеристики
+dimensions:
+  wall_ext_m:   0.40   # толщина наружной стены (кирпич + утеплитель + вент.фасад)
+  wall_int_m:   0.25   # несущая внутренняя стена
+  wall_prt_m:   0.12   # перегородка ГКЛ
+  floor_h_m:    3.60   # высота этажа
+  basement_h_m: 3.30   # высота подвала
+  slab_h_m:     0.20   # толщина монолитного ж/б перекрытия
+  fnd_depth_m:  3.60   # глубина заложения фундамента
+
+# Данные участка
+plot:
+  area_ha:      0.65433
+  width_m:      81.0
+  depth_m:      80.8
+  setback_s_m:  12.0   # отступ от южной границы (красная линия)
+  setback_n_m:  18.0   # отступ от северной границы
+  setback_w_m:  15.0   # отступ от западной границы
+  setback_e_m:  15.0   # отступ от восточной границы
+
+n_floors: 6
+basement: true
+
+# Поэтажный состав помещений
+floors:
+  - number: 0
+    elevation: -3.300
+    name: "Подвал"
+    rooms:
+      - {id: "Б-1", name: "Электрощитовая", type: "technical", x: 0,  y: 0,  width: 6,  height: 12}
+      - {id: "Б-2", name: "Тепловой узел",  type: "technical", x: 6,  y: 0,  width: 12, height: 12}
+      - {id: "Б-3", name: "Насосная",        type: "technical", x: 18, y: 0,  width: 6,  height: 12}
+      - {id: "Б-4", name: "Вент. камера",    type: "mechanical",x: 24, y: 0,  width: 12, height: 12}
+      - {id: "Б-5", name: "Хранилище",       type: "archive",   x: 36, y: 0,  width: 12, height: 12}
+      - {id: "Б-6", name: "Техн. пом.",      type: "technical", x: 0,  y: 12, width: 12, height: 18}
+      - {id: "Б-7", name: "Архив",           type: "archive",   x: 12, y: 12, width: 24, height: 18}
+      - {id: "ЛК-1", name: "Лест. клетка",  type: "staircase", x: 12, y: 18, width: 6,  height: 12}
+      - {id: "ЛК-2", name: "Лест. клетка",  type: "staircase", x: 36, y: 18, width: 6,  height: 12}
+
+  - number: 1
+    elevation: 0.000
+    name: "1-й этаж"
+    rooms:
+      - {id: "101", name: "Вестибюль-холл",   type: "lobby",      x: 0,  y: 0,  width: 12, height: 12}
+      - {id: "102", name: "Пост охраны",       type: "security",   x: 12, y: 0,  width: 6,  height: 6}
+      - {id: "103", name: "Зал ожидания",      type: "waiting",    x: 18, y: 0,  width: 12, height: 12}
+      - {id: "104", name: "Канцелярия",        type: "office",     x: 30, y: 0,  width: 12, height: 12}
+      - {id: "105", name: "Зал с/з №1",        type: "courtroom",  x: 0,  y: 12, width: 18, height: 12, area_m2: 108.0}
+      - {id: "106", name: "Зал с/з №2",        type: "courtroom",  x: 18, y: 12, width: 18, height: 12, area_m2: 108.0}
+      - {id: "107", name: "Конвойный блок",    type: "escort",     x: 36, y: 0,  width: 12, height: 18}
+      - {id: "108", name: "Камера №1",         type: "holding",    x: 36, y: 18, width: 6,  height: 6}
+      - {id: "109", name: "Камера №2",         type: "holding",    x: 42, y: 18, width: 6,  height: 6}
+      - {id: "110", name: "Санузел (М)",       type: "toilet",     x: 0,  y: 24, width: 6,  height: 6}
+      - {id: "111", name: "Санузел (Ж)",       type: "toilet",     x: 6,  y: 24, width: 6,  height: 6}
+      - {id: "ЛК-1", name: "Лест. клетка",    type: "staircase",  x: 12, y: 18, width: 6,  height: 12}
+      - {id: "Л-1",  name: "Лифт",            type: "elevator",   x: 18, y: 18, width: 4,  height: 5}
+      - {id: "ЛК-2", name: "Лест. клетка",    type: "staircase",  x: 24, y: 18, width: 6,  height: 12}
+
+  - number: 2
+    elevation: 3.600
+    name: "Типовой этаж (2–5)"
+    rooms:
+      - {id: "201", name: "Зал с/з №1",       type: "courtroom",    x: 0,  y: 0,  width: 18, height: 12, area_m2: 108.0}
+      - {id: "202", name: "Зал с/з №2",       type: "courtroom",    x: 18, y: 0,  width: 18, height: 12, area_m2: 108.0}
+      - {id: "203", name: "Совещ. комн. 1",   type: "deliberation", x: 36, y: 0,  width: 6,  height: 6,  area_m2: 18.0}
+      - {id: "204", name: "Совещ. комн. 2",   type: "deliberation", x: 42, y: 0,  width: 6,  height: 6,  area_m2: 18.0}
+      - {id: "205", name: "Каб. судьи 1",     type: "judge_office", x: 0,  y: 12, width: 6,  height: 6,  area_m2: 30.0}
+      - {id: "206", name: "Каб. судьи 2",     type: "judge_office", x: 6,  y: 12, width: 6,  height: 6,  area_m2: 30.0}
+      - {id: "207", name: "Каб. судьи 3",     type: "judge_office", x: 0,  y: 18, width: 6,  height: 6,  area_m2: 30.0}
+      - {id: "208", name: "Каб. судьи 4",     type: "judge_office", x: 6,  y: 18, width: 6,  height: 6,  area_m2: 30.0}
+      - {id: "209", name: "Аппарат суда",     type: "office",       x: 12, y: 12, width: 24, height: 12, area_m2: 144.0}
+      - {id: "210", name: "Архив",            type: "archive",      x: 36, y: 12, width: 12, height: 12, area_m2: 72.0}
+      - {id: "211", name: "Санузел (М)",      type: "toilet",       x: 0,  y: 24, width: 6,  height: 6}
+      - {id: "212", name: "Санузел (Ж)",      type: "toilet",       x: 6,  y: 24, width: 6,  height: 6}
+      - {id: "ЛК-1", name: "Лест. клетка",   type: "staircase",    x: 12, y: 18, width: 6,  height: 12}
+      - {id: "Л-1",  name: "Лифт",           type: "elevator",     x: 18, y: 18, width: 4,  height: 5}
+      - {id: "ЛК-2", name: "Лест. клетка",   type: "staircase",    x: 24, y: 18, width: 6,  height: 12}
+
+  - number: 6
+    elevation: 18.000
+    name: "6-й этаж (технический)"
+    rooms:
+      - {id: "601", name: "Архив раб.докум.", type: "archive",    x: 0,  y: 0,  width: 12, height: 12, area_m2: 72.0}
+      - {id: "602", name: "Серверная",        type: "server",     x: 12, y: 0,  width: 12, height: 12, area_m2: 72.0}
+      - {id: "603", name: "Архив суд.дел",    type: "archive",    x: 24, y: 0,  width: 12, height: 12, area_m2: 72.0}
+      - {id: "604", name: "Техн. пом.",       type: "technical",  x: 36, y: 0,  width: 12, height: 12, area_m2: 72.0}
+      - {id: "605", name: "Вент. камера",     type: "mechanical", x: 0,  y: 12, width: 18, height: 18, area_m2: 108.0}
+      - {id: "606", name: "АТС/диспетч.",     type: "technical",  x: 18, y: 12, width: 12, height: 12, area_m2: 72.0}
+      - {id: "607", name: "Зал совещаний",    type: "conference", x: 30, y: 12, width: 12, height: 12, area_m2: 72.0}
+      - {id: "608", name: "Подсобная",        type: "technical",  x: 42, y: 12, width: 6,  height: 12, area_m2: 36.0}
+      - {id: "ЛК-1", name: "Лест. клетка",   type: "staircase",  x: 12, y: 18, width: 6,  height: 12}
+      - {id: "Л-1",  name: "Лифт",           type: "elevator",   x: 18, y: 18, width: 4,  height: 5}
+      - {id: "ЛК-2", name: "Лест. клетка",   type: "staircase",  x: 24, y: 18, width: 6,  height: 12}

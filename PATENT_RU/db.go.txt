@@ -1,0 +1,47 @@
+package db
+
+import (
+	"context"
+	"database/sql"
+	"fmt"
+	"os"
+	"time"
+
+	_ "github.com/jackc/pgx/v5/stdlib"
+)
+
+type DB struct{ *sql.DB }
+
+func DSN() string {
+	if v := os.Getenv("DATABASE_URL"); v != "" {
+		return v
+	}
+	host := getenv("POSTGRES_HOST", "localhost")
+	port := getenv("POSTGRES_PORT", "5432")
+	user := getenv("POSTGRES_USER", "trest")
+	password := getenv("POSTGRES_PASSWORD", "change-me")
+	name := getenv("POSTGRES_DB", "trest")
+	return fmt.Sprintf("postgres://%s:%s@%s:%s/%s?sslmode=%s", user, password, host, port, name, getenv("POSTGRES_SSLMODE", "disable"))
+}
+
+func Open(ctx context.Context) (*DB, error) {
+	d, err := sql.Open("pgx", DSN())
+	if err != nil {
+		return nil, err
+	}
+	d.SetMaxOpenConns(20)
+	d.SetMaxIdleConns(5)
+	d.SetConnMaxLifetime(30 * time.Minute)
+	if err := d.PingContext(ctx); err != nil {
+		_ = d.Close()
+		return nil, err
+	}
+	return &DB{d}, nil
+}
+
+func getenv(k, fallback string) string {
+	if v := os.Getenv(k); v != "" {
+		return v
+	}
+	return fallback
+}

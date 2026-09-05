@@ -1,0 +1,677 @@
+#!/usr/bin/env bash
+# Trest Systems fully automatic installer for supported Linux distributions.
+set -Eeuo pipefail
+IFS=$'\n\t'
+umask 077
+
+VERSION="v0.39.1-stage11-prebuilt-auto-installer"
+SELF="$(readlink -f "${BASH_SOURCE[0]}")"
+SOURCE_DIR="$(cd -- "$(dirname -- "$SELF")/../.." && pwd)"
+INSTALL_DIR="${TREST_INSTALL_DIR:-/opt/trest-systems}"
+STATE_DIR="${TREST_STATE_DIR:-/var/lib/trest-systems}"
+REPORT_DIR="${TREST_REPORT_DIR:-/var/log/trest-systems}"
+DOMAIN=""
+ACME_EMAIL=""
+TLS_MODE="auto"
+MODE="install"
+NON_INTERACTIVE=0
+DRY_RUN=0
+NO_FIREWALL=0
+ALLOW_LOW_RESOURCES=0
+KEEP_SOURCE=0
+HTTP_PORT=80
+HTTPS_PORT=443
+CURRENT_STAGE="bootstrap"
+FAILURE_HANDLED=0
+ORIGINAL_USER="${SUDO_USER:-${USER:-root}}"
+ORIGINAL_ARGS=("$@")
+START_TS="$(date -u +%Y%m%dT%H%M%SZ)"
+TMP_DIR="$(mktemp -d -t trest-install.XXXXXX)"
+STAGES_FILE="$TMP_DIR/stages.tsv"
+ERRORS_FILE="$TMP_DIR/errors.txt"
+WARNINGS_FILE="$TMP_DIR/warnings.txt"
+COMMAND_LOG="$TMP_DIR/install.log"
+: >"$STAGES_FILE"; : >"$ERRORS_FILE"; : >"$WARNINGS_FILE"; : >"$COMMAND_LOG"
+
+usage() {
+  cat <<'EOF'
+Trest Systems — автоматическая установка
+
+  sudo ./install.sh [параметры]
+
+Параметры:
+  --domain DOMAIN          публичный домен; DNS должен указывать на сервер
+  --email EMAIL            email для автоматического TLS/ACME
+  --tls auto|off|internal  auto: доверенный TLS при наличии домена
+  --install-dir PATH       каталог установки (по умолчанию /opt/trest-systems)
+  --update                 безопасное обновление существующей установки
+  --repair                 диагностика и восстановление сервисов
+  --doctor                 только диагностика, без установки
+  --non-interactive        без вопросов; безопасные значения создаются автоматически
+  --dry-run                показать этапы, не менять систему
+  --no-firewall            не настраивать разрешённые порты firewall
+  --allow-low-resources    продолжить при ресурсах ниже минимума
+  --http-port PORT         внешний HTTP-порт (80)
+  --https-port PORT        внешний HTTPS-порт (443)
+  -h, --help               справка
+EOF
+}
+
+while (($#)); do
+  case "$1" in
+    --domain) DOMAIN="${2:?}"; shift 2;;
+    --email) ACME_EMAIL="${2:?}"; shift 2;;
+    --tls) TLS_MODE="${2:?}"; shift 2;;
+    --install-dir) INSTALL_DIR="${2:?}"; shift 2;;
+    --update) MODE="update"; shift;;
+    --repair) MODE="repair"; shift;;
+    --doctor) MODE="doctor"; shift;;
+    --non-interactive|--yes|-y) NON_INTERACTIVE=1; shift;;
+    --dry-run) DRY_RUN=1; shift;;
+    --no-firewall) NO_FIREWALL=1; shift;;
+    --allow-low-resources) ALLOW_LOW_RESOURCES=1; shift;;
+    --keep-source) KEEP_SOURCE=1; shift;;
+    --http-port) HTTP_PORT="${2:?}"; shift 2;;
+    --https-port) HTTPS_PORT="${2:?}"; shift 2;;
+    -h|--help) usage; exit 0;;
+    *) echo "Неизвестный параметр: $1" >&2; usage >&2; exit 2;;
+  esac
+done
+
+case "$TLS_MODE" in auto|off|internal) ;; *) echo "Недопустимый --tls: $TLS_MODE" >&2; exit 2;; esac
+[[ "$HTTP_PORT" =~ ^[0-9]+$ ]] && ((HTTP_PORT>=1 && HTTP_PORT<=65535)) || { echo "Некорректный HTTP-порт" >&2; exit 2; }
+[[ "$HTTPS_PORT" =~ ^[0-9]+$ ]] && ((HTTPS_PORT>=1 && HTTPS_PORT<=65535)) || { echo "Некорректный HTTPS-порт" >&2; exit 2; }
+
+c_reset='\033[0m'; c_green='\033[1;32m'; c_yellow='\033[1;33m'; c_red='\033[1;31m'; c_blue='\033[1;34m'
+log() { printf '%b[%s] %s%b\n' "$c_blue" "$(date '+%F %T')" "$*" "$c_reset" | tee -a "$COMMAND_LOG"; }
+ok() { printf '%b[OK] %s%b\n' "$c_green" "$*" "$c_reset" | tee -a "$COMMAND_LOG"; }
+warn() { printf '%b[WARN] %s%b\n' "$c_yellow" "$*" "$c_reset" | tee -a "$COMMAND_LOG"; printf '%s\n' "$*" >>"$WARNINGS_FILE"; }
+err() { printf '%b[ERROR] %s%b\n' "$c_red" "$*" "$c_reset" | tee -a "$COMMAND_LOG" >&2; printf '%s\n' "$*" >>"$ERRORS_FILE"; }
+
+quote_cmd() { printf '%q ' "$@"; }
+run_cmd() {
+  if ((DRY_RUN)); then log "DRY-RUN: $(quote_cmd "$@")"; return 0; fi
+  log "RUN: $(quote_cmd "$@")"
+  "$@" 2>&1 | tee -a "$COMMAND_LOG"
+  return "${PIPESTATUS[0]}"
+}
+
+stage() {
+  local name="$1"; shift
+  CURRENT_STAGE="$name"
+  local start end rc
+  start="$(date -u +%FT%TZ)"
+  log "=== Этап: $name ==="
+  set +e
+  ( trap - ERR; set -Eeuo pipefail; "$@" )
+  rc=$?
+  set -e
+  end="$(date -u +%FT%TZ)"
+  if ((rc==0)) && [[ -f "$TMP_DIR/system.env" ]]; then
+    # shellcheck disable=SC1090
+    source "$TMP_DIR/system.env"
+  fi
+  if ((rc==0)); then
+    printf '%s\tPASS\t%s\t%s\n' "$name" "$start" "$end" >>"$STAGES_FILE"
+    ok "$name"
+  else
+    printf '%s\tFAIL\t%s\t%s\n' "$name" "$start" "$end" >>"$STAGES_FILE"
+    err "$name завершён с кодом $rc"
+    return "$rc"
+  fi
+}
+
+json_escape() {
+  local s=${1//\\/\\\\}; s=${s//\"/\\\"}; s=${s//$'\n'/\\n}; s=${s//$'\r'/}; printf '%s' "$s"
+}
+
+collect_diagnostics() {
+  mkdir -p "$TMP_DIR/diagnostics"
+  { uname -a; echo; cat /etc/os-release 2>/dev/null || true; echo; df -h; echo; free -h 2>/dev/null || true; } >"$TMP_DIR/diagnostics/system.txt" 2>&1 || true
+  if command -v docker >/dev/null 2>&1; then
+    docker version >"$TMP_DIR/diagnostics/docker-version.txt" 2>&1 || true
+    docker info >"$TMP_DIR/diagnostics/docker-info.txt" 2>&1 || true
+    if [[ -d "$INSTALL_DIR" ]]; then
+      (cd "$INSTALL_DIR" && docker compose --env-file .env -f deployments/docker-compose.yml ps -a) >"$TMP_DIR/diagnostics/compose-ps.txt" 2>&1 || true
+      (cd "$INSTALL_DIR" && docker compose --env-file .env -f deployments/docker-compose.yml logs --no-color --tail=1000) >"$TMP_DIR/diagnostics/compose-logs.txt" 2>&1 || true
+    fi
+  fi
+  (ss -lntup 2>/dev/null || netstat -lntup 2>/dev/null || true) >"$TMP_DIR/diagnostics/ports.txt"
+}
+
+write_report() {
+  local rc="${1:-0}" final_dir stamp txt jsonf errors_count warnings_count
+  stamp="$(date -u +%Y%m%dT%H%M%SZ)"
+  final_dir="$REPORT_DIR"
+  mkdir -p "$final_dir" 2>/dev/null || final_dir="$SOURCE_DIR/installation-reports"
+  mkdir -p "$final_dir"
+  txt="$final_dir/install-$stamp.txt"; jsonf="$final_dir/install-$stamp.json"
+  errors_count=$(grep -c . "$ERRORS_FILE" 2>/dev/null || true)
+  warnings_count=$(grep -c . "$WARNINGS_FILE" 2>/dev/null || true)
+  {
+    echo "TREST SYSTEMS — ОТЧЁТ АВТОМАТИЧЕСКОЙ УСТАНОВКИ"
+    echo "Версия: $VERSION"
+    echo "Начало: $START_TS"
+    echo "Окончание: $(date -u +%FT%TZ)"
+    echo "Режим: $MODE"
+    echo "Каталог: $INSTALL_DIR"
+    echo "Домен: ${DOMAIN:-не задан}"
+    echo "TLS: $TLS_MODE"
+    echo "Код завершения: $rc"
+    echo
+    echo "ЭТАПЫ:"
+    if [[ -s "$STAGES_FILE" ]]; then awk -F '\t' '{printf "  %-44s %s\n", $1, $2}' "$STAGES_FILE"; else echo "  нет"; fi
+    echo
+    echo "ПРЕДУПРЕЖДЕНИЯ:"
+    if [[ -s "$WARNINGS_FILE" ]]; then sed 's/^/  - /' "$WARNINGS_FILE"; else echo "  нет"; fi
+    echo
+    echo "ОШИБКИ:"
+    if [[ -s "$ERRORS_FILE" ]]; then sed 's/^/  - /' "$ERRORS_FILE"; else echo "  нет"; fi
+    echo
+    echo "ДОСТУП:"
+    [[ -n "$DOMAIN" && "$TLS_MODE" != off ]] && echo "  https://$DOMAIN" || echo "  http://${DOMAIN:-$(hostname -I 2>/dev/null | awk '{print $1}')}:${HTTP_PORT}"
+    echo
+    echo "Полный журнал: $final_dir/install-$stamp.log"
+    echo "Диагностика: $final_dir/diagnostics-$stamp/"
+  } >"$txt"
+  cp "$COMMAND_LOG" "$final_dir/install-$stamp.log" 2>/dev/null || true
+  if [[ -d "$TMP_DIR/diagnostics" ]]; then cp -a "$TMP_DIR/diagnostics" "$final_dir/diagnostics-$stamp" 2>/dev/null || true; fi
+
+  {
+    printf '{\n'
+    printf '  "version": "%s",\n' "$(json_escape "$VERSION")"
+    printf '  "started_at": "%s",\n' "$(json_escape "$START_TS")"
+    printf '  "finished_at": "%s",\n' "$(date -u +%FT%TZ)"
+    printf '  "mode": "%s",\n' "$(json_escape "$MODE")"
+    printf '  "exit_code": %s,\n' "$rc"
+    printf '  "install_dir": "%s",\n' "$(json_escape "$INSTALL_DIR")"
+    printf '  "domain": "%s",\n' "$(json_escape "$DOMAIN")"
+    printf '  "tls_mode": "%s",\n' "$(json_escape "$TLS_MODE")"
+    printf '  "errors_count": %s,\n' "$errors_count"
+    printf '  "warnings_count": %s,\n' "$warnings_count"
+    printf '  "errors": ['
+    local first=1 line
+    while IFS= read -r line; do [[ -z "$line" ]] && continue; ((first)) || printf ','; printf '\n    "%s"' "$(json_escape "$line")"; first=0; done <"$ERRORS_FILE"
+    ((first)) || printf '\n  '
+    printf '],\n  "stages": ['
+    first=1
+    while IFS=$'\t' read -r name status st en; do [[ -z "$name" ]] && continue; ((first)) || printf ','; printf '\n    {"name":"%s","status":"%s","started_at":"%s","finished_at":"%s"}' "$(json_escape "$name")" "$status" "$st" "$en"; first=0; done <"$STAGES_FILE"
+    ((first)) || printf '\n  '
+    printf ']\n}\n'
+  } >"$jsonf"
+  cp "$txt" "$STATE_DIR/last-install-report.txt" 2>/dev/null || true
+  cp "$jsonf" "$STATE_DIR/last-install-report.json" 2>/dev/null || true
+  echo
+  cat "$txt"
+  echo
+  echo "Отчёт TXT: $txt"
+  echo "Отчёт JSON: $jsonf"
+}
+
+on_error() {
+  local rc=$? line="$1" command="$2"
+  ((FAILURE_HANDLED)) && exit "$rc"
+  FAILURE_HANDLED=1
+  trap - ERR
+  err "Сбой на этапе '$CURRENT_STAGE', строка $line: $command (код $rc)"
+  collect_diagnostics
+  write_report "$rc"
+  exit "$rc"
+}
+trap 'on_error "$LINENO" "$BASH_COMMAND"' ERR
+trap 'rm -rf "$TMP_DIR" 2>/dev/null || true' EXIT
+
+ensure_root() {
+  ((EUID == 0)) || { err "Нужны права root. Запустите: sudo ./install.sh"; return 1; }
+}
+
+detect_system() {
+  [[ -r /etc/os-release ]] || { err "Поддерживается Linux с /etc/os-release"; return 1; }
+  # shellcheck disable=SC1091
+  . /etc/os-release
+  OS_ID="${ID:-unknown}"; OS_VERSION="${VERSION_ID:-unknown}"
+  ARCH_RAW="$(uname -m)"
+  case "$ARCH_RAW" in x86_64|amd64) ARCH=amd64;; aarch64|arm64) ARCH=arm64;; *) err "Неподдерживаемая архитектура: $ARCH_RAW"; return 1;; esac
+  case "$OS_ID" in ubuntu|debian) PKG=apt;; rhel|centos|rocky|almalinux|fedora|ol) PKG=dnf;; alpine) PKG=apk;; arch|manjaro) PKG=pacman;; *) err "Неподдерживаемый дистрибутив: $OS_ID"; return 1;; esac
+  log "Система: $OS_ID $OS_VERSION, архитектура $ARCH"
+  printf 'OS_ID=%q
+OS_VERSION=%q
+ARCH_RAW=%q
+ARCH=%q
+PKG=%q
+' "$OS_ID" "$OS_VERSION" "$ARCH_RAW" "$ARCH" "$PKG" >"$TMP_DIR/system.env"
+}
+
+check_resources() {
+  local mem_kb disk_kb cpu disk_probe
+  mem_kb=$(awk '/MemTotal/{print $2}' /proc/meminfo)
+  disk_probe="$INSTALL_DIR"
+  while [[ ! -e "$disk_probe" && "$disk_probe" != / ]]; do disk_probe="$(dirname "$disk_probe")"; done
+  disk_kb=$(df -Pk "$disk_probe" | awk 'NR==2{print $4}')
+  cpu=$(getconf _NPROCESSORS_ONLN 2>/dev/null || echo 1)
+  log "Ресурсы: CPU=$cpu RAM=$((mem_kb/1024)) MiB свободный диск=$((disk_kb/1024/1024)) GiB"
+  if ((mem_kb < 2097152 || disk_kb < 8388608)); then
+    if ((ALLOW_LOW_RESOURCES)); then warn "Ресурсы ниже безопасного минимума (2 GiB RAM / 8 GiB disk)"; else err "Недостаточно ресурсов: минимум 2 GiB RAM и 8 GiB свободного диска"; return 1; fi
+  fi
+  if ((mem_kb < 4194304)); then warn "Рекомендуется не менее 4 GiB RAM"; fi
+  if ((disk_kb < 20971520)); then warn "Рекомендуется не менее 20 GiB свободного диска"; fi
+  return 0
+}
+
+check_network() {
+  if command -v getent >/dev/null 2>&1; then
+    getent hosts registry-1.docker.io >/dev/null 2>&1 || getent hosts download.docker.com >/dev/null 2>&1 || { err "DNS/Интернет недоступны"; return 1; }
+  elif command -v nslookup >/dev/null 2>&1; then
+    nslookup download.docker.com >/dev/null 2>&1 || { err "DNS/Интернет недоступны"; return 1; }
+  else
+    warn "До установки prerequisites нет утилиты DNS-проверки; сеть проверит package manager"
+  fi
+  if command -v curl >/dev/null 2>&1; then curl -fsSIL --max-time 20 https://download.docker.com/ >/dev/null || warn "download.docker.com недоступен; будет использован пакет дистрибутива"; fi
+}
+
+install_prerequisites() {
+  case "$PKG" in
+    apt)
+      export DEBIAN_FRONTEND=noninteractive
+      run_cmd apt-get update
+      run_cmd apt-get install -y --no-install-recommends ca-certificates curl gnupg jq openssl tar unzip iproute2 lsof dnsutils netcat-openbsd python3 libpq5
+      ;;
+    dnf)
+      run_cmd dnf install -y ca-certificates curl gnupg2 jq openssl tar unzip iproute lsof bind-utils nmap-ncat python3 postgresql-libs
+      ;;
+    apk)
+      run_cmd apk add --no-cache ca-certificates curl gnupg jq openssl tar unzip iproute2 lsof bind-tools netcat-openbsd python3 libpq
+      ;;
+    pacman)
+      run_cmd pacman -Sy --noconfirm ca-certificates curl gnupg jq openssl tar unzip iproute2 lsof bind openbsd-netcat python postgresql-libs
+      ;;
+  esac
+}
+
+install_docker_apt() {
+  local distro="$OS_ID" codename
+  codename="$(. /etc/os-release; echo "${VERSION_CODENAME:-}")"
+  [[ -n "$codename" ]] || codename="$(lsb_release -cs 2>/dev/null || true)"
+  install -m 0755 -d /etc/apt/keyrings
+  curl -fsSL "https://download.docker.com/linux/$distro/gpg" -o /etc/apt/keyrings/docker.asc
+  chmod a+r /etc/apt/keyrings/docker.asc
+  local archdpkg; archdpkg="$(dpkg --print-architecture)"
+  printf 'deb [arch=%s signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/%s %s stable\n' "$archdpkg" "$distro" "$codename" >/etc/apt/sources.list.d/docker.list
+  apt-get update
+  DEBIAN_FRONTEND=noninteractive apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+}
+
+install_docker() {
+  if command -v docker >/dev/null 2>&1 && docker compose version >/dev/null 2>&1; then
+    log "Docker и Compose уже установлены"
+  else
+    log "Установка Docker Engine и Compose v2"
+    case "$PKG" in
+      apt) run_cmd install_docker_apt;;
+      dnf)
+        run_cmd dnf install -y dnf-plugins-core
+        local repo_os=centos; [[ "$OS_ID" == fedora ]] && repo_os=fedora
+        run_cmd dnf config-manager --add-repo "https://download.docker.com/linux/$repo_os/docker-ce.repo"
+        run_cmd dnf install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+        ;;
+      apk) run_cmd apk add --no-cache docker docker-cli-compose;;
+      pacman) run_cmd pacman -S --noconfirm docker docker-compose;;
+    esac
+  fi
+  if command -v systemctl >/dev/null 2>&1; then run_cmd systemctl enable --now docker; else run_cmd service docker start; fi
+  docker version >/dev/null
+  docker compose version >/dev/null
+  if [[ "$ORIGINAL_USER" != root ]] && id "$ORIGINAL_USER" >/dev/null 2>&1; then usermod -aG docker "$ORIGINAL_USER" || true; fi
+}
+
+check_ports_free() {
+  local port owner
+  for port in "$HTTP_PORT" "$HTTPS_PORT"; do
+    owner=$(ss -ltnp "sport = :$port" 2>/dev/null | tail -n +2 || true)
+    if [[ -n "$owner" ]]; then
+      if grep -qiE 'docker|caddy|nginx' <<<"$owner" && [[ -d "$INSTALL_DIR" ]]; then warn "Порт $port уже занят существующей установкой Trest/proxy"; else err "Порт $port занят: $owner"; return 1; fi
+    fi
+  done
+}
+
+configure_firewall() {
+  ((NO_FIREWALL)) && { warn "Настройка firewall пропущена"; return 0; }
+  if command -v ufw >/dev/null 2>&1 && ufw status 2>/dev/null | grep -q 'Status: active'; then
+    run_cmd ufw allow "$HTTP_PORT/tcp" comment 'Trest HTTP'
+    run_cmd ufw allow "$HTTPS_PORT/tcp" comment 'Trest HTTPS'
+  elif command -v firewall-cmd >/dev/null 2>&1 && firewall-cmd --state >/dev/null 2>&1; then
+    run_cmd firewall-cmd --permanent --add-port="$HTTP_PORT/tcp"
+    run_cmd firewall-cmd --permanent --add-port="$HTTPS_PORT/tcp"
+    run_cmd firewall-cmd --reload
+  else
+    warn "Активный ufw/firewalld не обнаружен; firewall не изменялся"
+  fi
+}
+
+copy_project() {
+  mkdir -p "$INSTALL_DIR" "$STATE_DIR" "$REPORT_DIR" "$STATE_DIR/backups" "$STATE_DIR/credentials"
+  if [[ -f "$INSTALL_DIR/.env" ]]; then cp -a "$INSTALL_DIR/.env" "$STATE_DIR/backups/env-$START_TS"; fi
+  if [[ "$SOURCE_DIR" != "$INSTALL_DIR" ]]; then
+    tar --exclude='.git' --exclude='installation-reports' --exclude='verification/logs' -C "$SOURCE_DIR" -cf - . | tar -C "$INSTALL_DIR" -xf -
+  fi
+  chmod 0755 "$INSTALL_DIR/install.sh" "$INSTALL_DIR/scripts/installer/"*.sh 2>/dev/null || true
+}
+
+randhex() { openssl rand -hex "${1:-32}"; }
+urlencode() { python3 -c 'import sys,urllib.parse; print(urllib.parse.quote(sys.argv[1], safe=""))' "$1"; }
+upsert_env() {
+  local key="$1" value="$2" file="$INSTALL_DIR/.env" tmp
+  tmp="$(mktemp)"
+  if [[ -f "$file" ]]; then grep -v -E "^${key}=" "$file" >"$tmp" || true; fi
+  printf '%s=%s\n' "$key" "$value" >>"$tmp"
+  mv "$tmp" "$file"; chmod 0600 "$file"
+}
+get_env() { local key="$1"; grep -E "^${key}=" "$INSTALL_DIR/.env" 2>/dev/null | tail -1 | cut -d= -f2- || true; }
+ensure_secret() { local key="$1" bytes="${2:-32}" v; v="$(get_env "$key")"; [[ -n "$v" ]] || { v="$(randhex "$bytes")"; upsert_env "$key" "$v"; }; }
+
+validate_domain() {
+  [[ -z "$DOMAIN" ]] && return 0
+  [[ "$DOMAIN" =~ ^([A-Za-z0-9]([A-Za-z0-9-]{0,61}[A-Za-z0-9])?\.)+[A-Za-z]{2,63}$ ]] || { err "Некорректный домен: $DOMAIN"; return 1; }
+  local resolved public
+  resolved="$(getent ahostsv4 "$DOMAIN" | awk 'NR==1{print $1}' || true)"
+  public="$(curl -4fsS --max-time 15 https://api.ipify.org 2>/dev/null || true)"
+  [[ -n "$resolved" ]] || { err "DNS домена $DOMAIN не разрешается"; return 1; }
+  if [[ -n "$public" && "$resolved" != "$public" ]]; then warn "DNS $DOMAIN=$resolved, публичный IP сервера=$public; сертификат может не выпуститься"; fi
+  [[ "$HTTP_PORT" == 80 && "$HTTPS_PORT" == 443 ]] || { err "Публичный ACME TLS требует внешние порты 80 и 443"; return 1; }
+  [[ -n "$ACME_EMAIL" ]] || { err "Для публичного TLS требуется --email"; return 1; }
+  [[ "$ACME_EMAIL" =~ ^[^[:space:]@]+@[^[:space:]@]+\.[^[:space:]@]+$ ]] || { err "Некорректный ACME email"; return 1; }
+}
+
+configure_environment() {
+  touch "$INSTALL_DIR/.env"; chmod 0600 "$INSTALL_DIR/.env"
+  ensure_secret POSTGRES_PASSWORD 32
+  ensure_secret REDIS_PASSWORD 32
+  ensure_secret MINIO_ROOT_PASSWORD 32
+  upsert_env MINIO_SECRET_KEY "$(get_env MINIO_ROOT_PASSWORD)"
+  ensure_secret JWT_SECRET 48
+  ensure_secret SECRET_KEY 48
+  ensure_secret ADMIN_PASSWORD 24
+  local pgpass pguser pgdb
+  pgpass="$(get_env POSTGRES_PASSWORD)"
+  pguser="${POSTGRES_USER:-trest}"
+  pgdb="${POSTGRES_DB:-trest}"
+  upsert_env POSTGRES_USER "$pguser"
+  upsert_env POSTGRES_DB "$pgdb"
+  upsert_env DATABASE_URL "postgres://$(urlencode "$pguser"):$(urlencode "$pgpass")@postgres:5432/$(urlencode "$pgdb")?sslmode=disable"
+  upsert_env REDIS_URL "redis://:$(get_env REDIS_PASSWORD)@redis:6379/0"
+  upsert_env MINIO_ROOT_USER "trest"
+  upsert_env MINIO_ACCESS_KEY "trest"
+  upsert_env STORAGE_ENDPOINT "http://minio:9000"
+  upsert_env STORAGE_BUCKET "trest"
+  upsert_env HTTP_PORT "$HTTP_PORT"
+  upsert_env HTTPS_PORT "$HTTPS_PORT"
+  upsert_env ACME_EMAIL "$ACME_EMAIL"
+  upsert_env TLS_MODE "$TLS_MODE"
+  upsert_env TARGETARCH "$ARCH"
+  upsert_env COMPOSE_PROJECT_NAME "trest"
+  if [[ -n "$DOMAIN" && "$TLS_MODE" == auto ]]; then
+    upsert_env DOMAIN "$DOMAIN"; upsert_env SITE_ADDRESS "$DOMAIN"; upsert_env PUBLIC_URL "https://$DOMAIN"
+  elif [[ "$TLS_MODE" == internal ]]; then
+    local addr="${DOMAIN:-localhost}"
+    upsert_env DOMAIN "$addr"; upsert_env SITE_ADDRESS "$addr"; upsert_env PUBLIC_URL "https://$addr"
+  else
+    upsert_env DOMAIN "$DOMAIN"; upsert_env SITE_ADDRESS "http://:80"; upsert_env PUBLIC_URL "http://${DOMAIN:-localhost}:$HTTP_PORT"
+  fi
+  local cred="$STATE_DIR/credentials/admin.txt"
+  {
+    echo "Trest Systems initial administrator credentials"
+    echo "Created: $(date -u +%FT%TZ)"
+    echo "URL: $(get_env PUBLIC_URL)"
+    echo "ADMIN_PASSWORD=$(get_env ADMIN_PASSWORD)"
+    echo "Immediately change the password after first login."
+  } >"$cred"
+  chmod 0600 "$cred"
+  log "Начальные учётные данные сохранены: $cred (права 0600)"
+}
+
+render_caddy() {
+  local f="$INSTALL_DIR/deployments/generated/caddy/Caddyfile" upstream=nginx:80
+  mkdir -p "$(dirname "$f")"
+  if [[ -n "$DOMAIN" && "$TLS_MODE" == auto ]]; then
+    cat >"$f" <<EOF
+{
+  admin off
+  persist_config off
+  email $ACME_EMAIL
+}
+$DOMAIN {
+  encode zstd gzip
+  header {
+    -Server
+    X-Content-Type-Options "nosniff"
+    X-Frame-Options "SAMEORIGIN"
+    Referrer-Policy "strict-origin-when-cross-origin"
+    Permissions-Policy "camera=(), microphone=(), geolocation=()"
+    Strict-Transport-Security "max-age=31536000; includeSubDomains"
+  }
+  reverse_proxy $upstream
+  log {
+    output stdout
+    format json
+  }
+}
+EOF
+  elif [[ "$TLS_MODE" == internal ]]; then
+    local addr="${DOMAIN:-localhost}"
+    cat >"$f" <<EOF
+{
+  admin off
+  persist_config off
+}
+$addr {
+  tls internal
+  encode zstd gzip
+  reverse_proxy $upstream
+}
+EOF
+    warn "Используется внутренняя CA: удалённые браузеры должны доверять корневому сертификату Caddy"
+  else
+    cat >"$f" <<EOF
+{
+  admin off
+  persist_config off
+}
+http://:80 {
+  encode zstd gzip
+  header {
+    -Server
+    X-Content-Type-Options "nosniff"
+    X-Frame-Options "SAMEORIGIN"
+    Referrer-Policy "strict-origin-when-cross-origin"
+  }
+  reverse_proxy $upstream
+}
+EOF
+    [[ -z "$DOMAIN" ]] && warn "Домен не задан: запущен HTTP по IP. Доверенный публичный сертификат требует домен и DNS"
+  fi
+  chmod 0644 "$f"
+}
+
+dry_run_validate_package() {
+  local bindir="$SOURCE_DIR/release/bin/linux/$ARCH" manifest="$SOURCE_DIR/release/bin/SHA256SUMS" item
+  local required=(trest-api trest-worker trest trestctl trest-install)
+  [[ -f "$SOURCE_DIR/install.sh" ]] || { err "В пакете отсутствует install.sh"; return 1; }
+  [[ -f "$SOURCE_DIR/deployments/docker-compose.yml" ]] || { err "В пакете отсутствует deployments/docker-compose.yml"; return 1; }
+  [[ -f "$SOURCE_DIR/Dockerfile.api" && -f "$SOURCE_DIR/Dockerfile.worker" ]] || { err "В пакете отсутствуют Dockerfile API/Worker"; return 1; }
+  [[ -d "$SOURCE_DIR/migrations" ]] || { err "В пакете отсутствуют migrations"; return 1; }
+  [[ -d "$bindir" ]] || { err "Нет prebuilt binaries для linux/$ARCH"; return 1; }
+  for item in "${required[@]}"; do
+    [[ -x "$bindir/$item" ]] || { err "Нет prebuilt binary $item для linux/$ARCH"; return 1; }
+  done
+  if [[ -f "$manifest" ]]; then
+    (cd "$SOURCE_DIR" && sha256sum -c release/bin/SHA256SUMS --ignore-missing)
+  else
+    warn "SHA256SUMS для бинарников не найден"
+  fi
+  log "DRY-RUN: пакет проверен; изменения системы и $INSTALL_DIR не выполнялись"
+  log "DRY-RUN: при реальном запуске будут установлены prerequisites/Docker, настроены secrets/TLS/firewall, применены migrations и выполнен runtime acceptance"
+}
+
+verify_prebuilt() {
+  local bindir="$INSTALL_DIR/release/bin/linux/$ARCH" manifest="$INSTALL_DIR/release/bin/SHA256SUMS"
+  [[ -d "$bindir" ]] || { err "Нет prebuilt binaries для linux/$ARCH"; return 1; }
+  local required=(trest-api trest-worker trest trestctl) item
+  for item in "${required[@]}"; do
+    [[ -x "$bindir/$item" ]] || { err "Нет prebuilt binary $item для linux/$ARCH"; return 1; }
+  done
+  if [[ -f "$manifest" ]]; then (cd "$INSTALL_DIR" && sha256sum -c release/bin/SHA256SUMS --ignore-missing); else warn "SHA256SUMS для бинарников не найден"; fi
+}
+
+compose() { (cd "$INSTALL_DIR" && docker compose --env-file .env -f deployments/docker-compose.yml "$@"); }
+validate_compose() { compose config -q; compose config --services | tee -a "$COMMAND_LOG"; }
+prepare_images() {
+  compose pull --ignore-pull-failures || warn "Не все образы удалось скачать; локальные сервисы будут собраны"
+  compose build --pull
+}
+
+start_infrastructure() {
+  local services=() candidate all
+  all="$(compose config --services)"
+  for candidate in postgres db database redis minio; do
+    grep -qx "$candidate" <<<"$all" && services+=("$candidate")
+  done
+  ((${#services[@]})) || { err "Не найдены infrastructure services в Compose"; return 1; }
+  compose up -d "${services[@]}"
+}
+
+start_stack() { compose up -d --remove-orphans; }
+
+apply_migrations() { bash "$INSTALL_DIR/scripts/installer/apply-migrations.sh" "$INSTALL_DIR"; }
+
+wait_stack() {
+  local deadline=$((SECONDS+420)) unhealthy
+  while ((SECONDS < deadline)); do
+    unhealthy="$(compose ps -a 2>&1 | grep -Ei 'Restarting|unhealthy|Exited \([1-9][0-9]*\)|Exit [1-9][0-9]*' || true)"
+    [[ -n "$unhealthy" ]] && { echo "$unhealthy"; return 1; }
+    if curl -fsS --max-time 5 "http://127.0.0.1:$HTTP_PORT/health" >/dev/null 2>&1 || curl -fsS --max-time 5 "http://127.0.0.1:$HTTP_PORT/" >/dev/null 2>&1; then return 0; fi
+    sleep 5
+  done
+  err "Сервисы не стали доступны за 420 секунд"
+  return 1
+}
+
+check_ports() {
+  ss -ltn "sport = :$HTTP_PORT" | grep -q LISTEN || { err "HTTP-порт $HTTP_PORT не слушается"; return 1; }
+  if [[ -n "$DOMAIN" && "$TLS_MODE" != off ]]; then ss -ltn "sport = :$HTTPS_PORT" | grep -q LISTEN || { err "HTTPS-порт $HTTPS_PORT не слушается"; return 1; }; fi
+}
+
+check_tls_and_web() {
+  local url headers
+  if [[ -n "$DOMAIN" && "$TLS_MODE" == auto ]]; then
+    url="https://$DOMAIN"
+    local deadline=$((SECONDS+240))
+    until curl -fsS --max-time 15 "$url/" >/dev/null 2>&1; do ((SECONDS >= deadline)) && { err "Доверенный HTTPS не подтверждён для $DOMAIN"; return 1; }; sleep 5; done
+    echo | openssl s_client -connect "$DOMAIN:$HTTPS_PORT" -servername "$DOMAIN" -verify_return_error >/dev/null 2>&1 || { err "Цепочка TLS-сертификата не проходит проверку"; return 1; }
+    headers="$(curl -fsSI --max-time 15 "$url/" || true)"
+    grep -qi '^strict-transport-security:' <<<"$headers" || warn "HSTS-заголовок не обнаружен"
+  elif [[ "$TLS_MODE" == internal ]]; then
+    curl -kfsS --max-time 15 "https://${DOMAIN:-localhost}:$HTTPS_PORT/" >/dev/null || return 1
+  else
+    curl -fsS --max-time 15 "http://127.0.0.1:$HTTP_PORT/" >/dev/null || return 1
+  fi
+}
+
+check_service_state() {
+  local state
+  state="$(compose ps -a 2>&1)"; echo "$state" | tee -a "$COMMAND_LOG"
+  grep -Ei 'Restarting|unhealthy|Exited \([1-9][0-9]*\)|Exit [1-9][0-9]*' <<<"$state" && return 1 || true
+}
+
+scan_logs() {
+  local f="$TMP_DIR/diagnostics/compose-logs.txt" hits="$TMP_DIR/diagnostics/log-errors.txt"
+  mkdir -p "$TMP_DIR/diagnostics"
+  compose logs --no-color --tail=2000 >"$f" 2>&1 || true
+  grep -Ein 'panic:|fatal:|segmentation fault|traceback \(most recent call last\)|uncaught exception|permission denied|authentication failed|database is unavailable' "$f" >"$hits" || true
+  if [[ -s "$hits" ]]; then
+    head -80 "$hits" | tee -a "$COMMAND_LOG"
+    err "В логах обнаружены критические сигнатуры; см. $hits"
+    return 1
+  fi
+  log "Критические ошибки в логах не обнаружены"
+}
+
+external_reachability() {
+  local target
+  if [[ -n "$DOMAIN" && "$TLS_MODE" == auto ]]; then target="https://$DOMAIN"; else target="http://127.0.0.1:$HTTP_PORT"; fi
+  curl -fsS --max-time 20 "$target/" >/dev/null || { err "Веб-приложение недоступно: $target"; return 1; }
+  if [[ -n "$DOMAIN" ]]; then
+    local resolved; resolved="$(getent ahostsv4 "$DOMAIN" | awk 'NR==1{print $1}' || true)"
+    [[ -n "$resolved" ]] || { err "Публичный DNS перестал разрешаться"; return 1; }
+  fi
+}
+
+
+runtime_acceptance() {
+  local runner="$INSTALL_DIR/scripts/installer/runtime-acceptance.sh"
+  [[ -x "$runner" ]] || { err "Runtime acceptance runner не найден: $runner"; return 1; }
+  bash "$runner" "$INSTALL_DIR"
+}
+
+doctor_only() {
+  detect_system
+  check_resources
+  command -v docker >/dev/null && docker compose version
+  [[ -d "$INSTALL_DIR" && -f "$INSTALL_DIR/.env" ]] || { err "Установка не найдена: $INSTALL_DIR"; return 1; }
+  validate_compose
+  check_service_state
+  check_ports
+  check_tls_and_web
+  scan_logs
+}
+
+main() {
+  echo "Trest Systems $VERSION"
+  echo "Режим: $MODE"
+  stage "Проверка прав" ensure_root
+  stage "Определение ОС и архитектуры" detect_system
+  stage "Проверка ресурсов" check_resources
+  if ((DRY_RUN)); then
+    stage "Проверка сети и DNS" check_network
+    stage "Проверка целостности установочного пакета" dry_run_validate_package
+    collect_diagnostics
+    write_report 0
+    ok "DRY-RUN завершён. Система не изменялась"
+    return 0
+  fi
+  if [[ "$MODE" == doctor ]]; then stage "Полная диагностика" doctor_only; collect_diagnostics; write_report 0; return 0; fi
+  stage "Проверка сети и DNS" check_network
+  stage "Установка системных компонентов" install_prerequisites
+  stage "Установка/обновление Docker и Compose" install_docker
+  stage "Проверка внешних портов" check_ports_free
+  stage "Проверка домена и TLS-параметров" validate_domain
+  stage "Копирование и резервирование проекта" copy_project
+  stage "Создание безопасной конфигурации" configure_environment
+  stage "Формирование reverse-proxy/TLS конфигурации" render_caddy
+  stage "Проверка prebuilt Go binaries" verify_prebuilt
+  stage "Проверка Docker Compose" validate_compose
+  stage "Настройка firewall" configure_firewall
+  stage "Загрузка образов и быстрая сборка без компиляции Go" prepare_images
+  stage "Запуск PostgreSQL/Redis/MinIO" start_infrastructure
+  stage "Применение миграций PostgreSQL" apply_migrations
+  stage "Запуск всех сервисов" start_stack
+  stage "Ожидание готовности сервисов" wait_stack
+  stage "Проверка состояния контейнеров" check_service_state
+  stage "Проверка открытых портов" check_ports
+  stage "Проверка веб-интерфейса и сертификата" check_tls_and_web
+  stage "Проверка доступности приложения" external_reachability
+  stage "Анализ логов" scan_logs
+  stage "Полный runtime acceptance: E2E, security, backup/restore" runtime_acceptance
+  stage "Финальный анализ логов после acceptance" scan_logs
+  collect_diagnostics
+  write_report 0
+  ok "Установка завершена. Ошибки: нет"
+}
+if ((EUID != 0)); then
+  if command -v sudo >/dev/null 2>&1; then
+    echo "Trest Systems: перезапуск с правами root через sudo"
+    exec sudo -E bash "$SELF" "${ORIGINAL_ARGS[@]}"
+  fi
+  echo "ERROR: нужны права root; запустите sudo ./install.sh" >&2
+  exit 1
+fi
+main "$@"

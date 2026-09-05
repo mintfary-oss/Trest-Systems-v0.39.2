@@ -1,0 +1,57 @@
+#!/usr/bin/env bash
+set -Eeuo pipefail
+IFS=$'\n\t'
+ROOT="${1:-$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/../.." && pwd)}"
+cd "$ROOT"
+[[ -f .env ]] || { echo "ERROR: .env not found" >&2; exit 1; }
+COMPOSE=(docker compose --env-file .env -f deployments/docker-compose.yml)
+mapfile -t services < <("${COMPOSE[@]}" config --services)
+DB_SERVICE=""
+for candidate in postgres db database; do
+  for s in "${services[@]}"; do [[ "$s" == "$candidate" ]] && DB_SERVICE="$s"; done
+  [[ -n "$DB_SERVICE" ]] && break
+done
+[[ -n "$DB_SERVICE" ]] || { echo "ERROR: PostgreSQL service not found" >&2; exit 1; }
+# shellcheck disable=SC1091
+set -a; source ./.env; set +a
+DB_USER="${POSTGRES_USER:-trest}"; DB_NAME="${POSTGRES_DB:-trest}"
+for _ in {1..90}; do
+  "${COMPOSE[@]}" exec -T "$DB_SERVICE" pg_isready -U "$DB_USER" -d "$DB_NAME" >/dev/null 2>&1 && break
+  sleep 2
+done
+"${COMPOSE[@]}" exec -T "$DB_SERVICE" pg_isready -U "$DB_USER" -d "$DB_NAME" >/dev/null
+"${COMPOSE[@]}" exec -T "$DB_SERVICE" psql -v ON_ERROR_STOP=1 -U "$DB_USER" -d "$DB_NAME" <<'SQL'
+CREATE TABLE IF NOT EXISTS schema_migrations (
+  version text PRIMARY KEY,
+  checksum text NOT NULL,
+  applied_at timestamptz NOT NULL DEFAULT now()
+);
+SQL
+shopt -s nullglob
+files=(migrations/*.sql)
+((${#files[@]})) || { echo "ERROR: no SQL migrations" >&2; exit 1; }
+# Existing installations or PostgreSQL initdb may already contain the schema.
+# When tracking is empty but public tables exist, create a checksum baseline instead of rerunning CREATE statements.
+tracked="$("${COMPOSE[@]}" exec -T "$DB_SERVICE" psql -At -U "$DB_USER" -d "$DB_NAME" -c "SELECT count(*) FROM schema_migrations")"
+user_tables="$("${COMPOSE[@]}" exec -T "$DB_SERVICE" psql -At -U "$DB_USER" -d "$DB_NAME" -c "SELECT count(*) FROM pg_tables WHERE schemaname='public' AND tablename<>'schema_migrations'")"
+if [[ "$tracked" == 0 && "$user_tables" =~ ^[0-9]+$ && "$user_tables" -gt 0 ]]; then
+  echo "Existing schema detected ($user_tables tables); recording migration baseline"
+  for file in "${files[@]}"; do
+    version="$(basename "$file")"; checksum="$(sha256sum "$file" | awk '{print $1}')"
+    "${COMPOSE[@]}" exec -T "$DB_SERVICE" psql -v ON_ERROR_STOP=1 -U "$DB_USER" -d "$DB_NAME" -v v="$version" -v c="$checksum" -c "INSERT INTO schema_migrations(version,checksum) VALUES (:'v',:'c') ON CONFLICT (version) DO NOTHING"
+  done
+fi
+for file in "${files[@]}"; do
+  version="$(basename "$file")"
+  [[ "$version" =~ ^[A-Za-z0-9._-]+$ ]] || { echo "ERROR: unsafe migration name: $version" >&2; exit 1; }
+  checksum="$(sha256sum "$file" | awk '{print $1}')"
+  existing="$("${COMPOSE[@]}" exec -T "$DB_SERVICE" psql -At -U "$DB_USER" -d "$DB_NAME" -v v="$version" -c "SELECT checksum FROM schema_migrations WHERE version=:'v'" 2>/dev/null || true)"
+  if [[ -n "$existing" ]]; then
+    [[ "$existing" == "$checksum" ]] || { echo "ERROR: migration checksum changed: $version" >&2; exit 1; }
+    echo "SKIP $version"
+    continue
+  fi
+  echo "APPLY $version"
+  { cat "$file"; printf "\nINSERT INTO schema_migrations(version,checksum) VALUES ('%s','%s');\n" "$version" "$checksum"; } | \
+    "${COMPOSE[@]}" exec -T "$DB_SERVICE" psql -1 -v ON_ERROR_STOP=1 -U "$DB_USER" -d "$DB_NAME"
+done

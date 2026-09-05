@@ -1,0 +1,12 @@
+{
+  "version": "v0.37-stage10-runtime14",
+  "files": 819,
+  "go_files": 163,
+  "patent_files": 359,
+  "presentation_files": 3,
+  "duplicate_paths": 0,
+  "lost_paths_from_v0.36": 0,
+  "added_paths_from_v0.36": 10,
+  "zip_integrity": true,
+  "sha256_recorded_in": "RELEASE_V0.37_SHA256.txt"
+}

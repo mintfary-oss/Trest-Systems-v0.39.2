@@ -1,0 +1,4 @@
+services:
+  edge:
+    ports:
+      - "${HTTPS_PORT:-443}:443"

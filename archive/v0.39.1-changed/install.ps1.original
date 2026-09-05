@@ -1,0 +1,66 @@
+#requires -Version 5.1
+[CmdletBinding()]
+param(
+  [string]$InstallDir = "$env:ProgramData\TrestSystems",
+  [string]$Domain = "",
+  [string]$AcmeEmail = "",
+  [ValidateSet('auto','off','internal')][string]$Tls = 'auto',
+  [switch]$Update,
+  [switch]$NonInteractive
+)
+$ErrorActionPreference = 'Stop'
+$Version = 'v0.39-stage11-automatic-installer'
+$Start = Get-Date
+$SourceDir = Split-Path -Parent $PSCommandPath
+$ReportDir = Join-Path $env:ProgramData 'TrestSystems\reports'
+New-Item -ItemType Directory -Force $ReportDir | Out-Null
+$Log = Join-Path $ReportDir ("install-{0}.log" -f (Get-Date -Format 'yyyyMMddTHHmmss'))
+$Stages = [System.Collections.Generic.List[object]]::new()
+$Errors = [System.Collections.Generic.List[string]]::new()
+function Stage([string]$Name,[scriptblock]$Body) {
+  Write-Host "=== $Name ===" -ForegroundColor Cyan
+  $s=Get-Date
+  try { & $Body; $Stages.Add([pscustomobject]@{name=$Name;status='PASS';started=$s;finished=(Get-Date)}) }
+  catch { $Errors.Add("$Name`: $($_.Exception.Message)"); $Stages.Add([pscustomobject]@{name=$Name;status='FAIL';started=$s;finished=(Get-Date)}); throw }
+}
+function RandomHex([int]$Bytes=32) { $b=New-Object byte[] $Bytes; $rng=[Security.Cryptography.RandomNumberGenerator]::Create(); try{$rng.GetBytes($b)}finally{$rng.Dispose()}; -join ($b|ForEach-Object{$_.ToString('x2')}) }
+function Write-Report([int]$ExitCode) {
+  $r=[pscustomobject]@{version=$Version;started=$Start;finished=(Get-Date);exit_code=$ExitCode;install_dir=$InstallDir;domain=$Domain;tls=$Tls;stages=$Stages;errors=$Errors}
+  $json=Join-Path $ReportDir ("install-{0}.json" -f (Get-Date -Format 'yyyyMMddTHHmmss'))
+  $r|ConvertTo-Json -Depth 8|Set-Content -Encoding UTF8 $json
+  Write-Host "Отчёт: $json"
+  if($Errors.Count -eq 0){Write-Host 'Ошибки: нет' -ForegroundColor Green}else{$Errors|ForEach-Object{Write-Error $_}}
+}
+try {
+  Stage 'Проверка прав администратора' {
+    $id=[Security.Principal.WindowsIdentity]::GetCurrent(); $p=New-Object Security.Principal.WindowsPrincipal($id)
+    if(-not $p.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)){throw 'Запустите PowerShell от имени администратора'}
+  }
+  Stage 'Проверка/установка Docker Desktop' {
+    if(-not (Get-Command docker -ErrorAction SilentlyContinue)){
+      if(-not (Get-Command winget -ErrorAction SilentlyContinue)){throw 'winget не найден; установите App Installer'}
+      winget install -e --id Docker.DockerDesktop --accept-package-agreements --accept-source-agreements --silent
+      $env:Path += ';C:\Program Files\Docker\Docker\resources\bin'
+      Start-Process 'C:\Program Files\Docker\Docker\Docker Desktop.exe'
+    }
+    $deadline=(Get-Date).AddMinutes(10); do { Start-Sleep 5; docker info *> $null } until($LASTEXITCODE -eq 0 -or (Get-Date)-gt $deadline)
+    if($LASTEXITCODE -ne 0){throw 'Docker Desktop не запустился; возможна перезагрузка Windows/включение WSL2'}
+    docker compose version
+  }
+  Stage 'Копирование проекта' {
+    $src=$SourceDir
+    New-Item -ItemType Directory -Force $InstallDir|Out-Null
+    Copy-Item "$src\*" $InstallDir -Recurse -Force
+  }
+  Stage 'Безопасная конфигурация' {
+    $envFile=Join-Path $InstallDir '.env'
+    $vars=@{POSTGRES_USER='trest';POSTGRES_DB='trest';POSTGRES_PASSWORD=(RandomHex);JWT_SECRET=(RandomHex 48);SECRET_KEY=(RandomHex 48);ADMIN_PASSWORD=(RandomHex 24);MINIO_ROOT_USER='trest';MINIO_ROOT_PASSWORD=(RandomHex);HTTP_PORT='80';HTTPS_PORT='443';TARGETARCH='amd64';COMPOSE_PROJECT_NAME='trest'}
+    $vars['DATABASE_URL']="postgres://trest:$($vars.POSTGRES_PASSWORD)@postgres:5432/trest?sslmode=disable"
+    $vars['SITE_ADDRESS']=if($Domain -and $Tls -eq 'auto'){$Domain}else{'http://:80'}
+    $vars['ACME_EMAIL']=$AcmeEmail
+    $vars.GetEnumerator()|Sort-Object Name|ForEach-Object{"$($_.Name)=$($_.Value)"}|Set-Content -Encoding ascii $envFile
+  }
+  Stage 'Docker Compose запуск' { Push-Location $InstallDir; try { docker compose --env-file .env -f deployments/docker-compose.yml config -q; docker compose --env-file .env -f deployments/docker-compose.yml up -d --build } finally { Pop-Location } }
+  Stage 'Проверка сервисов и логов' { Push-Location $InstallDir; try { docker compose --env-file .env -f deployments/docker-compose.yml ps -a; docker compose --env-file .env -f deployments/docker-compose.yml logs --no-color --tail 500|Set-Content $Log } finally { Pop-Location } }
+  Write-Report 0
+} catch { $Errors.Add($_.Exception.Message); Write-Report 1; exit 1 }

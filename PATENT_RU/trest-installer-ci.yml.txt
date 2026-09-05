@@ -1,0 +1,103 @@
+# CI for trest-installer, the orchestrator/installer under trest-installer/.
+# Runs unit/integration tests (git, diagnostics, report, orchestrator,
+# appflow packages) and a smoke test that the built binary actually serves
+# its web dashboard, per AGENTS.md's testing plan.
+name: Trest Installer CI
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "trest-installer/**"
+      - ".github/workflows/trest-installer-ci.yml"
+  pull_request:
+    paths:
+      - "trest-installer/**"
+      - ".github/workflows/trest-installer-ci.yml"
+
+defaults:
+  run:
+    working-directory: trest-installer
+
+jobs:
+  test:
+    name: Unit and integration tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: trest-installer/go.mod
+
+      - name: Build
+        run: go build ./...
+
+      - name: Vet
+        run: go vet ./...
+
+      - name: Format check
+        run: |
+          unformatted="$(gofmt -l .)"
+          if [ -n "$unformatted" ]; then
+            echo "The following files are not gofmt-formatted:" >&2
+            echo "$unformatted" >&2
+            exit 1
+          fi
+
+      - name: Test
+        run: go test ./... -race -cover
+
+  smoke:
+    name: Smoke test (binary serves dashboard)
+    runs-on: ubuntu-latest
+    needs: test
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: trest-installer/go.mod
+
+      - name: Build binary
+        run: go build -o trest-installer ./cmd/trest
+
+      - name: Set up a throwaway git remote and minimal config
+        run: |
+          git init -q -b main /tmp/smoke-repo
+          git -C /tmp/smoke-repo -c user.email=ci@example.com -c user.name=CI commit -q --allow-empty -m init
+
+          cat > /tmp/smoke-config.yaml <<'EOF'
+          repo_url: /tmp/smoke-repo
+          branch: main
+          audit_port: 9091
+          projects:
+            - name: smoke
+              type: go-build
+              path: .
+              build_cmd: ["true"]
+          EOF
+
+      - name: Start the dashboard
+        run: |
+          ./trest-installer audit \
+            --config /tmp/smoke-config.yaml \
+            --repo-dir /tmp/smoke-checkout \
+            --interval 0 &
+          echo $! > /tmp/audit.pid
+
+      - name: Wait for http://localhost:9091/report to return 200
+        run: |
+          for i in $(seq 1 30); do
+            if curl -sf -o /dev/null -w '%{http_code}' http://localhost:9091/report | grep -q 200; then
+              echo "dashboard is up"
+              exit 0
+            fi
+            sleep 1
+          done
+          echo "dashboard did not become ready in time" >&2
+          exit 1
+
+      - name: Stop the dashboard
+        if: always()
+        run: kill "$(cat /tmp/audit.pid)" 2>/dev/null || true

@@ -1,0 +1,25 @@
+{
+    admin off
+    persist_config off
+    email {$ACME_EMAIL}
+}
+
+{$SITE_ADDRESS:http://:80} {
+    encode zstd gzip
+
+    header {
+        -Server
+        X-Content-Type-Options "nosniff"
+        X-Frame-Options "SAMEORIGIN"
+        Referrer-Policy "strict-origin-when-cross-origin"
+        Permissions-Policy "camera=(), microphone=(), geolocation=()"
+        Strict-Transport-Security "max-age=31536000; includeSubDomains"
+    }
+
+    reverse_proxy {$UPSTREAM:nginx:80}
+
+    log {
+        output stdout
+        format json
+    }
+}

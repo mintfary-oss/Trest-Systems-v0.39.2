@@ -1,0 +1,4027 @@
+{
+  "version": "v0.35-stage11-security-release-gate",
+  "stage": "11",
+  "status": "engineering-mvp-pre-beta",
+  "production_ready": false,
+  "file_count": 803,
+  "go_file_count": 155,
+  "patent_file_count": 358,
+  "presentation_file_count": 3,
+  "files": [
+    {
+      "path": ".dockerignore",
+      "sha256": "d9d1f6e264cd836ad844133eb6d68a0b54d475990cebd9740abd14782776af8f",
+      "size": 110
+    },
+    {
+      "path": ".env.example",
+      "sha256": "8353765ddc7544b7ebb019e3adaa6629932d8a141572770ebb64b3da3f43ca4f",
+      "size": 634
+    },
+    {
+      "path": ".github/pull_request_template.md",
+      "sha256": "857b6281ad9cf79166d0096844f5cee1ab60f11a16f11fefb13cb96a27a594b0",
+      "size": 266
+    },
+    {
+      "path": ".github/workflows/ci.yml",
+      "sha256": "b846d69434f83a7e4e47c26e24e3d8a8f518ed057ceaa8c0440435943a3516dd",
+      "size": 436
+    },
+    {
+      "path": ".github/workflows/release.yml",
+      "sha256": "b11e098356c7404775140c02129ac4577a79d4153bd3db06b28c16f017c85802",
+      "size": 2189
+    },
+    {
+      "path": ".github/workflows/trest-installer-ci.yml",
+      "sha256": "2ed21da47d66daa1e9070e0da108fc988dcf1213c871cfa5d66f5f8b807b68f3",
+      "size": 2824
+    },
+    {
+      "path": ".gitignore",
+      "sha256": "7cf359ccf68ad92b73138ccfc1fe0df09c549f45a56f219917cd577f3af6aa3e",
+      "size": 153
+    },
+    {
+      "path": "AGENTS.md",
+      "sha256": "bbd12b4d288088f10ec591989b7373dad16216e19284a43fa63ca22f4d82270c",
+      "size": 16800
+    },
+    {
+      "path": "AI_CONVERSATION_LOG.md",
+      "sha256": "c61f5c48b1625987a98c5ae1e4b85a6bac0d531b5bd9be990269cb6506cd10b6",
+      "size": 21081
+    },
+    {
+      "path": "ARCHITECTURE.md",
+      "sha256": "eab14ac92dc673912cb2818837f4f7378e9df6e756f1ee5843f6cfbc393ff855",
+      "size": 1333
+    },
+    {
+      "path": "ARCHIVE_MANIFEST.json",
+      "sha256": "13a236712a9cc9cda8d6836fea1829c3cd13ba9967da60084275d2106d7b0447",
+      "size": 110781
+    },
+    {
+      "path": "ARCHIVE_MANIFEST_RU.json",
+      "sha256": "78d665b0ef0db0728961532e4eafc5d43fb8e375ca539a84ccddeaf475be1aa4",
+      "size": 105957
+    },
+    {
+      "path": "CHANGELOG_AI.md",
+      "sha256": "e9f83a02ef52ef134125b61b8b81ed032054dce53791a229ea61143a055f05d4",
+      "size": 922
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "sha256": "c4a6d8341c4ca65d1046948ba4c5484e52bb764dfacf11042d7eb82c5716dea2",
+      "size": 561
+    },
+    {
+      "path": "CURRENT_STATE.md",
+      "sha256": "8b005b3a5b400b5c905d5f828963a6f1ecd698ef48c2cf51828115bce8b3313f",
+      "size": 7864
+    },
+    {
+      "path": "DECISIONS.md",
+      "sha256": "03d6b976cec701358239e3120412b2f923be80ceb8d5e852bb4e691ba3707564",
+      "size": 1156
+    },
+    {
+      "path": "DEVELOPMENT_PLAN.md",
+      "sha256": "5ad4d1d33e3a72591e7bf488e2174e8847f7b29a4237cbaf30801c052419ac0d",
+      "size": 8627
+    },
+    {
+      "path": "DOMAIN_MODEL.md",
+      "sha256": "a3fee0f1c097e7c3c824a4a21f7d2dc4e788945ff0d1a3ec0d711f82bf717579",
+      "size": 4514
+    },
+    {
+      "path": "Dockerfile",
+      "sha256": "7c8261113ac376e44d83d02ca2d788817d3aafc007cda75b50f0669ff233dd29",
+      "size": 325
+    },
+    {
+      "path": "Dockerfile.api",
+      "sha256": "e16d1639638a8c6674e1edaa95a699bf3564cd03698045b9d38e230c4e938756",
+      "size": 368
+    },
+    {
+      "path": "Dockerfile.worker",
+      "sha256": "7357a9ac7d6093dda2ec2ea646937a22d8ab162180db5ab40ea9e6601b79d8e0",
+      "size": 351
+    },
+    {
+      "path": "LICENSE",
+      "sha256": "2c7a9815b8660c7154ccead2037451165466f1f08c60f5ae11da4128f0c50feb",
+      "size": 750
+    },
+    {
+      "path": "MERGE_MANIFEST.json",
+      "sha256": "514400a01ff1e351523be26b74bffe4c0b1211f71c68b45608e5ad8197c78765",
+      "size": 40572
+    },
+    {
+      "path": "Makefile",
+      "sha256": "b27e627bc63d46ac32dc180910317c16ef0389e449ea48750e5ec50477b531ea",
+      "size": 272
+    },
+    {
+      "path": "NEXT_STEPS.md",
+      "sha256": "24b423c9322d756071567ec8061ef1de24d352ce8f1bf39c4b303a72b30ec987",
+      "size": 5216
+    },
+    {
+      "path": "NOTICE",
+      "sha256": "1c551b0007267fbfca4f4a06cd566a582e54a1e0d89863251fc6cb995432dfe5",
+      "size": 478
+    },
+    {
+      "path": "OPERATIONS.md",
+      "sha256": "4dd9d74ca1130e521653ca7f8f75ace9efec722d41d3f3173390c148d7e4c85d",
+      "size": 656
+    },
+    {
+      "path": "PATENT_RU/.env.example.txt",
+      "sha256": "8353765ddc7544b7ebb019e3adaa6629932d8a141572770ebb64b3da3f43ca4f",
+      "size": 634
+    },
+    {
+      "path": "PATENT_RU/0001-monorepo.md.txt",
+      "sha256": "e5e75b700a0408a79fd12440009173f4aea835af16eac574d68cfc2277d15f61",
+      "size": 242
+    },
+    {
+      "path": "PATENT_RU/0001-monorepo.txt",
+      "sha256": "e5e75b700a0408a79fd12440009173f4aea835af16eac574d68cfc2277d15f61",
+      "size": 242
+    },
+    {
+      "path": "PATENT_RU/0001_foundation.sql.txt",
+      "sha256": "1167ab5a0bfd7eb5e34d174387678352c2a49679a876c07a1d425f5f49f4924c",
+      "size": 1938
+    },
+    {
+      "path": "PATENT_RU/0002_auth.sql.txt",
+      "sha256": "9bfb12121db883a9d86080f91b36918556ea2b5e72d2db4bc4f70f7c8b9d568e",
+      "size": 272
+    },
+    {
+      "path": "PATENT_RU/0003_marketplace.sql.txt",
+      "sha256": "d266e7ce8e659f3a0462c8c27f5e379de2b7ba0773f1fae2d9ebc47431a06a75",
+      "size": 2145
+    },
+    {
+      "path": "PATENT_RU/0004_identity.sql.txt",
+      "sha256": "15caace1f4580ac986d1dc01e422ffd08255154c715c242ac2e0351318b90f50",
+      "size": 2734
+    },
+    {
+      "path": "PATENT_RU/0005_constructor.sql.txt",
+      "sha256": "9d2b0279cf6f67897e38a9997f16d4c98b06db87ced07798b161960ab9b3dd96",
+      "size": 5479
+    },
+    {
+      "path": "PATENT_RU/0006_estimates_orders.sql.txt",
+      "sha256": "9dfa1cda0833761db4f63976881924254c841191edb3e20f39b61357cf13d06d",
+      "size": 3047
+    },
+    {
+      "path": "PATENT_RU/0007_contractors.sql.txt",
+      "sha256": "ce49906bb410f1764720fc357ba5e38eec7055862e60131f7a61c57467d40b95",
+      "size": 1985
+    },
+    {
+      "path": "PATENT_RU/0008_suppliers.sql.txt",
+      "sha256": "1f6b67b227d7d38c18850af4d67eb5b247894dae7eb6fe211e509cb1c15ccbda",
+      "size": 3513
+    },
+    {
+      "path": "PATENT_RU/0009_ratings.sql.txt",
+      "sha256": "a6b1bf3b8a703efc9ad173550b6643767549eeb5b6a9ae3c738eef5edbcc3a6f",
+      "size": 4687
+    },
+    {
+      "path": "PATENT_RU/0010_ai.sql.txt",
+      "sha256": "171dbdc0f93037bb8ca07ed9ca269454d020dccfc79cdc4dc6faf980d9c9a107",
+      "size": 6183
+    },
+    {
+      "path": "PATENT_RU/0011_bim.sql.txt",
+      "sha256": "ef0e1f9967a4ac11960940b26aff8f1b8db008a68316f42b02d46b2a6f8f3897",
+      "size": 3854
+    },
+    {
+      "path": "PATENT_RU/00_ARCHIVE_UPDATE_RULE_RU.txt",
+      "sha256": "a3711bb842d77e6769f458b630ed5b33f56fba18d10b91a639c263b9575087c1",
+      "size": 1314
+    },
+    {
+      "path": "PATENT_RU/00_README_RU.txt",
+      "sha256": "1612ed5aba1089417bc9db711036b08852d05f518875b033bda1f995501a630a",
+      "size": 1426
+    },
+    {
+      "path": "PATENT_RU/00_STAGE10_RUNTIME2.txt",
+      "sha256": "a41f0c927df7c76967ef0748387d339a7bfb0753e9aeeb1008f676173dd11227",
+      "size": 169
+    },
+    {
+      "path": "PATENT_RU/01_NAVIGATION_RU.txt",
+      "sha256": "ef38d1c9b5754a1391d2cf0bc98ed6d439ec7e6379fabed7ddaecf594009ddcc",
+      "size": 2691
+    },
+    {
+      "path": "PATENT_RU/AGENTS.md.txt",
+      "sha256": "bbd12b4d288088f10ec591989b7373dad16216e19284a43fa63ca22f4d82270c",
+      "size": 16800
+    },
+    {
+      "path": "PATENT_RU/AGENTS.txt",
+      "sha256": "bbd12b4d288088f10ec591989b7373dad16216e19284a43fa63ca22f4d82270c",
+      "size": 16800
+    },
+    {
+      "path": "PATENT_RU/AI_CONVERSATION_LOG.md.txt",
+      "sha256": "986507bb5bec9826e995bfbd0080133533d544ade976643e296e5be3e19c4ef5",
+      "size": 18010
+    },
+    {
+      "path": "PATENT_RU/AI_CONVERSATION_LOG.txt",
+      "sha256": "87b0d3fe8567da8a016a5a439ad769f017258c968f7d9c594ec6086c8e5c2030",
+      "size": 19032
+    },
+    {
+      "path": "PATENT_RU/ARCHITECTURE.md.txt",
+      "sha256": "eab14ac92dc673912cb2818837f4f7378e9df6e756f1ee5843f6cfbc393ff855",
+      "size": 1333
+    },
+    {
+      "path": "PATENT_RU/ARCHITECTURE.txt",
+      "sha256": "eab14ac92dc673912cb2818837f4f7378e9df6e756f1ee5843f6cfbc393ff855",
+      "size": 1333
+    },
+    {
+      "path": "PATENT_RU/ARCHIVE_MANIFEST.json.txt",
+      "sha256": "70eaa6e27c89a814ef1ed2d12b3480c74218f770d2a98b9e0e0699c8f0c94f45",
+      "size": 500
+    },
+    {
+      "path": "PATENT_RU/ARCHIVE_MANIFEST.txt",
+      "sha256": "70eaa6e27c89a814ef1ed2d12b3480c74218f770d2a98b9e0e0699c8f0c94f45",
+      "size": 500
+    },
+    {
+      "path": "PATENT_RU/ARCHIVE_MANIFEST_RU.json",
+      "sha256": "7b00a7fec67dd5ee98a24a4c11d4ddd8605819e666c056da361c6f67c78d0f82",
+      "size": 103013
+    },
+    {
+      "path": "PATENT_RU/AUTHORSHIP_AND_OWNERSHIP_DECLARATION_RU.md.txt",
+      "sha256": "42be6a73e60792b3829120b2671b900f18e8da25f1ccb57b2ebcbeae92f7da89",
+      "size": 14840
+    },
+    {
+      "path": "PATENT_RU/AUTHORSHIP_AND_OWNERSHIP_DECLARATION_RU.txt",
+      "sha256": "42be6a73e60792b3829120b2671b900f18e8da25f1ccb57b2ebcbeae92f7da89",
+      "size": 14840
+    },
+    {
+      "path": "PATENT_RU/AdminLayout.js.txt",
+      "sha256": "6c9228e22206134b10706e4f82695dfd2fa87e71026e4c39282099047c1beeca",
+      "size": 2744
+    },
+    {
+      "path": "PATENT_RU/BACKUP_RESTORE_RU.txt",
+      "sha256": "3b700f04164aad0ede9d37f6990394ce1245767a1e0e93bb9339a9eff09306fa",
+      "size": 852
+    },
+    {
+      "path": "PATENT_RU/CHANGELOG_AI.md.txt",
+      "sha256": "e9f83a02ef52ef134125b61b8b81ed032054dce53791a229ea61143a055f05d4",
+      "size": 922
+    },
+    {
+      "path": "PATENT_RU/CHANGELOG_AI.txt",
+      "sha256": "e9f83a02ef52ef134125b61b8b81ed032054dce53791a229ea61143a055f05d4",
+      "size": 922
+    },
+    {
+      "path": "PATENT_RU/CI_RELEASE_TECHNICAL_NOTE_RU.txt",
+      "sha256": "161a9f7f58e45f9515a31d47cf50b991699e8300502c4d5a429299211a5384d4",
+      "size": 581
+    },
+    {
+      "path": "PATENT_RU/CODE_LINE_COUNT.json.txt",
+      "sha256": "fb92973d6424d5ad9f6d2a0ccd82842788ab4d1b5ae041e3aa93c8ba1bd07558",
+      "size": 5300
+    },
+    {
+      "path": "PATENT_RU/CODE_LINE_COUNT.txt",
+      "sha256": "a5939beb5d8e000a965b00870786f70c98b86999f2a50a46cd869b697561c2d7",
+      "size": 197
+    },
+    {
+      "path": "PATENT_RU/CONTRIBUTING.md.txt",
+      "sha256": "c4a6d8341c4ca65d1046948ba4c5484e52bb764dfacf11042d7eb82c5716dea2",
+      "size": 561
+    },
+    {
+      "path": "PATENT_RU/CONTRIBUTING.txt",
+      "sha256": "c4a6d8341c4ca65d1046948ba4c5484e52bb764dfacf11042d7eb82c5716dea2",
+      "size": 561
+    },
+    {
+      "path": "PATENT_RU/CONVERSATION.md.txt",
+      "sha256": "78528d2bec013b587d398dcb95eaff481be3299b0117eb12b1db4aee1707cf07",
+      "size": 8781
+    },
+    {
+      "path": "PATENT_RU/CONVERSATION.txt",
+      "sha256": "78528d2bec013b587d398dcb95eaff481be3299b0117eb12b1db4aee1707cf07",
+      "size": 8781
+    },
+    {
+      "path": "PATENT_RU/CURRENT_STATE.md.txt",
+      "sha256": "3794c96588f93e21ff0a4a824ba9d150a5d8cb8c906133344103d1c12e10b50b",
+      "size": 5246
+    },
+    {
+      "path": "PATENT_RU/CURRENT_STATE.txt",
+      "sha256": "d87d9ca638689b9b4dd508c461c51d4c2a7a0f3f433ff89fa56aaa8cd8f6538d",
+      "size": 6178
+    },
+    {
+      "path": "PATENT_RU/DECISIONS.md.txt",
+      "sha256": "03d6b976cec701358239e3120412b2f923be80ceb8d5e852bb4e691ba3707564",
+      "size": 1156
+    },
+    {
+      "path": "PATENT_RU/DECISIONS.txt",
+      "sha256": "03d6b976cec701358239e3120412b2f923be80ceb8d5e852bb4e691ba3707564",
+      "size": 1156
+    },
+    {
+      "path": "PATENT_RU/DEVELOPMENT_PLAN.md.txt",
+      "sha256": "723a7339fd04549ff4bfed570a24650a32c76d8f2cc6ba06a12f86c7d180110b",
+      "size": 8287
+    },
+    {
+      "path": "PATENT_RU/DEVELOPMENT_PLAN.txt",
+      "sha256": "45046956f6918f7dfc6aacb3d0f3be05c4f4cf2f2d621a71f8c7927dcc4c1c3c",
+      "size": 8152
+    },
+    {
+      "path": "PATENT_RU/DOMAIN_MODEL.md.txt",
+      "sha256": "c1a359ca8a01436f01c51ce6ef126e689b0fcdd0afdf80f592e20df3c891a782",
+      "size": 4117
+    },
+    {
+      "path": "PATENT_RU/DOMAIN_MODEL.txt",
+      "sha256": "c1a359ca8a01436f01c51ce6ef126e689b0fcdd0afdf80f592e20df3c891a782",
+      "size": 4117
+    },
+    {
+      "path": "PATENT_RU/DONE.md.txt",
+      "sha256": "1b08caa75931f944fcb4345371b5f05ab56e7c8b4b8e919418a19418ad9c039d",
+      "size": 6776
+    },
+    {
+      "path": "PATENT_RU/DONE.txt",
+      "sha256": "1b08caa75931f944fcb4345371b5f05ab56e7c8b4b8e919418a19418ad9c039d",
+      "size": 6776
+    },
+    {
+      "path": "PATENT_RU/Dockerfile.txt",
+      "sha256": "68c1b4f818b69dd04e6ac7e8ae0aaaf504c80bc67b2de2b1ab5c6094e22513bf",
+      "size": 326
+    },
+    {
+      "path": "PATENT_RU/E2E_SMOKE_RU.txt",
+      "sha256": "a83af2c8b0ade083752241c395d0ee3ad5190ca1cd18300706a27df26b68cf29",
+      "size": 703
+    },
+    {
+      "path": "PATENT_RU/ERRORS.md.txt",
+      "sha256": "01e9415b496d7c27c2fa4d5ff886967982ef8813996e43ac670ec38f3d0d324e",
+      "size": 8462
+    },
+    {
+      "path": "PATENT_RU/ERRORS.txt",
+      "sha256": "01e9415b496d7c27c2fa4d5ff886967982ef8813996e43ac670ec38f3d0d324e",
+      "size": 8462
+    },
+    {
+      "path": "PATENT_RU/FAST_INSTALL_RU.md.txt",
+      "sha256": "fb93afc870c7ed2ac7a2bc8c2477eb037d66d69865f54d3d4fe5e364dfa66cb6",
+      "size": 1668
+    },
+    {
+      "path": "PATENT_RU/FAST_INSTALL_RU.txt",
+      "sha256": "fb93afc870c7ed2ac7a2bc8c2477eb037d66d69865f54d3d4fe5e364dfa66cb6",
+      "size": 1668
+    },
+    {
+      "path": "PATENT_RU/INDEX.txt",
+      "sha256": "3f34b40ff9d984dec57b61542bad2efb8b98a1135617003eef28934be6053e6a",
+      "size": 15419
+    },
+    {
+      "path": "PATENT_RU/INVESTOR_BRIEF_RU.md.txt",
+      "sha256": "077c65690bdb3bb4684572e4ca5be906603fb4025bfb9eb221943cf8b7b55206",
+      "size": 5943
+    },
+    {
+      "path": "PATENT_RU/INVESTOR_BRIEF_RU.txt",
+      "sha256": "077c65690bdb3bb4684572e4ca5be906603fb4025bfb9eb221943cf8b7b55206",
+      "size": 5943
+    },
+    {
+      "path": "PATENT_RU/IP_PROVENANCE_AND_RIGHTS_RU.md.txt",
+      "sha256": "44ff1544661c066256574106e30a303b8522da04cb9d29ae2cb54823d64ab62b",
+      "size": 3511
+    },
+    {
+      "path": "PATENT_RU/IP_PROVENANCE_AND_RIGHTS_RU.txt",
+      "sha256": "44ff1544661c066256574106e30a303b8522da04cb9d29ae2cb54823d64ab62b",
+      "size": 3511
+    },
+    {
+      "path": "PATENT_RU/LEGAL_EVIDENCE_CHECKLIST_RU.md.txt",
+      "sha256": "8939215d3cc411fe9a3cf48caf24d7e39ebc9f116b6b0cb0203d9203c536fcb2",
+      "size": 2768
+    },
+    {
+      "path": "PATENT_RU/LEGAL_EVIDENCE_CHECKLIST_RU.txt",
+      "sha256": "8939215d3cc411fe9a3cf48caf24d7e39ebc9f116b6b0cb0203d9203c536fcb2",
+      "size": 2768
+    },
+    {
+      "path": "PATENT_RU/LICENSE.txt",
+      "sha256": "7dca5bb05c6c5311e7dde31a7d4eccad7ce18d18d9a5b8fd6052a57725478da7",
+      "size": 1070
+    },
+    {
+      "path": "PATENT_RU/Layout.js.txt",
+      "sha256": "493884519aac7d1c6e9e8be0cb90ef4efdcb85c9139973627c2d477db5d034e0",
+      "size": 1804
+    },
+    {
+      "path": "PATENT_RU/MERGE_MANIFEST.json.txt",
+      "sha256": "514400a01ff1e351523be26b74bffe4c0b1211f71c68b45608e5ad8197c78765",
+      "size": 40572
+    },
+    {
+      "path": "PATENT_RU/MERGE_MANIFEST.txt",
+      "sha256": "514400a01ff1e351523be26b74bffe4c0b1211f71c68b45608e5ad8197c78765",
+      "size": 40572
+    },
+    {
+      "path": "PATENT_RU/Makefile.txt",
+      "sha256": "b27e627bc63d46ac32dc180910317c16ef0389e449ea48750e5ec50477b531ea",
+      "size": 272
+    },
+    {
+      "path": "PATENT_RU/NEXT_STEPS.md.txt",
+      "sha256": "a95949740a0cc50aaf58707dd3ed573f1d4e054741fb1ad53d293321e95e348d",
+      "size": 3094
+    },
+    {
+      "path": "PATENT_RU/NEXT_STEPS.txt",
+      "sha256": "0182190164d071dcc65fd5dc68705b3a7aadc64adcc23cb0fadc271ac0d04672",
+      "size": 3887
+    },
+    {
+      "path": "PATENT_RU/NOTICE.txt",
+      "sha256": "1c551b0007267fbfca4f4a06cd566a582e54a1e0d89863251fc6cb995432dfe5",
+      "size": 478
+    },
+    {
+      "path": "PATENT_RU/OPERATIONS.md.txt",
+      "sha256": "4dd9d74ca1130e521653ca7f8f75ace9efec722d41d3f3173390c148d7e4c85d",
+      "size": 656
+    },
+    {
+      "path": "PATENT_RU/OPERATIONS.txt",
+      "sha256": "4dd9d74ca1130e521653ca7f8f75ace9efec722d41d3f3173390c148d7e4c85d",
+      "size": 656
+    },
+    {
+      "path": "PATENT_RU/PATENT_CLAIMS_DRAFT_RU.md.txt",
+      "sha256": "995003ff6e5992d182fa72b49b83b9e4fcc6d7e06075bc24d5c31fe6b9ce322d",
+      "size": 6032
+    },
+    {
+      "path": "PATENT_RU/PATENT_CLAIMS_DRAFT_RU.txt",
+      "sha256": "995003ff6e5992d182fa72b49b83b9e4fcc6d7e06075bc24d5c31fe6b9ce322d",
+      "size": 6032
+    },
+    {
+      "path": "PATENT_RU/PATENT_DOSSIER_RU.md.txt",
+      "sha256": "9403ed689e7aa2ebec6dc784de037358229ed98de928df9add1bd54673127d19",
+      "size": 44440
+    },
+    {
+      "path": "PATENT_RU/PATENT_DOSSIER_RU.txt",
+      "sha256": "9403ed689e7aa2ebec6dc784de037358229ed98de928df9add1bd54673127d19",
+      "size": 44440
+    },
+    {
+      "path": "PATENT_RU/PATENT_DRAWINGS_SPEC_RU.md.txt",
+      "sha256": "1f52eb33a685f2ffba5200d66d813b3762031de86228419ac5e5424f8894a2b8",
+      "size": 1453
+    },
+    {
+      "path": "PATENT_RU/PATENT_DRAWINGS_SPEC_RU.txt",
+      "sha256": "1f52eb33a685f2ffba5200d66d813b3762031de86228419ac5e5424f8894a2b8",
+      "size": 1453
+    },
+    {
+      "path": "PATENT_RU/PATENT_PACKAGE_INDEX_RU.md.txt",
+      "sha256": "c34727a1303577b98899f25438c1c05f493a9fd117acad303cc240ecfc906fb2",
+      "size": 1192
+    },
+    {
+      "path": "PATENT_RU/PATENT_PACKAGE_INDEX_RU.txt",
+      "sha256": "c34727a1303577b98899f25438c1c05f493a9fd117acad303cc240ecfc906fb2",
+      "size": 1192
+    },
+    {
+      "path": "PATENT_RU/PATENT_PRIOR_ART_CHECKLIST_RU.md.txt",
+      "sha256": "3466af36572b0b2af6871b56cda5dd182d4ea0ae80e7691bc5661dbc272bca1b",
+      "size": 2543
+    },
+    {
+      "path": "PATENT_RU/PATENT_PRIOR_ART_CHECKLIST_RU.txt",
+      "sha256": "3466af36572b0b2af6871b56cda5dd182d4ea0ae80e7691bc5661dbc272bca1b",
+      "size": 2543
+    },
+    {
+      "path": "PATENT_RU/PATENT_RELEASE_SHA256_MANIFEST.json.txt",
+      "sha256": "a7be231f99ce4efcb22c2b4869b09511b1e819de45123563cb0829bff560f152",
+      "size": 51912
+    },
+    {
+      "path": "PATENT_RU/PATENT_RELEASE_SHA256_MANIFEST.txt",
+      "sha256": "a7be231f99ce4efcb22c2b4869b09511b1e819de45123563cb0829bff560f152",
+      "size": 51912
+    },
+    {
+      "path": "PATENT_RU/PLAN.md.txt",
+      "sha256": "79e105e6c090565fa9eeba8fa2457cb69551b37d25fc6258f74e4e3b6bda15b6",
+      "size": 9393
+    },
+    {
+      "path": "PATENT_RU/PLAN.txt",
+      "sha256": "79e105e6c090565fa9eeba8fa2457cb69551b37d25fc6258f74e4e3b6bda15b6",
+      "size": 9393
+    },
+    {
+      "path": "PATENT_RU/PREBUILT_RELEASE.md.txt",
+      "sha256": "7889635bed6b1d402ffc046378460c9298d5b024e8d4a99dc89ef048de9637d4",
+      "size": 1997
+    },
+    {
+      "path": "PATENT_RU/PREBUILT_RELEASE.txt",
+      "sha256": "7889635bed6b1d402ffc046378460c9298d5b024e8d4a99dc89ef048de9637d4",
+      "size": 1997
+    },
+    {
+      "path": "PATENT_RU/PROJECT_CONTEXT.md.txt",
+      "sha256": "de7c04e2cff75f613098d43ae67e0e5fb03217083f025d4d93e0edab8599728a",
+      "size": 2024
+    },
+    {
+      "path": "PATENT_RU/PROJECT_CONTEXT.txt",
+      "sha256": "de7c04e2cff75f613098d43ae67e0e5fb03217083f025d4d93e0edab8599728a",
+      "size": 2024
+    },
+    {
+      "path": "PATENT_RU/PROJECT_HANDOFF.md.txt",
+      "sha256": "bcf494c7a4a03f856b040d72f0848e2a3750fe28ae9d60fb98269df5d9455399",
+      "size": 3360
+    },
+    {
+      "path": "PATENT_RU/PROJECT_HANDOFF.txt",
+      "sha256": "35dce94834b2ebc64ecdd3638c11da6472e5732c6b21977e4071cc43757b0fce",
+      "size": 3838
+    },
+    {
+      "path": "PATENT_RU/PROJECT_READINESS_REPORT_RU.md.txt",
+      "sha256": "1c2aaa32bf19a468a00ee77a1d23a5a41ce2e2e54df6e19663c82fedb25798ea",
+      "size": 2852
+    },
+    {
+      "path": "PATENT_RU/PROVENANCE_MANIFEST.md.txt",
+      "sha256": "dad5e79d43640dafd0472eb2eca0cdc66a73d4bb5bcc64a93ce6377155d7abc0",
+      "size": 1982
+    },
+    {
+      "path": "PATENT_RU/PROVENANCE_MANIFEST.txt",
+      "sha256": "dad5e79d43640dafd0472eb2eca0cdc66a73d4bb5bcc64a93ce6377155d7abc0",
+      "size": 1982
+    },
+    {
+      "path": "PATENT_RU/ProductCard.js.txt",
+      "sha256": "51ebf500be7410837fd5c7a8926fc48fa3a711a876f23bcb19b7d79217b163b4",
+      "size": 1107
+    },
+    {
+      "path": "PATENT_RU/READINESS_REPORT_RU.md.txt",
+      "sha256": "42c01a36a04f5f5622d858ff2093ee347008e97f46bb3b92d8ed9fc09f67b784",
+      "size": 9862
+    },
+    {
+      "path": "PATENT_RU/READINESS_REPORT_RU.txt",
+      "sha256": "42c01a36a04f5f5622d858ff2093ee347008e97f46bb3b92d8ed9fc09f67b784",
+      "size": 9862
+    },
+    {
+      "path": "PATENT_RU/README.md.txt",
+      "sha256": "c22a47b4bbcfaeabbc10b81c42dba563dcedd421ec50504e132121929c7d282c",
+      "size": 456
+    },
+    {
+      "path": "PATENT_RU/README.txt",
+      "sha256": "879421fc1f1e72a8a2256030c91cab8defcacd850d8d0da7f11d9df19ca7920e",
+      "size": 142
+    },
+    {
+      "path": "PATENT_RU/RELEASE_LEGAL_MANIFEST.json.txt",
+      "sha256": "163582ad1f2d3247f1739df17174a911d09a4f5b8d04a2a86254bc6a02546d43",
+      "size": 26408
+    },
+    {
+      "path": "PATENT_RU/RELEASE_LEGAL_MANIFEST.txt",
+      "sha256": "7efa2b0118927665bef80c984339702c6e6b6288cfc8e4f1506649a27b98f243",
+      "size": 923
+    },
+    {
+      "path": "PATENT_RU/RELEASE_MANIFEST_TEMPLATE.json.txt",
+      "sha256": "48e673c115d4318e16dac80dd847e159c55b594cc3f7bf762add739ac4b00f26",
+      "size": 342
+    },
+    {
+      "path": "PATENT_RU/RELEASE_MANIFEST_TEMPLATE.txt",
+      "sha256": "48e673c115d4318e16dac80dd847e159c55b594cc3f7bf762add739ac4b00f26",
+      "size": 342
+    },
+    {
+      "path": "PATENT_RU/REPORT.md.txt",
+      "sha256": "b9b149d7a27ead161f8ddcbb397d9e8e02c6e5eed90e86db17c95f258bf6daf9",
+      "size": 11424
+    },
+    {
+      "path": "PATENT_RU/REPORT.txt",
+      "sha256": "b9b149d7a27ead161f8ddcbb397d9e8e02c6e5eed90e86db17c95f258bf6daf9",
+      "size": 11424
+    },
+    {
+      "path": "PATENT_RU/RUNTIME11_MINIO_S3_IFC_IMPORT.txt",
+      "sha256": "4d02c7e3447b436793f9a17f69822ee2cb4eee0867a6a9ff540832641426ce54",
+      "size": 167
+    },
+    {
+      "path": "PATENT_RU/RUNTIME13_GEOMETRY_TECHNICAL_NOTE_RU.txt",
+      "sha256": "c8a815807926b63ff6c99f29d06762221afe089a67b12f43909384661435fd4b",
+      "size": 1122
+    },
+    {
+      "path": "PATENT_RU/Runtime12_MESH_PICKING_TECHNICAL_NOTE.txt",
+      "sha256": "4f106b8330bb5cbc35adc7e00f5f99604b33008966f3d5076f5ff8f119a302b1",
+      "size": 1093
+    },
+    {
+      "path": "PATENT_RU/SECURITY.md.txt",
+      "sha256": "8599ab4779cf458d401adcf0590b5d0e764cf9b8f8b548c4f18137d3ecfa7443",
+      "size": 766
+    },
+    {
+      "path": "PATENT_RU/SECURITY.txt",
+      "sha256": "8599ab4779cf458d401adcf0590b5d0e764cf9b8f8b548c4f18137d3ecfa7443",
+      "size": 766
+    },
+    {
+      "path": "PATENT_RU/SECURITY_BASELINE_RU.txt",
+      "sha256": "96e89ac2233d20d8aa24adb01c0c232b3bb3a7a13fe751956172d897b0cf17f1",
+      "size": 1527
+    },
+    {
+      "path": "PATENT_RU/SOURCE_AND_AI_METHOD_RU.md.txt",
+      "sha256": "ad9a26ae0405aafc99dd75ff3971e7d10603d0e5b8a0293b70f9244f02c3021c",
+      "size": 2917
+    },
+    {
+      "path": "PATENT_RU/SOURCE_AND_AI_METHOD_RU.txt",
+      "sha256": "ad9a26ae0405aafc99dd75ff3971e7d10603d0e5b8a0293b70f9244f02c3021c",
+      "size": 2917
+    },
+    {
+      "path": "PATENT_RU/STAGE10_BIM_REPORT.md.txt",
+      "sha256": "14f6c8a8c0e8da50f814092180273530805c2cad941c4380ced0a76aba458ef8",
+      "size": 1445
+    },
+    {
+      "path": "PATENT_RU/STAGE10_BIM_REPORT.txt",
+      "sha256": "14f6c8a8c0e8da50f814092180273530805c2cad941c4380ced0a76aba458ef8",
+      "size": 1445
+    },
+    {
+      "path": "PATENT_RU/STAGE10_RUNTIME13_REPORT.md.txt",
+      "sha256": "ad83342269107a2ac7afbbb7694a2261f48a0c3682b95bbca5d043322539d99f",
+      "size": 2191
+    },
+    {
+      "path": "PATENT_RU/STAGE11_FULL_E2E_REPORT_RU.txt",
+      "sha256": "3e58ae520ce69428a03d52b7a8a83f5e470a5034bb80741eac5a7977dc7368a0",
+      "size": 1256
+    },
+    {
+      "path": "PATENT_RU/STAGE11_INSTALLER_HARDENING_REPORT_RU.md.txt",
+      "sha256": "69dfab1ea9e366cd85aef737d31b00cd6b1e9d663a5568159eaaaa189a810512",
+      "size": 1184
+    },
+    {
+      "path": "PATENT_RU/STAGE11_SECURITY_BACKUP_REPORT_RU.txt",
+      "sha256": "8ce11058b2dd3cffc6e2db38465ad957802992f287cfd908cc41d071da1940d1",
+      "size": 1211
+    },
+    {
+      "path": "PATENT_RU/STAGE11_SECURITY_RELEASE_GATE_REPORT_RU.md.txt",
+      "sha256": "74547d91892b4fb78ed21f20afe44a3aaac476d3a6ffe26e1bdaed8586c359b5",
+      "size": 1117
+    },
+    {
+      "path": "PATENT_RU/STAGE11_SECURITY_RELEASE_GATE_RU.md.txt",
+      "sha256": "26d7626c04d421469168f90e80df1195178dcf530b3195d469271ece113cbfed",
+      "size": 1264
+    },
+    {
+      "path": "PATENT_RU/STAGE2_TEST_REPORT.md.txt",
+      "sha256": "ccb2fdcb11fbba7cba8a488b48ae708a403e7e5e2505dc5625551d708d61743e",
+      "size": 1489
+    },
+    {
+      "path": "PATENT_RU/STAGE2_TEST_REPORT.txt",
+      "sha256": "ccb2fdcb11fbba7cba8a488b48ae708a403e7e5e2505dc5625551d708d61743e",
+      "size": 1489
+    },
+    {
+      "path": "PATENT_RU/STAGE3_IDENTITY_REPORT.md.txt",
+      "sha256": "17dba3074aa38e0e3af5e8973b35a74f4f352d95186ebe6dc351d507acaf53e3",
+      "size": 431
+    },
+    {
+      "path": "PATENT_RU/STAGE3_IDENTITY_REPORT.txt",
+      "sha256": "17dba3074aa38e0e3af5e8973b35a74f4f352d95186ebe6dc351d507acaf53e3",
+      "size": 431
+    },
+    {
+      "path": "PATENT_RU/STAGE4_CONSTRUCTOR_REPORT.md.txt",
+      "sha256": "62064d8482fc2cdc1399286ba64d31f692a52d801e9be376b48d680dc3987521",
+      "size": 1613
+    },
+    {
+      "path": "PATENT_RU/STAGE4_CONSTRUCTOR_REPORT.txt",
+      "sha256": "62064d8482fc2cdc1399286ba64d31f692a52d801e9be376b48d680dc3987521",
+      "size": 1613
+    },
+    {
+      "path": "PATENT_RU/STAGE5_ESTIMATES_ORDERS_REPORT.md.txt",
+      "sha256": "2a1d41ea9df60e8e71a27ea4ba24bd07cbc0ced9c6761a47d59cf69b308efe62",
+      "size": 849
+    },
+    {
+      "path": "PATENT_RU/STAGE5_ESTIMATES_ORDERS_REPORT.txt",
+      "sha256": "2a1d41ea9df60e8e71a27ea4ba24bd07cbc0ced9c6761a47d59cf69b308efe62",
+      "size": 849
+    },
+    {
+      "path": "PATENT_RU/STAGE6_CONTRACTORS_REPORT.md.txt",
+      "sha256": "a3a278fe341af5a366dba6e950c2e17c2148b0b52ac729b144dd47998f25f166",
+      "size": 882
+    },
+    {
+      "path": "PATENT_RU/STAGE6_CONTRACTORS_REPORT.txt",
+      "sha256": "a3a278fe341af5a366dba6e950c2e17c2148b0b52ac729b144dd47998f25f166",
+      "size": 882
+    },
+    {
+      "path": "PATENT_RU/STAGE7_SUPPLIERS_REPORT.md.txt",
+      "sha256": "33c3304f336fdd796a655ce209c0b4587523397aa8b6da623c43869a0c574899",
+      "size": 1513
+    },
+    {
+      "path": "PATENT_RU/STAGE7_SUPPLIERS_REPORT.txt",
+      "sha256": "33c3304f336fdd796a655ce209c0b4587523397aa8b6da623c43869a0c574899",
+      "size": 1513
+    },
+    {
+      "path": "PATENT_RU/STAGE8_RATINGS_REPORT.md.txt",
+      "sha256": "e744b366bf26a5c5d16ba8d4f493bee9ea666605b9034516bd4341a838a69c3a",
+      "size": 1724
+    },
+    {
+      "path": "PATENT_RU/STAGE8_RATINGS_REPORT.txt",
+      "sha256": "e744b366bf26a5c5d16ba8d4f493bee9ea666605b9034516bd4341a838a69c3a",
+      "size": 1724
+    },
+    {
+      "path": "PATENT_RU/STAGE9_AI_TRAINING_REPORT.md.txt",
+      "sha256": "d1327be5376d780821b2a33ee7a3a674056f6a929e4b82a197a45bbdfd9891d0",
+      "size": 1628
+    },
+    {
+      "path": "PATENT_RU/STAGE9_AI_TRAINING_REPORT.txt",
+      "sha256": "d1327be5376d780821b2a33ee7a3a674056f6a929e4b82a197a45bbdfd9891d0",
+      "size": 1628
+    },
+    {
+      "path": "PATENT_RU/TASKS.md.txt",
+      "sha256": "35cfceeed3f6aa325f4f4a3a82f44ed1b64659afb2aeee9c53aba92a0015b072",
+      "size": 3216
+    },
+    {
+      "path": "PATENT_RU/TASKS.txt",
+      "sha256": "35cfceeed3f6aa325f4f4a3a82f44ed1b64659afb2aeee9c53aba92a0015b072",
+      "size": 3216
+    },
+    {
+      "path": "PATENT_RU/TECHNICAL.md.txt",
+      "sha256": "69338f48ffe72e2018d72a33bc104fb4d7b46be6f4d7317c74c3f244c668fa4e",
+      "size": 15447
+    },
+    {
+      "path": "PATENT_RU/TECHNICAL.txt",
+      "sha256": "69338f48ffe72e2018d72a33bc104fb4d7b46be6f4d7317c74c3f244c668fa4e",
+      "size": 15447
+    },
+    {
+      "path": "PATENT_RU/THIRD_PARTY_LICENSES.md.txt",
+      "sha256": "5cc5bc4985e600052459f1b41f2589edba99affc72b0a7e0a05338819bed974c",
+      "size": 1841
+    },
+    {
+      "path": "PATENT_RU/THIRD_PARTY_LICENSES.txt",
+      "sha256": "5cc5bc4985e600052459f1b41f2589edba99affc72b0a7e0a05338819bed974c",
+      "size": 1841
+    },
+    {
+      "path": "PATENT_RU/TODO.md.txt",
+      "sha256": "b06da55930993c53f028fd8be16a27c179d02d037bbebcf1b5cc14dcb6008e0e",
+      "size": 2312
+    },
+    {
+      "path": "PATENT_RU/TODO.txt",
+      "sha256": "b06da55930993c53f028fd8be16a27c179d02d037bbebcf1b5cc14dcb6008e0e",
+      "size": 2312
+    },
+    {
+      "path": "PATENT_RU/UNIFIED_ARCHITECTURE.md.txt",
+      "sha256": "74f5a02ee1b1c92c7984fe254c33ed5e365bfbc844d2eb27ed9db9fc62541793",
+      "size": 2102
+    },
+    {
+      "path": "PATENT_RU/UNIFIED_ARCHITECTURE.txt",
+      "sha256": "74f5a02ee1b1c92c7984fe254c33ed5e365bfbc844d2eb27ed9db9fc62541793",
+      "size": 2102
+    },
+    {
+      "path": "PATENT_RU/USERGUIDE.md.txt",
+      "sha256": "35e799e0b358972c5b672fb2e65397221b1e74c4ee6badf6cf864739b7334db0",
+      "size": 9678
+    },
+    {
+      "path": "PATENT_RU/USERGUIDE.txt",
+      "sha256": "35e799e0b358972c5b672fb2e65397221b1e74c4ee6badf6cf864739b7334db0",
+      "size": 9678
+    },
+    {
+      "path": "PATENT_RU/USER_GUIDE_RU.md.txt",
+      "sha256": "c6e56bd0f2240abb5d8d396dc9fc0fc7d80bb70decff4c7afd3a03d7812cbf8d",
+      "size": 5926
+    },
+    {
+      "path": "PATENT_RU/USER_GUIDE_RU.txt",
+      "sha256": "c6e56bd0f2240abb5d8d396dc9fc0fc7d80bb70decff4c7afd3a03d7812cbf8d",
+      "size": 5926
+    },
+    {
+      "path": "PATENT_RU/[slug].js.txt",
+      "sha256": "292634ff0479fda01dad4b2223abe8ee5c67ac06413b8fb2fb1d66e0a535c02e",
+      "size": 3316
+    },
+    {
+      "path": "PATENT_RU/__init__.py.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size": 0
+    },
+    {
+      "path": "PATENT_RU/_app.js.txt",
+      "sha256": "f8eebbcbd7dcf0f8a73132ee69d6bdfa569ec8529316d0b4501eaccc9facee0d",
+      "size": 949
+    },
+    {
+      "path": "PATENT_RU/admin.css.txt",
+      "sha256": "2db643008311dd165f9628ac84b7d43c6ec0b9088c9cef2572244d37a10a474a",
+      "size": 5089
+    },
+    {
+      "path": "PATENT_RU/admin_auth.py.txt",
+      "sha256": "a2bac1c8ff08101c975e1a4eae962f22a5f4d0303af67d1bc51af6f3f5659860",
+      "size": 1667
+    },
+    {
+      "path": "PATENT_RU/agent.go.txt",
+      "sha256": "749023b2e47189d8512dcf7941160a0369e57f57a92be7b4d421d5e978482df9",
+      "size": 318
+    },
+    {
+      "path": "PATENT_RU/agent_test.go.txt",
+      "sha256": "5376a6033d2e6324b0f7c03b7200af049c26c52b190e2b588a7916fbd5719c37",
+      "size": 474
+    },
+    {
+      "path": "PATENT_RU/ai-agents.md.txt",
+      "sha256": "74ad01952f00cef45e46c19b8a51d25366abcf1a0c4788d8648b35845a831c75",
+      "size": 286
+    },
+    {
+      "path": "PATENT_RU/ai-agents.txt",
+      "sha256": "74ad01952f00cef45e46c19b8a51d25366abcf1a0c4788d8648b35845a831c75",
+      "size": 286
+    },
+    {
+      "path": "PATENT_RU/ai_stage9.go.txt",
+      "sha256": "330d95c91272d30f5c8ce59eb9e82419825506e8a2ec5e15081965cf79420dd2",
+      "size": 5292
+    },
+    {
+      "path": "PATENT_RU/api-foundation.md.txt",
+      "sha256": "2036d71831fb7f079a720e406df8be75091f06cb01a8c0ba285b60f84b23d310",
+      "size": 439
+    },
+    {
+      "path": "PATENT_RU/api-foundation.txt",
+      "sha256": "2036d71831fb7f079a720e406df8be75091f06cb01a8c0ba285b60f84b23d310",
+      "size": 439
+    },
+    {
+      "path": "PATENT_RU/api.go.txt",
+      "sha256": "54b75419cabf06621f135678d216b69d9f1662b03b9f8bc6d7c025cbede802cf",
+      "size": 1029
+    },
+    {
+      "path": "PATENT_RU/api.js.txt",
+      "sha256": "13acd807d1a01c2379d46faaa5d15d24b91ae652b6ffc9a76ddfc1ee22a2488a",
+      "size": 905
+    },
+    {
+      "path": "PATENT_RU/app.py.txt",
+      "sha256": "4c9010cf3ac7e213d8dff682d000e55f66f04aab801c9eafbfa7c64322515879",
+      "size": 8478
+    },
+    {
+      "path": "PATENT_RU/appflow.go.txt",
+      "sha256": "75bf1b4c73fb7625c924c9efbccefa7e51666a22e38ea86f762fa1e7220bcda8",
+      "size": 3396
+    },
+    {
+      "path": "PATENT_RU/appflow_test.go.txt",
+      "sha256": "66c5cee1e0282e27404281163deeeb4805e4c65cf690a0378f355d569edd5519",
+      "size": 4117
+    },
+    {
+      "path": "PATENT_RU/audit.go.txt",
+      "sha256": "39721c02016ef9560cf931d28e76625eaa37f31aa43b50dea6fc85aa05c28d59",
+      "size": 3208
+    },
+    {
+      "path": "PATENT_RU/auth.go.txt",
+      "sha256": "0e79e2c53ce76758b53a8c2d1b18f31e32a24a9363ee515606ac008f5a16442f",
+      "size": 3720
+    },
+    {
+      "path": "PATENT_RU/auth.py.txt",
+      "sha256": "ea23e785c9aa23f45e6c177f2e7123a5147ca54935c3c3fd0f37f09eff4bd20a",
+      "size": 295
+    },
+    {
+      "path": "PATENT_RU/backup.sh.txt",
+      "sha256": "4edc780d1763ac5b8aa7802d0f8242b5033ac579befd2a7c70b1be192f5e4d5a",
+      "size": 1125
+    },
+    {
+      "path": "PATENT_RU/bim_stage10.go.txt",
+      "sha256": "7e91dc892e6e8761d8b05ad5f110a92dc7f561e3186f280f197bb19e7782d242",
+      "size": 5875
+    },
+    {
+      "path": "PATENT_RU/build-installer.yml.txt",
+      "sha256": "fa194931c7e86e91d387df62295936146e6512c7344dc858deadf3c5522c454a",
+      "size": 2786
+    },
+    {
+      "path": "PATENT_RU/build-release.sh.txt",
+      "sha256": "024ca2977bf9400296bd7aea44791f9a0e9914915e40631f6c4638415307734e",
+      "size": 903
+    },
+    {
+      "path": "PATENT_RU/categories.js.txt",
+      "sha256": "69ff17dedce2b56bc2ddf95fd6df3c3f7367e9a04dc432dede20a3e3d616e9b5",
+      "size": 4273
+    },
+    {
+      "path": "PATENT_RU/categories.py.txt",
+      "sha256": "42fab34c88553e71afbeca53a0b0f7d6b3ceb9f20a46adbd3d4c0bb34cfce07a",
+      "size": 2258
+    },
+    {
+      "path": "PATENT_RU/ci.yml.txt",
+      "sha256": "9828ee3997e4482997e79cd55cb912c869684c4a08c3a1dda59ce3f13262946e",
+      "size": 434
+    },
+    {
+      "path": "PATENT_RU/cli.go.txt",
+      "sha256": "58a532bc3da52cc7d32aa1a0d05de4730620fb9e1a12a34f71930327c95e59fb",
+      "size": 2414
+    },
+    {
+      "path": "PATENT_RU/config.go.txt",
+      "sha256": "709f02ce10bdfca5c09ec34ebe179d35819cecdb10406b6ca0ab3862f3824ce4",
+      "size": 4118
+    },
+    {
+      "path": "PATENT_RU/config.py.txt",
+      "sha256": "5fc4e3d5e3783f47fd183939e7e0224c64674a0473ea0583543552273e87b55a",
+      "size": 593
+    },
+    {
+      "path": "PATENT_RU/config.yaml.txt",
+      "sha256": "f21242e3e8f9747c0f2e50bcbf75380ad9ae52c1ffc9e4a53166499e7fa5e718",
+      "size": 1036
+    },
+    {
+      "path": "PATENT_RU/config_test.go.txt",
+      "sha256": "12d3883bb940ab73787a938b6f955395285b366bfced76ca7c7bbe2d625fcc7f",
+      "size": 2268
+    },
+    {
+      "path": "PATENT_RU/constructor.go.txt",
+      "sha256": "3594fdbc8f4aa0cdbb924ce863d31c58112b12208f60b62599da0c1568a0cbc2",
+      "size": 10197
+    },
+    {
+      "path": "PATENT_RU/constructor_test.go.txt",
+      "sha256": "5b35e3333c9594cb7f9bf3830e50a46de67689b8278a6a2444cb27842c70b659",
+      "size": 993
+    },
+    {
+      "path": "PATENT_RU/contractor-flow.md.txt",
+      "sha256": "5eea19d8477e8025cc91a2d547572ac7d489ac021a0184eee4434be6d6c57346",
+      "size": 296
+    },
+    {
+      "path": "PATENT_RU/contractor-flow.txt",
+      "sha256": "5eea19d8477e8025cc91a2d547572ac7d489ac021a0184eee4434be6d6c57346",
+      "size": 296
+    },
+    {
+      "path": "PATENT_RU/contractors_stage6.go.txt",
+      "sha256": "95367c78ff79d4a0b6e9a7e085025f8a7ac2b3792f25b85203dd3ec77743a8bd",
+      "size": 7788
+    },
+    {
+      "path": "PATENT_RU/court_tosno.yaml.txt",
+      "sha256": "cc6e1cb3682e82b933606f6238f5df8275febde187edbeced30506006b360256",
+      "size": 8727
+    },
+    {
+      "path": "PATENT_RU/current/ARCHIVE_PRESERVATION_RULE_RU.txt",
+      "sha256": "04012754d7c608d986d62cf964cac176bd8d46c64cf20686a11b077cd8887221",
+      "size": 1169
+    },
+    {
+      "path": "PATENT_RU/current/NEXT_BIM_RUNTIME_RU.txt",
+      "sha256": "61268f7feff4cc6a6de13c26c1e9f0c6b3e7eade8312dcb0c299bd3fca3ae568",
+      "size": 725
+    },
+    {
+      "path": "PATENT_RU/current/STAGE10_RUNTIME10_REPORT.txt",
+      "sha256": "afdf7695b03399efd68f4ca73acc7fa188fecccfe45a8719831ef7ab776453aa",
+      "size": 1741
+    },
+    {
+      "path": "PATENT_RU/current/STAGE10_RUNTIME9_CLAIMS_ADDENDUM_RU.txt",
+      "sha256": "7f7fcc25c4eb834edf377a36ad7cfc42ef1a4c3a6d1f1e34c2136a94831d1534",
+      "size": 1497
+    },
+    {
+      "path": "PATENT_RU/current/STAGE10_RUNTIME9_PATENT_TECHNICAL_ADDENDUM_RU.txt",
+      "sha256": "cc5cad5fd9f6412e444796d7c5e58713947a3ab88692362a643de1caa7b23e9a",
+      "size": 2769
+    },
+    {
+      "path": "PATENT_RU/current/internal__bim__converter__obj.go.txt",
+      "sha256": "b1f3d15ba5231d9458d7ab3ba502ac5288bc3c08c06b43aa87d45ac31ca6a84c",
+      "size": 5363
+    },
+    {
+      "path": "PATENT_RU/current/internal__bim__converter__obj_test.go.txt",
+      "sha256": "05575a9f357988968c2bcaa3513fb0bfae37913579e00fbfaa5d20f64e169d9c",
+      "size": 355
+    },
+    {
+      "path": "PATENT_RU/current/internal__bim__queue__processor.go.txt",
+      "sha256": "a14cdeda571f2f4327496505f1537e35e945325697ef3cd6f2e15c2ad227440a",
+      "size": 2401
+    },
+    {
+      "path": "PATENT_RU/current/internal__bim__queue__processor_test.go.txt",
+      "sha256": "ba3ebca4a3913179ad39446156015cdff473e298188bde2b6d869417a1d59e94",
+      "size": 141
+    },
+    {
+      "path": "PATENT_RU/current/web__bim-viewer__index.html.txt",
+      "sha256": "43b9eef6f103689cbfe83039ca5c5914948992246250dab8edb7f5ffb2902997",
+      "size": 981
+    },
+    {
+      "path": "PATENT_RU/current_cmd__worker__main.go.txt",
+      "sha256": "350de71324e471c6b6be194f8ab54f97c87853a7019554d33fd2ebad37333229",
+      "size": 1234
+    },
+    {
+      "path": "PATENT_RU/current_docs__bim__NEXT_BIM_RUNTIME_RU.md.txt",
+      "sha256": "61268f7feff4cc6a6de13c26c1e9f0c6b3e7eade8312dcb0c299bd3fca3ae568",
+      "size": 725
+    },
+    {
+      "path": "PATENT_RU/current_docs__bim__STAGE10_BIM_REPORT.md.txt",
+      "sha256": "dbe0df777156f3a652b653c682a6831152aa3999e503a06d5c91040a929a356c",
+      "size": 3098
+    },
+    {
+      "path": "PATENT_RU/current_internal__bim__converter__obj.go.txt",
+      "sha256": "b1f3d15ba5231d9458d7ab3ba502ac5288bc3c08c06b43aa87d45ac31ca6a84c",
+      "size": 5363
+    },
+    {
+      "path": "PATENT_RU/current_internal__bim__converter__obj_test.go.txt",
+      "sha256": "05575a9f357988968c2bcaa3513fb0bfae37913579e00fbfaa5d20f64e169d9c",
+      "size": 355
+    },
+    {
+      "path": "PATENT_RU/current_internal__bim__queue__processor.go.txt",
+      "sha256": "a14cdeda571f2f4327496505f1537e35e945325697ef3cd6f2e15c2ad227440a",
+      "size": 2401
+    },
+    {
+      "path": "PATENT_RU/current_internal__bim__queue__processor_test.go.txt",
+      "sha256": "ba3ebca4a3913179ad39446156015cdff473e298188bde2b6d869417a1d59e94",
+      "size": 141
+    },
+    {
+      "path": "PATENT_RU/customer-flow.md.txt",
+      "sha256": "24f01d6429809754fc41c3ba1b5ecbc694989247c122d5f19d23496c65d6673e",
+      "size": 314
+    },
+    {
+      "path": "PATENT_RU/customer-flow.txt",
+      "sha256": "24f01d6429809754fc41c3ba1b5ecbc694989247c122d5f19d23496c65d6673e",
+      "size": 314
+    },
+    {
+      "path": "PATENT_RU/dashboard.js.txt",
+      "sha256": "1b6f02ffbd468a71905d1ce65324642cd985da4ac687e5ae9d228a824b5fc7fa",
+      "size": 2425
+    },
+    {
+      "path": "PATENT_RU/database.py.txt",
+      "sha256": "ab3997bb93f32020b253f21f4f4250ad8d7a52d239736947b6b4db8c34438801",
+      "size": 535
+    },
+    {
+      "path": "PATENT_RU/db.go.txt",
+      "sha256": "8c1bf4d9631a7c7f6187096c7574de621d40d2b374b51747ebb47b830b7b3c9a",
+      "size": 989
+    },
+    {
+      "path": "PATENT_RU/deploy.sh.txt",
+      "sha256": "48b3e044ee7dfdb605e7a45519948c485a54bfa604a61d89188f31883d1f683b",
+      "size": 3688
+    },
+    {
+      "path": "PATENT_RU/diagnostics.go.txt",
+      "sha256": "2788fbe84c15ae62a7b1f76d4aa6c32e374afaa9c42081746a97a65e8bf32374",
+      "size": 4394
+    },
+    {
+      "path": "PATENT_RU/diagnostics_test.go.txt",
+      "sha256": "c288963d28a0ee4d2b363aea1de3f01479f34efb5093b6cdfa52578c7b8aaed5",
+      "size": 3678
+    },
+    {
+      "path": "PATENT_RU/docker-compose.gpu.yml.txt",
+      "sha256": "59b215e430f02a0faaa52250d09dc3e32d8fabde8e67ce80b69e1b2111fd4c1a",
+      "size": 4490
+    },
+    {
+      "path": "PATENT_RU/docker-compose.yml.txt",
+      "sha256": "0e3465a76f881b3489912c68bc60b1e1262d4ccf4b4fe1c79dfd47582f9e9f53",
+      "size": 2763
+    },
+    {
+      "path": "PATENT_RU/docs/install/CI_RELEASE_RU.txt",
+      "sha256": "84558392aa03e25c285be8ac0ce1a0091360ab5bf7d59164c528266cc4eebdfb",
+      "size": 1070
+    },
+    {
+      "path": "PATENT_RU/docs/install/RELEASE_FILE_MANIFEST.json",
+      "sha256": "48d37571873182e3291430844c277b1cb96f812662cfbd045a6017cfcb2d8e75",
+      "size": 81878
+    },
+    {
+      "path": "PATENT_RU/docs__bim__STAGE10_BIM_REPORT.md.txt",
+      "sha256": "16ee99375b739ea7dce4eca3aee5afd39bcc18496514285ecb5fcd98eb9f7ec3",
+      "size": 2405
+    },
+    {
+      "path": "PATENT_RU/docs__bim__STAGE10_RUNTIME11_REPORT.md.txt",
+      "sha256": "8743b191f030d3940dbb8feb983b5942bc12d288a266c15f17d4253a5035abb8",
+      "size": 1478
+    },
+    {
+      "path": "PATENT_RU/docs__bim__STAGE10_RUNTIME2_REPORT.md.txt",
+      "sha256": "c48dd9dbc8eaa0ef9e556ba5b01fb14e5f5577f467d50dad7633bbaab157192c",
+      "size": 1211
+    },
+    {
+      "path": "PATENT_RU/docs__legal__PATENT_DOSSIER_RU.md.txt",
+      "sha256": "fb64530e6bb5b72c0004b5d847a7cf0b2bf97fb941a4f2626cb4801b1bd3767b",
+      "size": 44992
+    },
+    {
+      "path": "PATENT_RU/doctor.go.txt",
+      "sha256": "fd87db96ad13b6c62cd6f64910ad25dfb8d93539f6d822f6f7c54d4c51a48b00",
+      "size": 1499
+    },
+    {
+      "path": "PATENT_RU/document.go.txt",
+      "sha256": "8950b33b119faf923d7cc2062bdf4efcc7bfe62f33dc81fb5861651e867aed51",
+      "size": 16367
+    },
+    {
+      "path": "PATENT_RU/download-models.sh.txt",
+      "sha256": "ed37fdbebc9d25646daa7b1f099462d249ffd6b2e16cd555c2bc6bfabd5e2d70",
+      "size": 4789
+    },
+    {
+      "path": "PATENT_RU/eligibility.go.txt",
+      "sha256": "59e30b5ba7756e2f4c2b90f18c83c4f8fde51d2f390af418403a316a590f6734",
+      "size": 865
+    },
+    {
+      "path": "PATENT_RU/eligibility_test.go.txt",
+      "sha256": "015d9fde8446f35a5bbe3af694bccac95fad696d6af823d205cdddd32827df55",
+      "size": 1069
+    },
+    {
+      "path": "PATENT_RU/errorlog.go.txt",
+      "sha256": "f82eac8e42473f6b7dcd541c0bdaa04c4c528c0228bc80a50e0a678f2415b64d",
+      "size": 945
+    },
+    {
+      "path": "PATENT_RU/errorlog_test.go.txt",
+      "sha256": "4e79bf0adc6a2eda860daac2837f7ade07f19453378ec284435fd01c2bdfd02f",
+      "size": 1567
+    },
+    {
+      "path": "PATENT_RU/facade.go.txt",
+      "sha256": "f2be77cbbdcb5d7f207edab14db9ab1adbbcc4b62eaded4d1d6951fe6f88a33e",
+      "size": 8147
+    },
+    {
+      "path": "PATENT_RU/floorplan.go.txt",
+      "sha256": "99b316602171ef535386605bf1761734aa9d6324ee32cdecfe802a4bd135e2ec",
+      "size": 10050
+    },
+    {
+      "path": "PATENT_RU/frame.go.txt",
+      "sha256": "24abb64bd3f95b955289500353cf7a2d0faf811e3bedaaf96c7617abf89a0b10",
+      "size": 10043
+    },
+    {
+      "path": "PATENT_RU/generator.go.txt",
+      "sha256": "c70d34464307a4f0a49f34d8eae746fb6a14449b0c26601bd3e8daa9bfff8596",
+      "size": 12119
+    },
+    {
+      "path": "PATENT_RU/gitrepo.go.txt",
+      "sha256": "4a85ea3613751c2cb99f3fac752c43fb6894fa9fed4fdc964b75c61da842a87e",
+      "size": 3091
+    },
+    {
+      "path": "PATENT_RU/gitrepo_test.go.txt",
+      "sha256": "455cc124e73ca0a30ea45d1612bb40816103f97cb6d5d2d510e5f3d480737c67",
+      "size": 2895
+    },
+    {
+      "path": "PATENT_RU/globals.css.txt",
+      "sha256": "c0161ad9a829f0dafb8f4dc96bbb587720790196b527df058bae89fc23727233",
+      "size": 12810
+    },
+    {
+      "path": "PATENT_RU/go.mod.txt",
+      "sha256": "3ec9c7796a12aefd06a40b8eed0e39f7d86641acee5702e19a2b4fb02af94e1e",
+      "size": 95
+    },
+    {
+      "path": "PATENT_RU/go.sum.txt",
+      "sha256": "e42794fa9b56301ad073de55cac1dea683b320ed951454d8709ffc7156088dd2",
+      "size": 360
+    },
+    {
+      "path": "PATENT_RU/helpers.go.txt",
+      "sha256": "0997a9b6ecb0ce1a8f3e70a35932534e4fc190c67f45413a0c06c9f2f3c5d0d7",
+      "size": 11982
+    },
+    {
+      "path": "PATENT_RU/i18n.py.txt",
+      "sha256": "0e691a2e55d647ed3688e3d1fbd3d1fda42c74961ff59a6d85a01ccc1190c841",
+      "size": 18559
+    },
+    {
+      "path": "PATENT_RU/identity.go.txt",
+      "sha256": "af983ea97ffcca7a153523ba14c15a5191a45f98b298aa31f916ec7e1339fd5d",
+      "size": 3601
+    },
+    {
+      "path": "PATENT_RU/identity_test.go.txt",
+      "sha256": "bad915e5c7b9fe75ef3ee0295c8f23b78f45513532a006e1da94ee4755b50058",
+      "size": 801
+    },
+    {
+      "path": "PATENT_RU/index.html.txt",
+      "sha256": "3ceb4bd5a51d5f573c100d77c39d86a905b81e8ce378f6cf0657763c82986a48",
+      "size": 16373
+    },
+    {
+      "path": "PATENT_RU/index.js.txt",
+      "sha256": "6ccf066c1fb658225cffdaf1b6c4febe66d50208f2c7edd4a64e7dcee67b52d3",
+      "size": 4668
+    },
+    {
+      "path": "PATENT_RU/init_db.sh.txt",
+      "sha256": "5285b2e534e57c4d7568bfff426b580546744efe53ad18ab23223c296ff48c2e",
+      "size": 545
+    },
+    {
+      "path": "PATENT_RU/install-gpu-monitor.sh.txt",
+      "sha256": "b9ace76be98e04ba90e4ee8cd007731f5d85156a55e7d06d5650c024d5c53545",
+      "size": 2853
+    },
+    {
+      "path": "PATENT_RU/install.bat.txt",
+      "sha256": "d8af6701db92b91d773c2e80aacc826fa9898c49e82e3649bcfad5ae199b46e6",
+      "size": 5465
+    },
+    {
+      "path": "PATENT_RU/install.go.txt",
+      "sha256": "2af8b26141b303e19a8261bac9ce799ad59a1eafc1fea4ee0bb5fc3f7ad5ae75",
+      "size": 4298
+    },
+    {
+      "path": "PATENT_RU/install.sh.txt",
+      "sha256": "ada5c680a92910d9a61e03541986b2dc75cf1d5ecd2cd69a6fcd1628744cb5c9",
+      "size": 16139
+    },
+    {
+      "path": "PATENT_RU/internal__api__bim_runtime11.go.txt",
+      "sha256": "f2bb3288ec3b98cda1cb7ff2062ad1a27bb2bfd2f563f7f02d8fb8d4b7aa0f48",
+      "size": 4603
+    },
+    {
+      "path": "PATENT_RU/internal__api__bim_stage10_extended.go.txt",
+      "sha256": "65314691ef7df02ac46f5ad5669738e20be55184a7e70d80179eea580d17359a",
+      "size": 8181
+    },
+    {
+      "path": "PATENT_RU/internal__api__server.go.txt",
+      "sha256": "b79be29cfd9ef2423dd3b6cc53aee7dd41a9b189a70f8e12d101c7341632088c",
+      "size": 9330
+    },
+    {
+      "path": "PATENT_RU/internal__bim__converter__dxf.go.txt",
+      "sha256": "b936262a9574d27553d12745613c3fbc081e45fe7c83af58921614500da4637d",
+      "size": 1710
+    },
+    {
+      "path": "PATENT_RU/internal__bim__converter__dxf_test.go.txt",
+      "sha256": "bce602a0d53e7018ecac4cd919e2d70f4d0ab26206953393b98cbc5642de3624",
+      "size": 319
+    },
+    {
+      "path": "PATENT_RU/internal__bim__converter__glb.go.txt",
+      "sha256": "fa8d63e6d81027c2e6505f8d55e6f9a79047b4fbf48906fb7324c53e9b612c47",
+      "size": 2575
+    },
+    {
+      "path": "PATENT_RU/internal__bim__converter__glb_test.go.txt",
+      "sha256": "8da282103fd400436e03ce4d599e0d327ab30cf759ffbb6f518e85bc4ac8915d",
+      "size": 307
+    },
+    {
+      "path": "PATENT_RU/internal__bim__diff__mesh.go.txt",
+      "sha256": "07bd7386392a53fe700974c1383b29903bc8374758401f39d665c2e412dd8445",
+      "size": 1148
+    },
+    {
+      "path": "PATENT_RU/internal__bim__diff__mesh_test.go.txt",
+      "sha256": "5bf2e60240fe0f81e57a10109ee99b96386e22609bd8c0c74447172db2169347",
+      "size": 291
+    },
+    {
+      "path": "PATENT_RU/internal__bim__model.go.txt",
+      "sha256": "ef0753623c214589d2d215cc7b637f5735fca2245847084448d5782939d2110d",
+      "size": 1859
+    },
+    {
+      "path": "PATENT_RU/internal__bim__model_test.go.txt",
+      "sha256": "dd16622ae07922d0f4ed188b0753d9c57e0f7c83ed29995d0907636e6c685ca2",
+      "size": 1155
+    },
+    {
+      "path": "PATENT_RU/internal__bim__storage__s3.go.txt",
+      "sha256": "25a16ead55c25cb131e5d025877637762550d665e9114cdf400b166e2ba6b8ba",
+      "size": 3502
+    },
+    {
+      "path": "PATENT_RU/internal__bim__storage__s3_test.go.txt",
+      "sha256": "90c217c61dda71c1cd2324f728b46d4b6380b3c7e2ffbfe4ace15dcb062a68a3",
+      "size": 827
+    },
+    {
+      "path": "PATENT_RU/lifecycle.go.txt",
+      "sha256": "3cd06966f9bedb0ae10e5f411f465ae41b1839149dff922ebb16e8f407247fb2",
+      "size": 3499
+    },
+    {
+      "path": "PATENT_RU/main.go.txt",
+      "sha256": "1fd07d1a5b8158033eaf91a44361248ccd1d468f23b4ef48ab4a9799f55b6179",
+      "size": 2082
+    },
+    {
+      "path": "PATENT_RU/main.py.txt",
+      "sha256": "e0e58b53d14e4611ecd0152416a56a5181f6f65635ff3d7fcf105710cef00c07",
+      "size": 5216
+    },
+    {
+      "path": "PATENT_RU/marketplace-scenarios.md.txt",
+      "sha256": "e7d10142d71e0d537af936442a8fb3660ee6e400407388dfa72a425b156094d3",
+      "size": 331
+    },
+    {
+      "path": "PATENT_RU/marketplace-scenarios.txt",
+      "sha256": "e7d10142d71e0d537af936442a8fb3660ee6e400407388dfa72a425b156094d3",
+      "size": 331
+    },
+    {
+      "path": "PATENT_RU/marketplace.go.txt",
+      "sha256": "5cbd216598a943ca69a0ac288a6f6867d53c7c65b4e9d55e458fc1ee42bc39ed",
+      "size": 10106
+    },
+    {
+      "path": "PATENT_RU/migrate.go.txt",
+      "sha256": "1849869531c8f85b755516cee4477dcf191d8c88116415240e56c65b76dd5dac",
+      "size": 1553
+    },
+    {
+      "path": "PATENT_RU/migrations__0011_bim.sql.txt",
+      "sha256": "ef0e1f9967a4ac11960940b26aff8f1b8db008a68316f42b02d46b2a6f8f3897",
+      "size": 3854
+    },
+    {
+      "path": "PATENT_RU/migrations__0012_bim_runtime.sql.txt",
+      "sha256": "47c91913d31ae076e0b4574892b5c3161a83de6b4e905aceb9813f7ecffa3a53",
+      "size": 1194
+    },
+    {
+      "path": "PATENT_RU/migrations__0019_bim_storage_import_runtime11.sql.txt",
+      "sha256": "5f441f52252166d250197acdc2e3d31b20a988a6b9e7483cc0c18f42445e77ed",
+      "size": 960
+    },
+    {
+      "path": "PATENT_RU/model.go.txt",
+      "sha256": "0f6adb4ad27af389fbad681615cc9034b70ff98a6b1e5ddfaca33a909152add9",
+      "size": 6846
+    },
+    {
+      "path": "PATENT_RU/model_test.go.txt",
+      "sha256": "dd16622ae07922d0f4ed188b0753d9c57e0f7c83ed29995d0907636e6c685ca2",
+      "size": 1155
+    },
+    {
+      "path": "PATENT_RU/models.go.txt",
+      "sha256": "d7e8734559ad04ff03f1c2a817ba6122aa1d59ce69adc5e0bd3adc21eb0ebf94",
+      "size": 980
+    },
+    {
+      "path": "PATENT_RU/next.config.js.txt",
+      "sha256": "bd8534a6cc060dcf5c019d75179bb4a9a974aab3eb7b6f25f17a5cb2c6bf6db1",
+      "size": 188
+    },
+    {
+      "path": "PATENT_RU/nginx.conf.txt",
+      "sha256": "ced3dfca59a6ea644565798537d40e68c4ed0ef9701a0c1910fa6b7e28e33f4f",
+      "size": 564
+    },
+    {
+      "path": "PATENT_RU/ollama.go.txt",
+      "sha256": "15e43795aa40005b90048522787bfb91cac47efdbe0b00a003ed8e2c8468403f",
+      "size": 1545
+    },
+    {
+      "path": "PATENT_RU/orchestrator.go.txt",
+      "sha256": "fd87b711f80cd5d24e8687af9a55b15bf0406aacf56a5c1b578bc13bfe2ce807",
+      "size": 2848
+    },
+    {
+      "path": "PATENT_RU/orchestrator_test.go.txt",
+      "sha256": "2f41a61be3d56008cfd4b1a5706ed8cf00f08cc82cc410704d5d2166fab223bf",
+      "size": 3070
+    },
+    {
+      "path": "PATENT_RU/order-lifecycle.md.txt",
+      "sha256": "ce3cf783e2445c08c33577d6568080d27a8fb0754586ffb28ff3f7a8c6bae706",
+      "size": 296
+    },
+    {
+      "path": "PATENT_RU/order-lifecycle.txt",
+      "sha256": "ce3cf783e2445c08c33577d6568080d27a8fb0754586ffb28ff3f7a8c6bae706",
+      "size": 296
+    },
+    {
+      "path": "PATENT_RU/order.py.txt",
+      "sha256": "3d035386393b6bb8698f8ea26ed11175da170016231e021a0731c54308338c8a",
+      "size": 976
+    },
+    {
+      "path": "PATENT_RU/orders.js.txt",
+      "sha256": "8e68be4025a5d93bb4c120b5427eb8cd78d9db04658cdf44d841dc448a75ab89",
+      "size": 4404
+    },
+    {
+      "path": "PATENT_RU/orders.py.txt",
+      "sha256": "042a5f9547f2491bc0b723fe3cf32f1ce51cbadab0cdb048b9df8db49e3aa116",
+      "size": 3402
+    },
+    {
+      "path": "PATENT_RU/orders_stage5.go.txt",
+      "sha256": "1319d1be6b5fd087f64c50ebfea30843eb83fd67804207b528f7a52387bc0c5b",
+      "size": 7267
+    },
+    {
+      "path": "PATENT_RU/package-release.sh.txt",
+      "sha256": "29f5608e1e313de8bb70556491b55a1730195f325113c680632d49301b8f632f",
+      "size": 601
+    },
+    {
+      "path": "PATENT_RU/package.json.txt",
+      "sha256": "80027451a350ee0195a93cd75caaad042409bdcb875999d9dd698f329112aa61",
+      "size": 278
+    },
+    {
+      "path": "PATENT_RU/package.txt",
+      "sha256": "80027451a350ee0195a93cd75caaad042409bdcb875999d9dd698f329112aa61",
+      "size": 278
+    },
+    {
+      "path": "PATENT_RU/pages.js.txt",
+      "sha256": "49cc9914416a6675c8a5abfd5077761e1b1af1d38db3b5eedf6f94c3b713f9f1",
+      "size": 4996
+    },
+    {
+      "path": "PATENT_RU/pages.py.txt",
+      "sha256": "9a48ba2f363b72ae2f782f76d930c8dd81714a15cc112cf3ffcdaabcce4a2580",
+      "size": 2462
+    },
+    {
+      "path": "PATENT_RU/password.js.txt",
+      "sha256": "f1f54176f270ffe7ee4a498ee3544a7c69065ee7dd492ed331d101a431dd1776",
+      "size": 2468
+    },
+    {
+      "path": "PATENT_RU/placeholder.svg.txt",
+      "sha256": "94ceb7f9dc04ff441414bb38fc30a675385aad6ad4f5f4a1ebb8b51663992a04",
+      "size": 288
+    },
+    {
+      "path": "PATENT_RU/prepare_dataset.py.txt",
+      "sha256": "5ab2c94348128316b48adcbc5a8462066eea6492a1dd726f0ce08f7ffe58db91",
+      "size": 920
+    },
+    {
+      "path": "PATENT_RU/process.go.txt",
+      "sha256": "fc7060b3f4ceff4c6ae3b8678a1489bd855a7644c44c9f07a6ee56a8befc5f6f",
+      "size": 971
+    },
+    {
+      "path": "PATENT_RU/product.py.txt",
+      "sha256": "1ee9f8098833bcfc9e69bece8b6b3d578a251541d8c84700b2e7ff86939e6b30",
+      "size": 2403
+    },
+    {
+      "path": "PATENT_RU/products.js.txt",
+      "sha256": "3d2d0b6b6f53b0524e0e2eb8ef87e6b8c3acda6b957394a40654756fbabba262",
+      "size": 7171
+    },
+    {
+      "path": "PATENT_RU/products.py.txt",
+      "sha256": "70096e83554ccb16cca25db9a85047d6a9f19e89de121d3b31fbddafb231a61d",
+      "size": 3209
+    },
+    {
+      "path": "PATENT_RU/pull_request_template.md.txt",
+      "sha256": "857b6281ad9cf79166d0096844f5cee1ab60f11a16f11fefb13cb96a27a594b0",
+      "size": 266
+    },
+    {
+      "path": "PATENT_RU/pull_request_template.txt",
+      "sha256": "857b6281ad9cf79166d0096844f5cee1ab60f11a16f11fefb13cb96a27a594b0",
+      "size": 266
+    },
+    {
+      "path": "PATENT_RU/rating-system.md.txt",
+      "sha256": "4bd39642f935f18018ea6a027e578a6dcbc3f9143d96f64d9107fa80fa6cc506",
+      "size": 289
+    },
+    {
+      "path": "PATENT_RU/rating-system.txt",
+      "sha256": "4bd39642f935f18018ea6a027e578a6dcbc3f9143d96f64d9107fa80fa6cc506",
+      "size": 289
+    },
+    {
+      "path": "PATENT_RU/rating.go.txt",
+      "sha256": "c90509b2dc5e27c17295e7b818d681a7925b01bd9be7cf27e9e99bbdcd310249",
+      "size": 441
+    },
+    {
+      "path": "PATENT_RU/rating_test.go.txt",
+      "sha256": "46e0fc0cfc69dfcfdade787e7bd25a206512ea697692febea7ace888e2c08a6c",
+      "size": 827
+    },
+    {
+      "path": "PATENT_RU/ratings_stage8.go.txt",
+      "sha256": "0725bf1ae57fd0b2c6de8d11f833ed208049796b29784392a2019ddfb8d91524",
+      "size": 12803
+    },
+    {
+      "path": "PATENT_RU/report.go.txt",
+      "sha256": "930258b8d380d88eb618f11bd9186ad61cd3346baaf3fd2f769da0afd6a0ab2e",
+      "size": 5403
+    },
+    {
+      "path": "PATENT_RU/report_test.go.txt",
+      "sha256": "305203a123517d04cc0246192e22b8ef944d5228fcc662e61d4ac9293fa0240f",
+      "size": 3749
+    },
+    {
+      "path": "PATENT_RU/requirements.txt",
+      "sha256": "4be11f0081152b520399a91d2ef482bf8fb711cb46c297d4db7dfb888d7d278f",
+      "size": 272
+    },
+    {
+      "path": "PATENT_RU/requirements.txt.txt",
+      "sha256": "4be11f0081152b520399a91d2ef482bf8fb711cb46c297d4db7dfb888d7d278f",
+      "size": 272
+    },
+    {
+      "path": "PATENT_RU/roofplan.go.txt",
+      "sha256": "3c9649f5bba93d357e690e1f5259ba54d9706fca58b3156a0013261c78caf476",
+      "size": 6915
+    },
+    {
+      "path": "PATENT_RU/run.go.txt",
+      "sha256": "e748c71632056992eede214c0d2feff9babfd21eed2ca5afd7f66270f81382cd",
+      "size": 1710
+    },
+    {
+      "path": "PATENT_RU/section.go.txt",
+      "sha256": "f497e75bb1908533f1ab3793f1ce02f1357f7265ef93b4ebea6e809f9ff2bf5a",
+      "size": 8011
+    },
+    {
+      "path": "PATENT_RU/security.py.txt",
+      "sha256": "f9b13cd4474c953ebc36e8da344745e8808ec8fe13efe53336296da1f3cbe9ef",
+      "size": 1913
+    },
+    {
+      "path": "PATENT_RU/seed_products.py.txt",
+      "sha256": "5dadf9ae5840f45f1f2d538263298aee746338e0efc0d6b9cc46714f7c126359",
+      "size": 54069
+    },
+    {
+      "path": "PATENT_RU/server.go.txt",
+      "sha256": "71ca3eafda5bfb288a203da5924c005e0b70a36b1a9ec41eb208efba326dc00e",
+      "size": 8740
+    },
+    {
+      "path": "PATENT_RU/settings.js.txt",
+      "sha256": "ba586fe926f31b714db642b789f0294c4f559af64a0898f650c9d4c5afbc9b38",
+      "size": 8432
+    },
+    {
+      "path": "PATENT_RU/settings.py.txt",
+      "sha256": "15a28a742971a806256f7604b6e61d0ea866076c77642f4167aab396c1151d63",
+      "size": 1308
+    },
+    {
+      "path": "PATENT_RU/setup-tesla-p100.sh.txt",
+      "sha256": "a35576018af919c7b5c99c646369eadf0a89900a82b0b92fbbc43965ae1d12a3",
+      "size": 30397
+    },
+    {
+      "path": "PATENT_RU/setup.ps1.txt",
+      "sha256": "a6186383dd16f9f13c6bb0f6a3d285b41351cbfb92e0928ba41773092a945e44",
+      "size": 17074
+    },
+    {
+      "path": "PATENT_RU/site.py.txt",
+      "sha256": "762686fa20cb1fae44f5531834cee61b0f2604ae728387626a331c82b2c913c9",
+      "size": 2530
+    },
+    {
+      "path": "PATENT_RU/siteplan.go.txt",
+      "sha256": "414730d16a87ea455772964c024fff60826c45a469f663022bc136a1162acc28",
+      "size": 9884
+    },
+    {
+      "path": "PATENT_RU/stage-1-core.md.txt",
+      "sha256": "c9c4d0e96429404f766fc66afaa38abf3329a14e23325d55a3eca11346f561cd",
+      "size": 474
+    },
+    {
+      "path": "PATENT_RU/stage-1-core.txt",
+      "sha256": "c9c4d0e96429404f766fc66afaa38abf3329a14e23325d55a3eca11346f561cd",
+      "size": 474
+    },
+    {
+      "path": "PATENT_RU/stage-2-auth.md.txt",
+      "sha256": "ad9f3ee9bd831c0e5304cc6ae58aa7b8c73d3e59ffa0df967b4adf4e51773383",
+      "size": 913
+    },
+    {
+      "path": "PATENT_RU/stage-2-auth.txt",
+      "sha256": "ad9f3ee9bd831c0e5304cc6ae58aa7b8c73d3e59ffa0df967b4adf4e51773383",
+      "size": 913
+    },
+    {
+      "path": "PATENT_RU/stage-3-api.md.txt",
+      "sha256": "4da9187dacf9c68510a4b5f87cd3411aac3b0d0565e2f958388452c3bd7c4d36",
+      "size": 560
+    },
+    {
+      "path": "PATENT_RU/stage-3-api.txt",
+      "sha256": "4da9187dacf9c68510a4b5f87cd3411aac3b0d0565e2f958388452c3bd7c4d36",
+      "size": 560
+    },
+    {
+      "path": "PATENT_RU/stage-3-marketplace.md.txt",
+      "sha256": "bafb10cfdb9bb919582bd6bc8c3461434d9a02b9f0331f51b8401bde26622332",
+      "size": 877
+    },
+    {
+      "path": "PATENT_RU/stage-3-marketplace.txt",
+      "sha256": "bafb10cfdb9bb919582bd6bc8c3461434d9a02b9f0331f51b8401bde26622332",
+      "size": 877
+    },
+    {
+      "path": "PATENT_RU/state.go.txt",
+      "sha256": "6be9e7d4c8c23dff3872b4aab6adc51b8aba0b7b5e9487a04072373d2b28e542",
+      "size": 2634
+    },
+    {
+      "path": "PATENT_RU/state_test.go.txt",
+      "sha256": "04654008bf8cdc520f01144704cae98bebda001e73baf244868f3c1be8222ce8",
+      "size": 1455
+    },
+    {
+      "path": "PATENT_RU/status.go.txt",
+      "sha256": "e1da1b778898ff10eb90054c36e942dfde59878984a63e7ad9220c076bd5a40a",
+      "size": 900
+    },
+    {
+      "path": "PATENT_RU/stock.js.txt",
+      "sha256": "b0036b7bdadfe9f3092f31e805b1aed9eeced4535a4bd6b8ee6226801cd668a6",
+      "size": 5534
+    },
+    {
+      "path": "PATENT_RU/stock.py.txt",
+      "sha256": "40f32a869fbe6c6789171bbaf63f0f49cb1497e6594b173925b99acf5ae5baa1",
+      "size": 2531
+    },
+    {
+      "path": "PATENT_RU/supplier-flow.md.txt",
+      "sha256": "70a0b5de8a57506ba8493d106c4f8d6c88c88282481208ce42ac8c3abf01a53a",
+      "size": 246
+    },
+    {
+      "path": "PATENT_RU/supplier-flow.txt",
+      "sha256": "70a0b5de8a57506ba8493d106c4f8d6c88c88282481208ce42ac8c3abf01a53a",
+      "size": 246
+    },
+    {
+      "path": "PATENT_RU/suppliers_stage7.go.txt",
+      "sha256": "876600f9b7391508cf04d5a5567bb9c584ffb05dfc8f36beeac70c07a3b057bd",
+      "size": 12823
+    },
+    {
+      "path": "PATENT_RU/system-context.md.txt",
+      "sha256": "2db9bc9b04cb84c0b7555b85f228c56b9df1d5b67c6cedddebd55ef3edab44d4",
+      "size": 315
+    },
+    {
+      "path": "PATENT_RU/system-context.txt",
+      "sha256": "2db9bc9b04cb84c0b7555b85f228c56b9df1d5b67c6cedddebd55ef3edab44d4",
+      "size": 315
+    },
+    {
+      "path": "PATENT_RU/themes.js.txt",
+      "sha256": "2f8ef305241754f7aa96c42a04a934e093493ad506171944c4801c4701dcbcbf",
+      "size": 4001
+    },
+    {
+      "path": "PATENT_RU/themes.py.txt",
+      "sha256": "a65c39a61e81ffa3599a80f455c75221c501ae04a36e5b879d8befc4e57ff9b4",
+      "size": 2211
+    },
+    {
+      "path": "PATENT_RU/themes_generator.py.txt",
+      "sha256": "d08a8b9f1a4fe6e9685226508b175ce89b89dc5c274735c01dee24b1b5ea6a8a",
+      "size": 12640
+    },
+    {
+      "path": "PATENT_RU/train_qlora.py.txt",
+      "sha256": "e218ba11990497be02d478eb11ff75213f2cf9f520f738340fef567acd2287b9",
+      "size": 2269
+    },
+    {
+      "path": "PATENT_RU/trest-installer-ci.yml.txt",
+      "sha256": "2ed21da47d66daa1e9070e0da108fc988dcf1213c871cfa5d66f5f8b807b68f3",
+      "size": 2824
+    },
+    {
+      "path": "PATENT_RU/types.go.txt",
+      "sha256": "73aca8b80a39a46b60e17fe53424cbaecf751d17916c314c58b540cffbe967da",
+      "size": 668
+    },
+    {
+      "path": "PATENT_RU/uninstall.sh.txt",
+      "sha256": "7ee6e3cf6ae4d6a2bef5d9de5c352c241697e951b954ac5e07d481ea21a94ba2",
+      "size": 2453
+    },
+    {
+      "path": "PATENT_RU/update.sh.txt",
+      "sha256": "d11955805dffc3e007583b753dabf0177efbc270458403d71aa8c8f227f9306c",
+      "size": 998
+    },
+    {
+      "path": "PATENT_RU/upload.py.txt",
+      "sha256": "07b441cf4b88006137bc825591792ee55988833295d9ea5fa2711fc1fddd14d0",
+      "size": 1920
+    },
+    {
+      "path": "PATENT_RU/useAdmin.js.txt",
+      "sha256": "06b03aa83eb5f75a617740d521eebf3cbe2ecf203ac3c7279f3e19c9ce7fe8fd",
+      "size": 2908
+    },
+    {
+      "path": "PATENT_RU/useCart.js.txt",
+      "sha256": "ce53ed2a83d422c60bde4bd50354f91365b00ac9b64a0cb8bce29ab395a61da0",
+      "size": 1812
+    },
+    {
+      "path": "PATENT_RU/useLang.js.txt",
+      "sha256": "879d94f6e1ed6565a33c9c58c9706bdd8c127119202b6f639dbcc1a6f6c8a280",
+      "size": 2228
+    },
+    {
+      "path": "PATENT_RU/useTheme.js.txt",
+      "sha256": "dd786bad41121b60e380a73a844224beab4d8b57dc601cc5967a3358a379edd4",
+      "size": 2453
+    },
+    {
+      "path": "PATENT_RU/user.py.txt",
+      "sha256": "2007681a99368779fbb44d1d4f02bf7b78857433d750cde70014cbc2f354f1f9",
+      "size": 783
+    },
+    {
+      "path": "PATENT_RU/watch-gpu.sh.txt",
+      "sha256": "4b7d245779dcaa97fc989953dc8c2d145bbf3ddcf09afb618d3d9f20f4c79775",
+      "size": 9878
+    },
+    {
+      "path": "PATENT_RU/web.go.txt",
+      "sha256": "d4912c4176bc134dae3dd7c4c7f3b2861ee72c055859438160c34e468a42d12c",
+      "size": 5318
+    },
+    {
+      "path": "PATENT_RU/web_test.go.txt",
+      "sha256": "43c50c6d84706d1c4ac8192109da28e66e0c6bb55e56b4647505e9d3a63f8d0e",
+      "size": 6004
+    },
+    {
+      "path": "PROJECT_CONTEXT.md",
+      "sha256": "de7c04e2cff75f613098d43ae67e0e5fb03217083f025d4d93e0edab8599728a",
+      "size": 2024
+    },
+    {
+      "path": "PROJECT_HANDOFF.md",
+      "sha256": "7f6b49a300830b692b9b46b831c88ad287e4218b064901e74d516baa9860f982",
+      "size": 4842
+    },
+    {
+      "path": "READABLE_TXT_RU/AI_CONVERSATION_LOG.txt",
+      "sha256": "f4990915647d113c573b32bcbbc0040577c221fe2e3d4e2359c78f93cc8427ca",
+      "size": 18558
+    },
+    {
+      "path": "READABLE_TXT_RU/BACKUP_RESTORE_RU.txt",
+      "sha256": "3b700f04164aad0ede9d37f6990394ce1245767a1e0e93bb9339a9eff09306fa",
+      "size": 852
+    },
+    {
+      "path": "READABLE_TXT_RU/CI_RELEASE_TECHNICAL_NOTE_RU.txt",
+      "sha256": "161a9f7f58e45f9515a31d47cf50b991699e8300502c4d5a429299211a5384d4",
+      "size": 581
+    },
+    {
+      "path": "READABLE_TXT_RU/CURRENT_STATE.txt",
+      "sha256": "4e637b9bb624f48f2bec676f540c84bb448c8313fe961992f312a1f36aff7fb7",
+      "size": 5689
+    },
+    {
+      "path": "READABLE_TXT_RU/NEXT_STEPS.txt",
+      "sha256": "407b7edcff8f505d2dabc2bf1c5303aa16e779420956c6f7b470e491699f1242",
+      "size": 3660
+    },
+    {
+      "path": "READABLE_TXT_RU/PROJECT_HANDOFF.txt",
+      "sha256": "627ef855bed683e4b892f48b6fc06a054b11df4729281fd4073deaaf745a2728",
+      "size": 3512
+    },
+    {
+      "path": "READABLE_TXT_RU/PROJECT_READINESS_REPORT_RU.txt",
+      "sha256": "1c2aaa32bf19a468a00ee77a1d23a5a41ce2e2e54df6e19663c82fedb25798ea",
+      "size": 2852
+    },
+    {
+      "path": "READABLE_TXT_RU/README.md",
+      "sha256": "c22a47b4bbcfaeabbc10b81c42dba563dcedd421ec50504e132121929c7d282c",
+      "size": 456
+    },
+    {
+      "path": "READABLE_TXT_RU/SECURITY_BASELINE_RU.txt",
+      "sha256": "96e89ac2233d20d8aa24adb01c0c232b3bb3a7a13fe751956172d897b0cf17f1",
+      "size": 1527
+    },
+    {
+      "path": "READABLE_TXT_RU/STAGE10_RUNTIME13_REPORT.txt",
+      "sha256": "ad83342269107a2ac7afbbb7694a2261f48a0c3682b95bbca5d043322539d99f",
+      "size": 2191
+    },
+    {
+      "path": "READABLE_TXT_RU/STAGE11_INSTALLER_HARDENING_REPORT_RU.txt",
+      "sha256": "69dfab1ea9e366cd85aef737d31b00cd6b1e9d663a5568159eaaaa189a810512",
+      "size": 1184
+    },
+    {
+      "path": "READABLE_TXT_RU/STAGE11_SECURITY_BACKUP_REPORT_RU.txt",
+      "sha256": "8ce11058b2dd3cffc6e2db38465ad957802992f287cfd908cc41d071da1940d1",
+      "size": 1211
+    },
+    {
+      "path": "READABLE_TXT_RU/STAGE11_SECURITY_RELEASE_GATE_REPORT_RU.md",
+      "sha256": "74547d91892b4fb78ed21f20afe44a3aaac476d3a6ffe26e1bdaed8586c359b5",
+      "size": 1117
+    },
+    {
+      "path": "READABLE_TXT_RU/STAGE11_SECURITY_RELEASE_GATE_RU.md",
+      "sha256": "26d7626c04d421469168f90e80df1195178dcf530b3195d469271ece113cbfed",
+      "size": 1264
+    },
+    {
+      "path": "READABLE_TXT_RU/cli.go.txt",
+      "sha256": "58a532bc3da52cc7d32aa1a0d05de4730620fb9e1a12a34f71930327c95e59fb",
+      "size": 2414
+    },
+    {
+      "path": "READABLE_TXT_RU/config.go.txt",
+      "sha256": "709f02ce10bdfca5c09ec34ebe179d35819cecdb10406b6ca0ab3862f3824ce4",
+      "size": 4118
+    },
+    {
+      "path": "READABLE_TXT_RU/docs/install/CI_RELEASE_RU.txt",
+      "sha256": "84558392aa03e25c285be8ac0ce1a0091360ab5bf7d59164c528266cc4eebdfb",
+      "size": 1070
+    },
+    {
+      "path": "READABLE_TXT_RU/docs/install/RELEASE_FILE_MANIFEST.json",
+      "sha256": "48d37571873182e3291430844c277b1cb96f812662cfbd045a6017cfcb2d8e75",
+      "size": 81878
+    },
+    {
+      "path": "READABLE_TXT_RU/install.go.txt",
+      "sha256": "2af8b26141b303e19a8261bac9ce799ad59a1eafc1fea4ee0bb5fc3f7ad5ae75",
+      "size": 4298
+    },
+    {
+      "path": "READABLE_TXT_RU/lifecycle.go.txt",
+      "sha256": "3cd06966f9bedb0ae10e5f411f465ae41b1839149dff922ebb16e8f407247fb2",
+      "size": 3499
+    },
+    {
+      "path": "READABLE_TXT_RU/process.go.txt",
+      "sha256": "fc7060b3f4ceff4c6ae3b8678a1489bd855a7644c44c9f07a6ee56a8befc5f6f",
+      "size": 971
+    },
+    {
+      "path": "README.md",
+      "sha256": "92af91787949d6d1652240b8019ba779a4f989a7a2560ae5034743f4c51fd6ba",
+      "size": 3183
+    },
+    {
+      "path": "RELEASE_V0.32_MANIFEST.json",
+      "sha256": "70444071820b94fa53013893b24e095924d4798b7e118b89d0c877656b1e1ef4",
+      "size": 357
+    },
+    {
+      "path": "RELEASE_V0.34_MANIFEST.json",
+      "sha256": "e2764fb87d172b28064e7bdf057f2d5aa9feb13ee45723e17736addf10e97b4c",
+      "size": 31564
+    },
+    {
+      "path": "SECURITY.md",
+      "sha256": "8599ab4779cf458d401adcf0590b5d0e764cf9b8f8b548c4f18137d3ecfa7443",
+      "size": 766
+    },
+    {
+      "path": "STAGE11_FULL_E2E_REPORT_RU.md",
+      "sha256": "3e58ae520ce69428a03d52b7a8a83f5e470a5034bb80741eac5a7977dc7368a0",
+      "size": 1256
+    },
+    {
+      "path": "STAGE11_SECURITY_BACKUP_REPORT_RU.md",
+      "sha256": "8ce11058b2dd3cffc6e2db38465ad957802992f287cfd908cc41d071da1940d1",
+      "size": 1211
+    },
+    {
+      "path": "STAGE11_SECURITY_IDOR_REPORT_RU.md",
+      "sha256": "372f06155ffd45e971933545bb5325171898aa487e33dbde1c6d824f5a29e000",
+      "size": 1533
+    },
+    {
+      "path": "STAGE11_SECURITY_RELEASE_GATE_REPORT_RU.md",
+      "sha256": "74547d91892b4fb78ed21f20afe44a3aaac476d3a6ffe26e1bdaed8586c359b5",
+      "size": 1117
+    },
+    {
+      "path": "STAGE11_SECURITY_UPLOAD_REPORT_RU.md",
+      "sha256": "074e848e7cb30208f97b19596cebba64d704ff7e32e07db9c8b6faddbb1ee746",
+      "size": 2161
+    },
+    {
+      "path": "STAGE2_TEST_REPORT.md",
+      "sha256": "ccb2fdcb11fbba7cba8a488b48ae708a403e7e5e2505dc5625551d708d61743e",
+      "size": 1489
+    },
+    {
+      "path": "STAGE3_IDENTITY_REPORT.md",
+      "sha256": "17dba3074aa38e0e3af5e8973b35a74f4f352d95186ebe6dc351d507acaf53e3",
+      "size": 431
+    },
+    {
+      "path": "STAGE4_CONSTRUCTOR_REPORT.md",
+      "sha256": "62064d8482fc2cdc1399286ba64d31f692a52d801e9be376b48d680dc3987521",
+      "size": 1613
+    },
+    {
+      "path": "STAGE5_ESTIMATES_ORDERS_REPORT.md",
+      "sha256": "2a1d41ea9df60e8e71a27ea4ba24bd07cbc0ced9c6761a47d59cf69b308efe62",
+      "size": 849
+    },
+    {
+      "path": "STAGE6_CONTRACTORS_REPORT.md",
+      "sha256": "a3a278fe341af5a366dba6e950c2e17c2148b0b52ac729b144dd47998f25f166",
+      "size": 882
+    },
+    {
+      "path": "STAGE7_SUPPLIERS_REPORT.md",
+      "sha256": "33c3304f336fdd796a655ce209c0b4587523397aa8b6da623c43869a0c574899",
+      "size": 1513
+    },
+    {
+      "path": "STAGE8_RATINGS_REPORT.md",
+      "sha256": "e744b366bf26a5c5d16ba8d4f493bee9ea666605b9034516bd4341a838a69c3a",
+      "size": 1724
+    },
+    {
+      "path": "STAGE9_AI_TRAINING_REPORT.md",
+      "sha256": "d1327be5376d780821b2a33ee7a3a674056f6a929e4b82a197a45bbdfd9891d0",
+      "size": 1628
+    },
+    {
+      "path": "TASKS.md",
+      "sha256": "71a6d71d8701d4aa2b87f060dee434047d304a7b030f7dc9a16a107da3275f22",
+      "size": 3580
+    },
+    {
+      "path": "UNIFIED_ARCHITECTURE.md",
+      "sha256": "74f5a02ee1b1c92c7984fe254c33ed5e365bfbc844d2eb27ed9db9fc62541793",
+      "size": 2102
+    },
+    {
+      "path": "archive/previous_versions/README.md",
+      "sha256": "879421fc1f1e72a8a2256030c91cab8defcacd850d8d0da7f11d9df19ca7920e",
+      "size": 142
+    },
+    {
+      "path": "cmd/api/main.go",
+      "sha256": "0375fa42494ebf18ee2590ea9040b7b627027080fdf524983f8d51f0318d956a",
+      "size": 969
+    },
+    {
+      "path": "cmd/trest/audit.go",
+      "sha256": "5781201036a3d3432e526f8bc0141678fe9fc9d39c92ca6ef2c6391504d49e1d",
+      "size": 3144
+    },
+    {
+      "path": "cmd/trest/main.go",
+      "sha256": "c9ffad45985f7f07b84ff92dad68dcf65702ec46290c8262e23a48fe56613fe0",
+      "size": 2676
+    },
+    {
+      "path": "cmd/trest/run.go",
+      "sha256": "677cfb78178c4ee4c7d9415e59d97397dea401f1c05fe23f6d194648d47c923d",
+      "size": 1662
+    },
+    {
+      "path": "cmd/trest/status.go",
+      "sha256": "72184029e88ce7353baeec6e8a1ef2489bbec1b828f961ca89c4dcc5087295c0",
+      "size": 884
+    },
+    {
+      "path": "cmd/trestctl/main.go",
+      "sha256": "9a1039f2a5b0af6448232da5bdce7132a95d01e78988dad4c1df79812f799779",
+      "size": 142
+    },
+    {
+      "path": "cmd/worker/main.go",
+      "sha256": "350de71324e471c6b6be194f8ab54f97c87853a7019554d33fd2ebad37333229",
+      "size": 1234
+    },
+    {
+      "path": "config.yaml",
+      "sha256": "e86c327cb079a1c96dba7fecb3f2e9ba162caf33977df7f602b91744be8f57e8",
+      "size": 533
+    },
+    {
+      "path": "deployments/.env.example",
+      "sha256": "405ba5be7af8781b7376499e3a76ec8d2192eed2d9b2496939786e56fc0b2106",
+      "size": 371
+    },
+    {
+      "path": "deployments/docker-compose.yml",
+      "sha256": "a78b1583c763ca37fb7b95c36a66cb9c3802450413650703f0ad7906f7e332b5",
+      "size": 4051
+    },
+    {
+      "path": "deployments/nginx/nginx.conf",
+      "sha256": "b59173e64fe4432c2037a91ccef27869bcb32e19193763e6e56c4ba729d34bc2",
+      "size": 746
+    },
+    {
+      "path": "docs/PROJECT_READINESS_REPORT_RU.md",
+      "sha256": "1c2aaa32bf19a468a00ee77a1d23a5a41ce2e2e54df6e19663c82fedb25798ea",
+      "size": 2852
+    },
+    {
+      "path": "docs/STAGE11_INSTALLER_HARDENING_REPORT_RU.md",
+      "sha256": "69dfab1ea9e366cd85aef737d31b00cd6b1e9d663a5568159eaaaa189a810512",
+      "size": 1184
+    },
+    {
+      "path": "docs/USER_GUIDE_RU.md",
+      "sha256": "c6e56bd0f2240abb5d8d396dc9fc0fc7d80bb70decff4c7afd3a03d7812cbf8d",
+      "size": 5926
+    },
+    {
+      "path": "docs/adr/0001-monorepo.md",
+      "sha256": "e5e75b700a0408a79fd12440009173f4aea835af16eac574d68cfc2277d15f61",
+      "size": 242
+    },
+    {
+      "path": "docs/architecture/ai-agents.md",
+      "sha256": "74ad01952f00cef45e46c19b8a51d25366abcf1a0c4788d8648b35845a831c75",
+      "size": 286
+    },
+    {
+      "path": "docs/architecture/api-foundation.md",
+      "sha256": "2036d71831fb7f079a720e406df8be75091f06cb01a8c0ba285b60f84b23d310",
+      "size": 439
+    },
+    {
+      "path": "docs/architecture/order-lifecycle.md",
+      "sha256": "ce3cf783e2445c08c33577d6568080d27a8fb0754586ffb28ff3f7a8c6bae706",
+      "size": 296
+    },
+    {
+      "path": "docs/architecture/stage-1-core.md",
+      "sha256": "c9c4d0e96429404f766fc66afaa38abf3329a14e23325d55a3eca11346f561cd",
+      "size": 474
+    },
+    {
+      "path": "docs/architecture/stage-2-auth.md",
+      "sha256": "ad9f3ee9bd831c0e5304cc6ae58aa7b8c73d3e59ffa0df967b4adf4e51773383",
+      "size": 913
+    },
+    {
+      "path": "docs/architecture/stage-3-api.md",
+      "sha256": "4da9187dacf9c68510a4b5f87cd3411aac3b0d0565e2f958388452c3bd7c4d36",
+      "size": 560
+    },
+    {
+      "path": "docs/architecture/stage-3-marketplace.md",
+      "sha256": "bafb10cfdb9bb919582bd6bc8c3461434d9a02b9f0331f51b8401bde26622332",
+      "size": 877
+    },
+    {
+      "path": "docs/architecture/system-context.md",
+      "sha256": "2db9bc9b04cb84c0b7555b85f228c56b9df1d5b67c6cedddebd55ef3edab44d4",
+      "size": 315
+    },
+    {
+      "path": "docs/bim/IFC_SEMANTIC_ROADMAP_RU.md",
+      "sha256": "68e7f709bdf50aab40a3789a744c71373414d0ed65f959a2039f92364c71d054",
+      "size": 727
+    },
+    {
+      "path": "docs/bim/NEXT_BIM_RUNTIME_RU.md",
+      "sha256": "e1fd2609905ec10ceffcbb30fd4deb5cd0cdcb67e2e85529fd8d81d2e9cf8fec",
+      "size": 731
+    },
+    {
+      "path": "docs/bim/STAGE10_BIM_REPORT.md",
+      "sha256": "dbe0df777156f3a652b653c682a6831152aa3999e503a06d5c91040a929a356c",
+      "size": 3098
+    },
+    {
+      "path": "docs/bim/STAGE10_RUNTIME10_REPORT.md",
+      "sha256": "afdf7695b03399efd68f4ca73acc7fa188fecccfe45a8719831ef7ab776453aa",
+      "size": 1741
+    },
+    {
+      "path": "docs/bim/STAGE10_RUNTIME11_REPORT.md",
+      "sha256": "8743b191f030d3940dbb8feb983b5942bc12d288a266c15f17d4253a5035abb8",
+      "size": 1478
+    },
+    {
+      "path": "docs/bim/STAGE10_RUNTIME12_REPORT.md",
+      "sha256": "cd51e2527992a15f01a04ec27d9cd5440e4d30b441e382758cd6599d1d22f5e5",
+      "size": 1301
+    },
+    {
+      "path": "docs/bim/STAGE10_RUNTIME13_REPORT.md",
+      "sha256": "ad83342269107a2ac7afbbb7694a2261f48a0c3682b95bbca5d043322539d99f",
+      "size": 2191
+    },
+    {
+      "path": "docs/bim/STAGE10_RUNTIME2_REPORT.md",
+      "sha256": "c48dd9dbc8eaa0ef9e556ba5b01fb14e5f5577f467d50dad7633bbaab157192c",
+      "size": 1211
+    },
+    {
+      "path": "docs/bim/STAGE10_RUNTIME3_REPORT.md",
+      "sha256": "272d915d0e269dea3499ee7e06490ae95bd4527bad3326f07b53f235b0e0cb52",
+      "size": 1056
+    },
+    {
+      "path": "docs/bim/STAGE10_RUNTIME4_REPORT.md",
+      "sha256": "7d771717d4b0af5494bc1f47a6f136680dd78bbf5640463557940f74d5530325",
+      "size": 1521
+    },
+    {
+      "path": "docs/bim/STAGE10_RUNTIME5_REPORT.md",
+      "sha256": "7c64431f9a204c56e12c7718eabc2fd2b92dfe9194e2a0430bcd4e6c116396c0",
+      "size": 1267
+    },
+    {
+      "path": "docs/bim/STAGE10_RUNTIME7_REPORT.md",
+      "sha256": "d813b32c639b293bc864ef021c95f3f9a2a32d77806bbd1886adfddc9f16e2f5",
+      "size": 1146
+    },
+    {
+      "path": "docs/bim/STAGE10_RUNTIME8_REPORT.md",
+      "sha256": "11c0b465f558c6f6ef94f79e3cdf5a0fc7d4adbd1a7ba525096dbe1716e951dd",
+      "size": 1911
+    },
+    {
+      "path": "docs/bim/STAGE10_RUNTIME9_REPORT.md",
+      "sha256": "835f625e008be934b06e5330955bb43e684ac3068999f25dceaaee56b3881e36",
+      "size": 1291
+    },
+    {
+      "path": "docs/bim/STAGE10_RUNTIME_REPORT.md",
+      "sha256": "ad0dcaf12c95fbfc84acf160a02caa30739c4a603668ac019e92469b2a549cb7",
+      "size": 898
+    },
+    {
+      "path": "docs/install/BACKUP_RESTORE_RU.md",
+      "sha256": "3b700f04164aad0ede9d37f6990394ce1245767a1e0e93bb9339a9eff09306fa",
+      "size": 852
+    },
+    {
+      "path": "docs/install/CI_RELEASE_RU.md",
+      "sha256": "84558392aa03e25c285be8ac0ce1a0091360ab5bf7d59164c528266cc4eebdfb",
+      "size": 1070
+    },
+    {
+      "path": "docs/install/E2E_FULL_RU.md",
+      "sha256": "cc285c1c5781485445def34991b9dd79db529351735c8a3140407977bb81bf20",
+      "size": 1698
+    },
+    {
+      "path": "docs/install/E2E_SMOKE_RU.md",
+      "sha256": "a83af2c8b0ade083752241c395d0ee3ad5190ca1cd18300706a27df26b68cf29",
+      "size": 703
+    },
+    {
+      "path": "docs/install/FAST_INSTALL_RU.md",
+      "sha256": "fb93afc870c7ed2ac7a2bc8c2477eb037d66d69865f54d3d4fe5e364dfa66cb6",
+      "size": 1668
+    },
+    {
+      "path": "docs/install/PREBUILT_RELEASE.md",
+      "sha256": "7889635bed6b1d402ffc046378460c9298d5b024e8d4a99dc89ef048de9637d4",
+      "size": 1997
+    },
+    {
+      "path": "docs/install/RELEASE_FILE_MANIFEST.json",
+      "sha256": "48d37571873182e3291430844c277b1cb96f812662cfbd045a6017cfcb2d8e75",
+      "size": 81878
+    },
+    {
+      "path": "docs/install/SECURITY_BASELINE_RU.md",
+      "sha256": "96e89ac2233d20d8aa24adb01c0c232b3bb3a7a13fe751956172d897b0cf17f1",
+      "size": 1527
+    },
+    {
+      "path": "docs/install/SECURITY_E2E_RU.md",
+      "sha256": "be123a918f1b0440684cd04331a18b2e29c7741a2ca76c2f172e42788f250841",
+      "size": 1410
+    },
+    {
+      "path": "docs/install/STAGE11_SECURITY_RELEASE_GATE_RU.md",
+      "sha256": "26d7626c04d421469168f90e80df1195178dcf530b3195d469271ece113cbfed",
+      "size": 1264
+    },
+    {
+      "path": "docs/investors/INVESTOR_BRIEF_RU.md",
+      "sha256": "077c65690bdb3bb4684572e4ca5be906603fb4025bfb9eb221943cf8b7b55206",
+      "size": 5943
+    },
+    {
+      "path": "docs/legal/AUTHORSHIP_AND_OWNERSHIP_DECLARATION_RU.md",
+      "sha256": "42be6a73e60792b3829120b2671b900f18e8da25f1ccb57b2ebcbeae92f7da89",
+      "size": 14840
+    },
+    {
+      "path": "docs/legal/CODE_LINE_COUNT.json",
+      "sha256": "fb92973d6424d5ad9f6d2a0ccd82842788ab4d1b5ae041e3aa93c8ba1bd07558",
+      "size": 5300
+    },
+    {
+      "path": "docs/legal/IP_PROVENANCE_AND_RIGHTS_RU.md",
+      "sha256": "44ff1544661c066256574106e30a303b8522da04cb9d29ae2cb54823d64ab62b",
+      "size": 3511
+    },
+    {
+      "path": "docs/legal/LEGAL_EVIDENCE_CHECKLIST_RU.md",
+      "sha256": "8939215d3cc411fe9a3cf48caf24d7e39ebc9f116b6b0cb0203d9203c536fcb2",
+      "size": 2768
+    },
+    {
+      "path": "docs/legal/PATENT_CLAIMS_DRAFT_RU.md",
+      "sha256": "995003ff6e5992d182fa72b49b83b9e4fcc6d7e06075bc24d5c31fe6b9ce322d",
+      "size": 6032
+    },
+    {
+      "path": "docs/legal/PATENT_DOSSIER_RU.md",
+      "sha256": "fb64530e6bb5b72c0004b5d847a7cf0b2bf97fb941a4f2626cb4801b1bd3767b",
+      "size": 44992
+    },
+    {
+      "path": "docs/legal/PATENT_DRAWINGS_SPEC_RU.md",
+      "sha256": "1f52eb33a685f2ffba5200d66d813b3762031de86228419ac5e5424f8894a2b8",
+      "size": 1453
+    },
+    {
+      "path": "docs/legal/PATENT_PACKAGE_INDEX_RU.md",
+      "sha256": "c34727a1303577b98899f25438c1c05f493a9fd117acad303cc240ecfc906fb2",
+      "size": 1192
+    },
+    {
+      "path": "docs/legal/PATENT_PRIOR_ART_CHECKLIST_RU.md",
+      "sha256": "3466af36572b0b2af6871b56cda5dd182d4ea0ae80e7691bc5661dbc272bca1b",
+      "size": 2543
+    },
+    {
+      "path": "docs/legal/PATENT_RELEASE_SHA256_MANIFEST.json",
+      "sha256": "a7be231f99ce4efcb22c2b4869b09511b1e819de45123563cb0829bff560f152",
+      "size": 51912
+    },
+    {
+      "path": "docs/legal/PROVENANCE_MANIFEST.md",
+      "sha256": "dad5e79d43640dafd0472eb2eca0cdc66a73d4bb5bcc64a93ce6377155d7abc0",
+      "size": 1982
+    },
+    {
+      "path": "docs/legal/READINESS_REPORT_RU.md",
+      "sha256": "42c01a36a04f5f5622d858ff2093ee347008e97f46bb3b92d8ed9fc09f67b784",
+      "size": 9862
+    },
+    {
+      "path": "docs/legal/RELEASE_LEGAL_MANIFEST.json",
+      "sha256": "163582ad1f2d3247f1739df17174a911d09a4f5b8d04a2a86254bc6a02546d43",
+      "size": 26408
+    },
+    {
+      "path": "docs/legal/SOURCE_AND_AI_METHOD_RU.md",
+      "sha256": "ad9a26ae0405aafc99dd75ff3971e7d10603d0e5b8a0293b70f9244f02c3021c",
+      "size": 2917
+    },
+    {
+      "path": "docs/legal/THIRD_PARTY_LICENSES.md",
+      "sha256": "5cc5bc4985e600052459f1b41f2589edba99affc72b0a7e0a05338819bed974c",
+      "size": 1841
+    },
+    {
+      "path": "docs/product/contractor-flow.md",
+      "sha256": "5eea19d8477e8025cc91a2d547572ac7d489ac021a0184eee4434be6d6c57346",
+      "size": 296
+    },
+    {
+      "path": "docs/product/customer-flow.md",
+      "sha256": "24f01d6429809754fc41c3ba1b5ecbc694989247c122d5f19d23496c65d6673e",
+      "size": 314
+    },
+    {
+      "path": "docs/product/marketplace-scenarios.md",
+      "sha256": "e7d10142d71e0d537af936442a8fb3660ee6e400407388dfa72a425b156094d3",
+      "size": 331
+    },
+    {
+      "path": "docs/product/rating-system.md",
+      "sha256": "4bd39642f935f18018ea6a027e578a6dcbc3f9143d96f64d9107fa80fa6cc506",
+      "size": 289
+    },
+    {
+      "path": "docs/product/supplier-flow.md",
+      "sha256": "70a0b5de8a57506ba8493d106c4f8d6c88c88282481208ce42ac8c3abf01a53a",
+      "size": 246
+    },
+    {
+      "path": "go.mod",
+      "sha256": "1bea159160bf96ae000f28cbbd072088d2de74fb7ab2c6d81f1e3d6544aff529",
+      "size": 165
+    },
+    {
+      "path": "go.sum",
+      "sha256": "7fd6d31f60f0555f8f3021d6d695b27719684abb7c867f231bd8bc78b0acee3b",
+      "size": 1152
+    },
+    {
+      "path": "internal/ai/agent.go",
+      "sha256": "749023b2e47189d8512dcf7941160a0369e57f57a92be7b4d421d5e978482df9",
+      "size": 318
+    },
+    {
+      "path": "internal/ai/agent_test.go",
+      "sha256": "5376a6033d2e6324b0f7c03b7200af049c26c52b190e2b588a7916fbd5719c37",
+      "size": 474
+    },
+    {
+      "path": "internal/ai/ollama.go",
+      "sha256": "15e43795aa40005b90048522787bfb91cac47efdbe0b00a003ed8e2c8468403f",
+      "size": 1545
+    },
+    {
+      "path": "internal/ai/types.go",
+      "sha256": "73aca8b80a39a46b60e17fe53424cbaecf751d17916c314c58b540cffbe967da",
+      "size": 668
+    },
+    {
+      "path": "internal/api/ai_stage9.go",
+      "sha256": "330d95c91272d30f5c8ce59eb9e82419825506e8a2ec5e15081965cf79420dd2",
+      "size": 5292
+    },
+    {
+      "path": "internal/api/auth.go",
+      "sha256": "0e79e2c53ce76758b53a8c2d1b18f31e32a24a9363ee515606ac008f5a16442f",
+      "size": 3720
+    },
+    {
+      "path": "internal/api/bim_auth.go",
+      "sha256": "907ae29c22a5255d1190e0cb6825b2bfd449c9a6d8cd76a098e8a7d6aa082566",
+      "size": 560
+    },
+    {
+      "path": "internal/api/bim_diff_stage10.go",
+      "sha256": "a0af141fae750677fcc1f5b27154f706984b8ce222436b0fa7e04b3da8d55eca",
+      "size": 3164
+    },
+    {
+      "path": "internal/api/bim_exchange_runtime4.go",
+      "sha256": "f648c202045e3f5ae745f451c9ebb7879a7ddc96d771fe078c678c6aa30adf5e",
+      "size": 1738
+    },
+    {
+      "path": "internal/api/bim_runtime10.go",
+      "sha256": "af63d46c321a20ed7ee58932faf3e16e4b7444772b8bf5c3dba70967e5101d38",
+      "size": 2494
+    },
+    {
+      "path": "internal/api/bim_runtime11.go",
+      "sha256": "746508ffecea1124098c1bee0e420210184361ad2f6f319726e8e8db13149697",
+      "size": 5080
+    },
+    {
+      "path": "internal/api/bim_runtime11_test.go",
+      "sha256": "ab87be17643e02745e9a41ea44930af1ab803837f90aced72420d0529b66feab",
+      "size": 580
+    },
+    {
+      "path": "internal/api/bim_runtime12.go",
+      "sha256": "44c01ce3e700209de4ca296dab020b991c7c7e401ddf9fb99918f594abf3a3c4",
+      "size": 1484
+    },
+    {
+      "path": "internal/api/bim_stage10.go",
+      "sha256": "7e91dc892e6e8761d8b05ad5f110a92dc7f561e3186f280f197bb19e7782d242",
+      "size": 5875
+    },
+    {
+      "path": "internal/api/bim_stage10_extended.go",
+      "sha256": "65314691ef7df02ac46f5ad5669738e20be55184a7e70d80179eea580d17359a",
+      "size": 8181
+    },
+    {
+      "path": "internal/api/constructor.go",
+      "sha256": "3594fdbc8f4aa0cdbb924ce863d31c58112b12208f60b62599da0c1568a0cbc2",
+      "size": 10197
+    },
+    {
+      "path": "internal/api/constructor_test.go",
+      "sha256": "5b35e3333c9594cb7f9bf3830e50a46de67689b8278a6a2444cb27842c70b659",
+      "size": 993
+    },
+    {
+      "path": "internal/api/contractors_stage6.go",
+      "sha256": "95367c78ff79d4a0b6e9a7e085025f8a7ac2b3792f25b85203dd3ec77743a8bd",
+      "size": 7788
+    },
+    {
+      "path": "internal/api/identity.go",
+      "sha256": "af983ea97ffcca7a153523ba14c15a5191a45f98b298aa31f916ec7e1339fd5d",
+      "size": 3601
+    },
+    {
+      "path": "internal/api/identity_test.go",
+      "sha256": "bad915e5c7b9fe75ef3ee0295c8f23b78f45513532a006e1da94ee4755b50058",
+      "size": 801
+    },
+    {
+      "path": "internal/api/marketplace.go",
+      "sha256": "5cbd216598a943ca69a0ac288a6f6867d53c7c65b4e9d55e458fc1ee42bc39ed",
+      "size": 10106
+    },
+    {
+      "path": "internal/api/orders_stage5.go",
+      "sha256": "1319d1be6b5fd087f64c50ebfea30843eb83fd67804207b528f7a52387bc0c5b",
+      "size": 7267
+    },
+    {
+      "path": "internal/api/ratings_stage8.go",
+      "sha256": "ed797057363d5931d8feed4a030714f4121c9cdd048b0adddd9f932e0c097aaa",
+      "size": 12817
+    },
+    {
+      "path": "internal/api/security.go",
+      "sha256": "0a38ed4d7c4e6ad50cef3756e06fdde499c7ef6ec47c3293481bad6d8f3a2df7",
+      "size": 2103
+    },
+    {
+      "path": "internal/api/security_test.go",
+      "sha256": "d32318b2c21aee4e6aad001794a89702512e74f920ca589cf6142ebf5485531e",
+      "size": 983
+    },
+    {
+      "path": "internal/api/server.go",
+      "sha256": "20b42f9cef24f6898f1aa888b48775be5f596c1ad29a7f5135337475e51618a9",
+      "size": 10871
+    },
+    {
+      "path": "internal/api/suppliers_stage7.go",
+      "sha256": "876600f9b7391508cf04d5a5567bb9c584ffb05dfc8f36beeac70c07a3b057bd",
+      "size": 12823
+    },
+    {
+      "path": "internal/appflow/appflow.go",
+      "sha256": "2ccb0cad4063cbfe548d3c0994d44146b4c818c1abeab80abd3ba43b511ea819",
+      "size": 3284
+    },
+    {
+      "path": "internal/appflow/appflow_test.go",
+      "sha256": "5758d41939f9c66c360f4ac8f082e3f9ece75f032b0d54a54b726c9bca68993d",
+      "size": 4101
+    },
+    {
+      "path": "internal/auth/auth.go",
+      "sha256": "f20821451485549ca0492d40507a8e7a1e33e7d145d47cd2f728e4dc155082d9",
+      "size": 3178
+    },
+    {
+      "path": "internal/bim/converter/dxf.go",
+      "sha256": "b936262a9574d27553d12745613c3fbc081e45fe7c83af58921614500da4637d",
+      "size": 1710
+    },
+    {
+      "path": "internal/bim/converter/dxf_test.go",
+      "sha256": "bce602a0d53e7018ecac4cd919e2d70f4d0ab26206953393b98cbc5642de3624",
+      "size": 319
+    },
+    {
+      "path": "internal/bim/converter/glb.go",
+      "sha256": "18180e82c1fd6a99e13ab6d7ba015fdd5c50d8b010e0f33a2e5a330c6071ff93",
+      "size": 6097
+    },
+    {
+      "path": "internal/bim/converter/glb_test.go",
+      "sha256": "18ea512828f94f6e2a99c1c71071f31c27b0a35c20cfa3f58f18de4e6cf849aa",
+      "size": 325
+    },
+    {
+      "path": "internal/bim/converter/obj.go",
+      "sha256": "b1f3d15ba5231d9458d7ab3ba502ac5288bc3c08c06b43aa87d45ac31ca6a84c",
+      "size": 5363
+    },
+    {
+      "path": "internal/bim/converter/obj_test.go",
+      "sha256": "05575a9f357988968c2bcaa3513fb0bfae37913579e00fbfaa5d20f64e169d9c",
+      "size": 355
+    },
+    {
+      "path": "internal/bim/diff/mesh.go",
+      "sha256": "07bd7386392a53fe700974c1383b29903bc8374758401f39d665c2e412dd8445",
+      "size": 1148
+    },
+    {
+      "path": "internal/bim/diff/mesh_test.go",
+      "sha256": "5bf2e60240fe0f81e57a10109ee99b96386e22609bd8c0c74447172db2169347",
+      "size": 291
+    },
+    {
+      "path": "internal/bim/diff/semantic.go",
+      "sha256": "0c1f75585be0f727289b6b2dd20ffd07fd843525085c727329505786d3a2f074",
+      "size": 1998
+    },
+    {
+      "path": "internal/bim/diff/semantic_test.go",
+      "sha256": "cb27f2b32e3d314581c546200068c55e75c01c1a59fb9efa7857eb42ee281646",
+      "size": 431
+    },
+    {
+      "path": "internal/bim/ifc/step.go",
+      "sha256": "cf98e5bf67351fbe7a466ffe8632101ff00ae51a88b9ad8ccbf9131d9c401af5",
+      "size": 1761
+    },
+    {
+      "path": "internal/bim/ifc/step_test.go",
+      "sha256": "02efd87a4615b22a756ec9efc3a3af5febeabc09bd4ac77c0ea0fbec602dd360",
+      "size": 691
+    },
+    {
+      "path": "internal/bim/ifcgeometry/mesh.go",
+      "sha256": "611f4e2e882bb1fe9bbc854a94d7463ccd4443025609300fda41544a0478c708",
+      "size": 6456
+    },
+    {
+      "path": "internal/bim/ifcgeometry/mesh_test.go",
+      "sha256": "9c025df6618b831f9570c5270110fd86f5bafe3f9796afef11ad16097f8eabf5",
+      "size": 1102
+    },
+    {
+      "path": "internal/bim/ifcsemantic/graph.go",
+      "sha256": "366bf8265622d1a7b37d9ae08175e1f27fd5b18d6847a9fb18e446eb86ba4b82",
+      "size": 1209
+    },
+    {
+      "path": "internal/bim/ifcsemantic/graph_test.go",
+      "sha256": "df84b2e2529ee488bed9c06cb6544ec096f2ef80ca9052469f94ff801e0970b7",
+      "size": 564
+    },
+    {
+      "path": "internal/bim/ifcsemantic/mapping.go",
+      "sha256": "3418849bd1719483decac3044dd2c6b6df02877d38263509a023f9d0417bc00d",
+      "size": 2203
+    },
+    {
+      "path": "internal/bim/ifcsemantic/mapping_test.go",
+      "sha256": "412f9dda3326015937b8c84a5a8147dd648ab8feb545fa56299f7ae44d54d622",
+      "size": 663
+    },
+    {
+      "path": "internal/bim/ifcsemantic/properties.go",
+      "sha256": "557b9968a0744451607efe2045b18df39e47053f7859015044b40c02474f9389",
+      "size": 4551
+    },
+    {
+      "path": "internal/bim/ifcsemantic/properties_test.go",
+      "sha256": "5fe61ab795a5e6b09c936a699c825c99f7f2336965b2658415018633cc2f67d2",
+      "size": 1326
+    },
+    {
+      "path": "internal/bim/ifcsemantic/relations.go",
+      "sha256": "d61df156807dccf539b31148afc93b7ed17ce1c973bd3aecfa4f1b8319d47d5e",
+      "size": 1594
+    },
+    {
+      "path": "internal/bim/ifcsemantic/relations_test.go",
+      "sha256": "25708582305d47c188c50a727c02fe0a5c3f5c1282bbac844c38fb6b06ec273e",
+      "size": 575
+    },
+    {
+      "path": "internal/bim/ifcsemantic/schema.go",
+      "sha256": "4e307a9fd9a507e05afe28822798b205fc341cd5c8ebc902fe674dd9abf595c0",
+      "size": 1418
+    },
+    {
+      "path": "internal/bim/ifcsemantic/semantic.go",
+      "sha256": "5be0aa52b658313e1dec954652d8bac108ff1b2b12157c3077c85c159efde0d1",
+      "size": 1969
+    },
+    {
+      "path": "internal/bim/ifcsemantic/semantic_test.go",
+      "sha256": "aba23f26483c937432c9ec89c9fbed92c3e84d2a9a02709e30a3d0cb7cd5c07f",
+      "size": 483
+    },
+    {
+      "path": "internal/bim/importer/import.go",
+      "sha256": "1a3bd82b82551b2c1e8d5f48f96c55e6241a02df177f50bf6cba6e956a47744a",
+      "size": 2216
+    },
+    {
+      "path": "internal/bim/importer/import_test.go",
+      "sha256": "9a7bfeed21c8f661672285fa638dd1fcdc392f4cabbc6b97fd67c87145807307",
+      "size": 409
+    },
+    {
+      "path": "internal/bim/meshmanifest.go",
+      "sha256": "8fa51b0e0acf770c977ff5ea5de0e592ae6653d0e45fc0c51cffb0b5f5468c01",
+      "size": 1826
+    },
+    {
+      "path": "internal/bim/meshmanifest_runtime12.go",
+      "sha256": "0625b601ba7b9c49c9f81ac43959492c5d217f8273f744e0a128060a18dd1d1c",
+      "size": 1367
+    },
+    {
+      "path": "internal/bim/meshmanifest_runtime12_test.go",
+      "sha256": "50af8bd12a71ce42efa389584ec11c5c6c62d957e36a54ae60a04e050ddb5c03",
+      "size": 532
+    },
+    {
+      "path": "internal/bim/meshmanifest_test.go",
+      "sha256": "e2c65dd4cac511ff0d4bc4209ea348851f966a533fe6b5bafaa29d87e02753e5",
+      "size": 534
+    },
+    {
+      "path": "internal/bim/model.go",
+      "sha256": "ef0753623c214589d2d215cc7b637f5735fca2245847084448d5782939d2110d",
+      "size": 1859
+    },
+    {
+      "path": "internal/bim/model_test.go",
+      "sha256": "dd16622ae07922d0f4ed188b0753d9c57e0f7c83ed29995d0907636e6c685ca2",
+      "size": 1155
+    },
+    {
+      "path": "internal/bim/queue/processor.go",
+      "sha256": "7c296c0d91bd883f1dbf9251ac7f04681c8fd4b5def97c36e924c031e55910d9",
+      "size": 4807
+    },
+    {
+      "path": "internal/bim/queue/processor_test.go",
+      "sha256": "ba3ebca4a3913179ad39446156015cdff473e298188bde2b6d869417a1d59e94",
+      "size": 141
+    },
+    {
+      "path": "internal/bim/storage/local.go",
+      "sha256": "1188a1551bb940b17c9f3dd15d1b54259e560eeed21336de2fd0a36782fc499d",
+      "size": 1000
+    },
+    {
+      "path": "internal/bim/storage/local_test.go",
+      "sha256": "95993360ee244402ec8ca7126a0dcea29686aad1c4a2ee9c66ea6e5d4cbc3e12",
+      "size": 453
+    },
+    {
+      "path": "internal/bim/storage/object.go",
+      "sha256": "fd91aa6426ea2e9dcf3f7272038ca0212165d3b3987837f72557684b2790f45a",
+      "size": 1254
+    },
+    {
+      "path": "internal/bim/storage/object_test.go",
+      "sha256": "2b7ba5e159048080606f8947f81c1a576fb03b8f70aa1805d999b8cb1158cbfb",
+      "size": 480
+    },
+    {
+      "path": "internal/bim/storage/s3.go",
+      "sha256": "25a16ead55c25cb131e5d025877637762550d665e9114cdf400b166e2ba6b8ba",
+      "size": 3502
+    },
+    {
+      "path": "internal/bim/storage/s3_test.go",
+      "sha256": "90c217c61dda71c1cd2324f728b46d4b6380b3c7e2ffbfe4ace15dcb062a68a3",
+      "size": 827
+    },
+    {
+      "path": "internal/cli/api.go",
+      "sha256": "54b75419cabf06621f135678d216b69d9f1662b03b9f8bc6d7c025cbede802cf",
+      "size": 1029
+    },
+    {
+      "path": "internal/cli/cli.go",
+      "sha256": "3ba06c68e945e1dc8f13257ec8f8d1d0434f87d305bc5d41bf55e928e409c264",
+      "size": 2541
+    },
+    {
+      "path": "internal/cli/install.go",
+      "sha256": "9c6eb5638323902ada8f8b0e07f2bf4db04dbb69c21b41c1eaef0975497450d7",
+      "size": 617
+    },
+    {
+      "path": "internal/cli/lifecycle.go",
+      "sha256": "8ccbd824d62f17470ca2379e88db1dc7965d966b846a13d8d45b2c284cc5a712",
+      "size": 3625
+    },
+    {
+      "path": "internal/cli/migrate.go",
+      "sha256": "c402918f8c3dab8c3d7e1b5472c40450f814a53df9ba837aac87eb51765aca91",
+      "size": 499
+    },
+    {
+      "path": "internal/cli/process.go",
+      "sha256": "fc7060b3f4ceff4c6ae3b8678a1489bd855a7644c44c9f07a6ee56a8befc5f6f",
+      "size": 971
+    },
+    {
+      "path": "internal/config/config.go",
+      "sha256": "cff15feada7def1d6f91a052093194e32bf9cb589d6d3e23970f9c54aa197b5f",
+      "size": 4107
+    },
+    {
+      "path": "internal/config/config_test.go",
+      "sha256": "12d3883bb940ab73787a938b6f955395285b366bfced76ca7c7bbe2d625fcc7f",
+      "size": 2268
+    },
+    {
+      "path": "internal/contractors/eligibility.go",
+      "sha256": "59e30b5ba7756e2f4c2b90f18c83c4f8fde51d2f390af418403a316a590f6734",
+      "size": 865
+    },
+    {
+      "path": "internal/contractors/eligibility_test.go",
+      "sha256": "015d9fde8446f35a5bbe3af694bccac95fad696d6af823d205cdddd32827df55",
+      "size": 1069
+    },
+    {
+      "path": "internal/db/db.go",
+      "sha256": "8c1bf4d9631a7c7f6187096c7574de621d40d2b374b51747ebb47b830b7b3c9a",
+      "size": 989
+    },
+    {
+      "path": "internal/db/migrate.go",
+      "sha256": "1849869531c8f85b755516cee4477dcf191d8c88116415240e56c65b76dd5dac",
+      "size": 1553
+    },
+    {
+      "path": "internal/diagnostics/diagnostics.go",
+      "sha256": "2788fbe84c15ae62a7b1f76d4aa6c32e374afaa9c42081746a97a65e8bf32374",
+      "size": 4394
+    },
+    {
+      "path": "internal/diagnostics/diagnostics_test.go",
+      "sha256": "c288963d28a0ee4d2b363aea1de3f01479f34efb5093b6cdfa52578c7b8aaed5",
+      "size": 3678
+    },
+    {
+      "path": "internal/doctor/doctor.go",
+      "sha256": "fd87db96ad13b6c62cd6f64910ad25dfb8d93539f6d822f6f7c54d4c51a48b00",
+      "size": 1499
+    },
+    {
+      "path": "internal/domain/models.go",
+      "sha256": "d7e8734559ad04ff03f1c2a817ba6122aa1d59ce69adc5e0bd3adc21eb0ebf94",
+      "size": 980
+    },
+    {
+      "path": "internal/errorlog/errorlog.go",
+      "sha256": "f82eac8e42473f6b7dcd541c0bdaa04c4c528c0228bc80a50e0a678f2415b64d",
+      "size": 945
+    },
+    {
+      "path": "internal/errorlog/errorlog_test.go",
+      "sha256": "4e79bf0adc6a2eda860daac2837f7ade07f19453378ec284435fd01c2bdfd02f",
+      "size": 1567
+    },
+    {
+      "path": "internal/gitrepo/gitrepo.go",
+      "sha256": "4a85ea3613751c2cb99f3fac752c43fb6894fa9fed4fdc964b75c61da842a87e",
+      "size": 3091
+    },
+    {
+      "path": "internal/gitrepo/gitrepo_test.go",
+      "sha256": "455cc124e73ca0a30ea45d1612bb40816103f97cb6d5d2d510e5f3d480737c67",
+      "size": 2895
+    },
+    {
+      "path": "internal/installer/install.go",
+      "sha256": "2af8b26141b303e19a8261bac9ce799ad59a1eafc1fea4ee0bb5fc3f7ad5ae75",
+      "size": 4298
+    },
+    {
+      "path": "internal/orchestrator/orchestrator.go",
+      "sha256": "8b11043495c500c7b896454afab8d22ad4e1208c98622d5911f813cca0edaa9b",
+      "size": 2832
+    },
+    {
+      "path": "internal/orchestrator/orchestrator_test.go",
+      "sha256": "33b31c8bf2c3c46e50bbea65b008ff82eaeca47c36b3b02836a23a5f9b740a28",
+      "size": 3054
+    },
+    {
+      "path": "internal/orders/state.go",
+      "sha256": "365523bf659d11264780c97b26a94f7dfdfd7f1c60524de73966046d27920c98",
+      "size": 1050
+    },
+    {
+      "path": "internal/orders/state_test.go",
+      "sha256": "6274c54a8dccc3f6d4b28fac31b4ca1954177437ed0a1017db9a23304ee336e9",
+      "size": 676
+    },
+    {
+      "path": "internal/proektirovka/building/model.go",
+      "sha256": "c096b095afb077b966820776a4231b4707d784ffbc617e68f5a85eb6fc5e9e19",
+      "size": 6850
+    },
+    {
+      "path": "internal/proektirovka/drawings/facade.go",
+      "sha256": "658b0bb3118d17d7b67728a4620a8cdbf4609140b2b1d91f445e390647185cba",
+      "size": 8169
+    },
+    {
+      "path": "internal/proektirovka/drawings/floorplan.go",
+      "sha256": "d8ed43f719642ca91ec01588b2834876e7d08ceb0bd5cc71dd11af05eb00091f",
+      "size": 10088
+    },
+    {
+      "path": "internal/proektirovka/drawings/helpers.go",
+      "sha256": "4fa42e604b7415d515e4cb5b4b1f981ed3354aa7430700280455ed1d0610de50",
+      "size": 11985
+    },
+    {
+      "path": "internal/proektirovka/drawings/roofplan.go",
+      "sha256": "22d97a79141f55b018bb0c029c011e8fbfa27461351d96f5bdd0e48d63fdc8bb",
+      "size": 6949
+    },
+    {
+      "path": "internal/proektirovka/drawings/section.go",
+      "sha256": "7ab6df05cb2c72ce3b2ffd1f81f04ce71026cb4a47c08fa4f8c8a6a986f6b9cf",
+      "size": 8024
+    },
+    {
+      "path": "internal/proektirovka/drawings/siteplan.go",
+      "sha256": "51a02f20ea89d63238f8713e4f10e663eb45fcb07c74c633af69ecb097eedf4f",
+      "size": 9920
+    },
+    {
+      "path": "internal/proektirovka/dxf/document.go",
+      "sha256": "8ca81550e2df3967ee0906f5cf3a6bc3621b23f9abeb3943dd39b76d2a01677a",
+      "size": 16162
+    },
+    {
+      "path": "internal/proektirovka/generator/generator.go",
+      "sha256": "c70d34464307a4f0a49f34d8eae746fb6a14449b0c26601bd3e8daa9bfff8596",
+      "size": 12119
+    },
+    {
+      "path": "internal/proektirovka/gost/frame.go",
+      "sha256": "08381b618e1eae9216fcbe59a0364522915168a663af6355a69fa5d56d571bcb",
+      "size": 10043
+    },
+    {
+      "path": "internal/ratings/rating.go",
+      "sha256": "c90509b2dc5e27c17295e7b818d681a7925b01bd9be7cf27e9e99bbdcd310249",
+      "size": 441
+    },
+    {
+      "path": "internal/ratings/rating_test.go",
+      "sha256": "46e0fc0cfc69dfcfdade787e7bd25a206512ea697692febea7ace888e2c08a6c",
+      "size": 827
+    },
+    {
+      "path": "internal/report/report.go",
+      "sha256": "45d41308f663f99ed737d69b796a84ac0d26a6e866988b1e5a3d0a272e944b0b",
+      "size": 5371
+    },
+    {
+      "path": "internal/report/report_test.go",
+      "sha256": "f69794d636717180a829728faa0a05d633f1c6af00a16bbbe60aa316cfc4d585",
+      "size": 3717
+    },
+    {
+      "path": "internal/state/state.go",
+      "sha256": "6be9e7d4c8c23dff3872b4aab6adc51b8aba0b7b5e9487a04072373d2b28e542",
+      "size": 2634
+    },
+    {
+      "path": "internal/state/state_test.go",
+      "sha256": "04654008bf8cdc520f01144704cae98bebda001e73baf244868f3c1be8222ce8",
+      "size": 1455
+    },
+    {
+      "path": "internal/suppliers/eligibility.go",
+      "sha256": "21a052a53074df75c6345e229e719a6eaaca32818e6212df51a65b45c6a4459c",
+      "size": 614
+    },
+    {
+      "path": "internal/suppliers/eligibility_test.go",
+      "sha256": "1ccf91cc66440881af8322a04474b4cbd9916f33d48f704d7b0c5375e3e59bf9",
+      "size": 1146
+    },
+    {
+      "path": "internal/web/web.go",
+      "sha256": "9ad237405748ecfdb2d5ccfb5d6fb9492800609c33c4dd04dbd8c792390e3477",
+      "size": 5302
+    },
+    {
+      "path": "internal/web/web_test.go",
+      "sha256": "7b74e22939d547146e1015763143a177c65b4ed8b708940b3f301ee40b594f33",
+      "size": 5972
+    },
+    {
+      "path": "magasin-777/.env.example",
+      "sha256": "ca056c7d5ea6bda7ce1004c22e7e27549f6ad185026853ec406fd1b51b27f9fb",
+      "size": 736
+    },
+    {
+      "path": "magasin-777/.gitignore",
+      "sha256": "9485cb6a40a11d0dc4dd1fe7984b77bbd4b0439c90252bfccd55c6f41af5090a",
+      "size": 227
+    },
+    {
+      "path": "magasin-777/README.md",
+      "sha256": "a60bc05ea09b7afa01bb39363faa921197dba1ee415dff08377b6230f21acb14",
+      "size": 16082
+    },
+    {
+      "path": "magasin-777/deploy.sh",
+      "sha256": "48b3e044ee7dfdb605e7a45519948c485a54bfa604a61d89188f31883d1f683b",
+      "size": 3688
+    },
+    {
+      "path": "magasin-777/docker-compose.yml",
+      "sha256": "31dd2c8ceef474075336bcfc3dc22607c0c9779b403afd203342cd39a4f60f86",
+      "size": 2377
+    },
+    {
+      "path": "magasin-777/frontend/Dockerfile",
+      "sha256": "fec65e75b5546867169b528adcdb981553a1fa4e67c8155352b972048754c4b2",
+      "size": 142
+    },
+    {
+      "path": "magasin-777/frontend/components/Layout.js",
+      "sha256": "493884519aac7d1c6e9e8be0cb90ef4efdcb85c9139973627c2d477db5d034e0",
+      "size": 1804
+    },
+    {
+      "path": "magasin-777/frontend/components/ProductCard.js",
+      "sha256": "51ebf500be7410837fd5c7a8926fc48fa3a711a876f23bcb19b7d79217b163b4",
+      "size": 1107
+    },
+    {
+      "path": "magasin-777/frontend/components/admin/AdminLayout.js",
+      "sha256": "6c9228e22206134b10706e4f82695dfd2fa87e71026e4c39282099047c1beeca",
+      "size": 2744
+    },
+    {
+      "path": "magasin-777/frontend/lib/api.js",
+      "sha256": "13acd807d1a01c2379d46faaa5d15d24b91ae652b6ffc9a76ddfc1ee22a2488a",
+      "size": 905
+    },
+    {
+      "path": "magasin-777/frontend/lib/useAdmin.js",
+      "sha256": "06b03aa83eb5f75a617740d521eebf3cbe2ecf203ac3c7279f3e19c9ce7fe8fd",
+      "size": 2908
+    },
+    {
+      "path": "magasin-777/frontend/lib/useCart.js",
+      "sha256": "ce53ed2a83d422c60bde4bd50354f91365b00ac9b64a0cb8bce29ab395a61da0",
+      "size": 1812
+    },
+    {
+      "path": "magasin-777/frontend/lib/useLang.js",
+      "sha256": "879d94f6e1ed6565a33c9c58c9706bdd8c127119202b6f639dbcc1a6f6c8a280",
+      "size": 2228
+    },
+    {
+      "path": "magasin-777/frontend/lib/useTheme.js",
+      "sha256": "dd786bad41121b60e380a73a844224beab4d8b57dc601cc5967a3358a379edd4",
+      "size": 2453
+    },
+    {
+      "path": "magasin-777/frontend/next.config.js",
+      "sha256": "bd8534a6cc060dcf5c019d75179bb4a9a974aab3eb7b6f25f17a5cb2c6bf6db1",
+      "size": 188
+    },
+    {
+      "path": "magasin-777/frontend/package.json",
+      "sha256": "80027451a350ee0195a93cd75caaad042409bdcb875999d9dd698f329112aa61",
+      "size": 278
+    },
+    {
+      "path": "magasin-777/frontend/pages/_app.js",
+      "sha256": "f8eebbcbd7dcf0f8a73132ee69d6bdfa569ec8529316d0b4501eaccc9facee0d",
+      "size": 949
+    },
+    {
+      "path": "magasin-777/frontend/pages/admin/categories.js",
+      "sha256": "69ff17dedce2b56bc2ddf95fd6df3c3f7367e9a04dc432dede20a3e3d616e9b5",
+      "size": 4273
+    },
+    {
+      "path": "magasin-777/frontend/pages/admin/dashboard.js",
+      "sha256": "1b6f02ffbd468a71905d1ce65324642cd985da4ac687e5ae9d228a824b5fc7fa",
+      "size": 2425
+    },
+    {
+      "path": "magasin-777/frontend/pages/admin/index.js",
+      "sha256": "e6138e4ea4f4e26f40456cf9411ab3fc04cae71e3cfa14151430674e3aef9731",
+      "size": 2059
+    },
+    {
+      "path": "magasin-777/frontend/pages/admin/orders.js",
+      "sha256": "8e68be4025a5d93bb4c120b5427eb8cd78d9db04658cdf44d841dc448a75ab89",
+      "size": 4404
+    },
+    {
+      "path": "magasin-777/frontend/pages/admin/pages.js",
+      "sha256": "49cc9914416a6675c8a5abfd5077761e1b1af1d38db3b5eedf6f94c3b713f9f1",
+      "size": 4996
+    },
+    {
+      "path": "magasin-777/frontend/pages/admin/password.js",
+      "sha256": "f1f54176f270ffe7ee4a498ee3544a7c69065ee7dd492ed331d101a431dd1776",
+      "size": 2468
+    },
+    {
+      "path": "magasin-777/frontend/pages/admin/products.js",
+      "sha256": "3d2d0b6b6f53b0524e0e2eb8ef87e6b8c3acda6b957394a40654756fbabba262",
+      "size": 7171
+    },
+    {
+      "path": "magasin-777/frontend/pages/admin/settings.js",
+      "sha256": "ba586fe926f31b714db642b789f0294c4f559af64a0898f650c9d4c5afbc9b38",
+      "size": 8432
+    },
+    {
+      "path": "magasin-777/frontend/pages/admin/stock.js",
+      "sha256": "b0036b7bdadfe9f3092f31e805b1aed9eeced4535a4bd6b8ee6226801cd668a6",
+      "size": 5534
+    },
+    {
+      "path": "magasin-777/frontend/pages/admin/themes.js",
+      "sha256": "2f8ef305241754f7aa96c42a04a934e093493ad506171944c4801c4701dcbcbf",
+      "size": 4001
+    },
+    {
+      "path": "magasin-777/frontend/pages/cart/index.js",
+      "sha256": "02b93c884ee92a2f153b41a5b02f58d08b92caba7a219df02e1adc55c26645fd",
+      "size": 2798
+    },
+    {
+      "path": "magasin-777/frontend/pages/catalog/[slug].js",
+      "sha256": "292634ff0479fda01dad4b2223abe8ee5c67ac06413b8fb2fb1d66e0a535c02e",
+      "size": 3316
+    },
+    {
+      "path": "magasin-777/frontend/pages/catalog/index.js",
+      "sha256": "f80dcaf68100e2729da8e9fdefbfb24a803f390aed44c0920dfb0616038c7ea9",
+      "size": 2935
+    },
+    {
+      "path": "magasin-777/frontend/pages/checkout/index.js",
+      "sha256": "6ccf066c1fb658225cffdaf1b6c4febe66d50208f2c7edd4a64e7dcee67b52d3",
+      "size": 4668
+    },
+    {
+      "path": "magasin-777/frontend/pages/index.js",
+      "sha256": "6853a97859d207040666201ae4ee936ca76ed769b8703b5f4e74b6b1e97171b8",
+      "size": 2766
+    },
+    {
+      "path": "magasin-777/frontend/pages/page/[slug].js",
+      "sha256": "8a9727eafb17cf33adbc40d2af4fd1332c645f68db638e945b621ca45a360fe6",
+      "size": 1622
+    },
+    {
+      "path": "magasin-777/frontend/public/.gitkeep",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size": 0
+    },
+    {
+      "path": "magasin-777/frontend/public/placeholder.svg",
+      "sha256": "94ceb7f9dc04ff441414bb38fc30a675385aad6ad4f5f4a1ebb8b51663992a04",
+      "size": 288
+    },
+    {
+      "path": "magasin-777/frontend/styles/admin.css",
+      "sha256": "2db643008311dd165f9628ac84b7d43c6ec0b9088c9cef2572244d37a10a474a",
+      "size": 5089
+    },
+    {
+      "path": "magasin-777/frontend/styles/globals.css",
+      "sha256": "c0161ad9a829f0dafb8f4dc96bbb587720790196b527df058bae89fc23727233",
+      "size": 12810
+    },
+    {
+      "path": "magasin-777/scripts/backup.sh",
+      "sha256": "4edc780d1763ac5b8aa7802d0f8242b5033ac579befd2a7c70b1be192f5e4d5a",
+      "size": 1125
+    },
+    {
+      "path": "magasin-777/scripts/init_db.sh",
+      "sha256": "5285b2e534e57c4d7568bfff426b580546744efe53ad18ab23223c296ff48c2e",
+      "size": 545
+    },
+    {
+      "path": "magasin-777/services/auth/.gitkeep",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size": 0
+    },
+    {
+      "path": "magasin-777/services/catalog/.gitkeep",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size": 0
+    },
+    {
+      "path": "magasin-777/services/evaluator/Dockerfile",
+      "sha256": "68c1b4f818b69dd04e6ac7e8ae0aaaf504c80bc67b2de2b1ab5c6094e22513bf",
+      "size": 326
+    },
+    {
+      "path": "magasin-777/services/evaluator/app/core/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size": 0
+    },
+    {
+      "path": "magasin-777/services/evaluator/app/core/config.py",
+      "sha256": "5fc4e3d5e3783f47fd183939e7e0224c64674a0473ea0583543552273e87b55a",
+      "size": 593
+    },
+    {
+      "path": "magasin-777/services/evaluator/app/core/database.py",
+      "sha256": "ab3997bb93f32020b253f21f4f4250ad8d7a52d239736947b6b4db8c34438801",
+      "size": 535
+    },
+    {
+      "path": "magasin-777/services/evaluator/app/core/i18n.py",
+      "sha256": "0e691a2e55d647ed3688e3d1fbd3d1fda42c74961ff59a6d85a01ccc1190c841",
+      "size": 18559
+    },
+    {
+      "path": "magasin-777/services/evaluator/app/core/security.py",
+      "sha256": "f9b13cd4474c953ebc36e8da344745e8808ec8fe13efe53336296da1f3cbe9ef",
+      "size": 1913
+    },
+    {
+      "path": "magasin-777/services/evaluator/app/core/seed_products.py",
+      "sha256": "5dadf9ae5840f45f1f2d538263298aee746338e0efc0d6b9cc46714f7c126359",
+      "size": 54069
+    },
+    {
+      "path": "magasin-777/services/evaluator/app/core/themes_generator.py",
+      "sha256": "d08a8b9f1a4fe6e9685226508b175ce89b89dc5c274735c01dee24b1b5ea6a8a",
+      "size": 12640
+    },
+    {
+      "path": "magasin-777/services/evaluator/app/main.py",
+      "sha256": "e0e58b53d14e4611ecd0152416a56a5181f6f65635ff3d7fcf105710cef00c07",
+      "size": 5216
+    },
+    {
+      "path": "magasin-777/services/evaluator/app/models/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size": 0
+    },
+    {
+      "path": "magasin-777/services/evaluator/app/models/order.py",
+      "sha256": "33bac65450374abd12a204527c88c12a44c17492ce7704bff60957f92e9d76b8",
+      "size": 1885
+    },
+    {
+      "path": "magasin-777/services/evaluator/app/models/product.py",
+      "sha256": "379fdad183270808b80e2f661e681307b25bbe9c393d7349ced4441ca625d3c8",
+      "size": 3237
+    },
+    {
+      "path": "magasin-777/services/evaluator/app/models/site.py",
+      "sha256": "4d4c0e573d1fb510c0e3c8c52d0efdbbd0d9abc509e339f0151a978bf9e93a47",
+      "size": 4300
+    },
+    {
+      "path": "magasin-777/services/evaluator/app/models/user.py",
+      "sha256": "2007681a99368779fbb44d1d4f02bf7b78857433d750cde70014cbc2f354f1f9",
+      "size": 783
+    },
+    {
+      "path": "magasin-777/services/evaluator/app/requirements.txt",
+      "sha256": "4be11f0081152b520399a91d2ef482bf8fb711cb46c297d4db7dfb888d7d278f",
+      "size": 272
+    },
+    {
+      "path": "magasin-777/services/evaluator/app/routers/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size": 0
+    },
+    {
+      "path": "magasin-777/services/evaluator/app/routers/admin_auth.py",
+      "sha256": "a2bac1c8ff08101c975e1a4eae962f22a5f4d0303af67d1bc51af6f3f5659860",
+      "size": 1667
+    },
+    {
+      "path": "magasin-777/services/evaluator/app/routers/categories.py",
+      "sha256": "42fab34c88553e71afbeca53a0b0f7d6b3ceb9f20a46adbd3d4c0bb34cfce07a",
+      "size": 2258
+    },
+    {
+      "path": "magasin-777/services/evaluator/app/routers/orders.py",
+      "sha256": "042a5f9547f2491bc0b723fe3cf32f1ce51cbadab0cdb048b9df8db49e3aa116",
+      "size": 3402
+    },
+    {
+      "path": "magasin-777/services/evaluator/app/routers/pages.py",
+      "sha256": "9a48ba2f363b72ae2f782f76d930c8dd81714a15cc112cf3ffcdaabcce4a2580",
+      "size": 2462
+    },
+    {
+      "path": "magasin-777/services/evaluator/app/routers/products.py",
+      "sha256": "70096e83554ccb16cca25db9a85047d6a9f19e89de121d3b31fbddafb231a61d",
+      "size": 3209
+    },
+    {
+      "path": "magasin-777/services/evaluator/app/routers/settings.py",
+      "sha256": "15a28a742971a806256f7604b6e61d0ea866076c77642f4167aab396c1151d63",
+      "size": 1308
+    },
+    {
+      "path": "magasin-777/services/evaluator/app/routers/stock.py",
+      "sha256": "40f32a869fbe6c6789171bbaf63f0f49cb1497e6594b173925b99acf5ae5baa1",
+      "size": 2531
+    },
+    {
+      "path": "magasin-777/services/evaluator/app/routers/themes.py",
+      "sha256": "a65c39a61e81ffa3599a80f455c75221c501ae04a36e5b879d8befc4e57ff9b4",
+      "size": 2211
+    },
+    {
+      "path": "magasin-777/services/evaluator/app/routers/upload.py",
+      "sha256": "07b441cf4b88006137bc825591792ee55988833295d9ea5fa2711fc1fddd14d0",
+      "size": 1920
+    },
+    {
+      "path": "magasin-777/services/evaluator/app/schemas/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size": 0
+    },
+    {
+      "path": "magasin-777/services/evaluator/app/schemas/auth.py",
+      "sha256": "ea23e785c9aa23f45e6c177f2e7123a5147ca54935c3c3fd0f37f09eff4bd20a",
+      "size": 295
+    },
+    {
+      "path": "magasin-777/services/evaluator/app/schemas/order.py",
+      "sha256": "3d035386393b6bb8698f8ea26ed11175da170016231e021a0731c54308338c8a",
+      "size": 976
+    },
+    {
+      "path": "magasin-777/services/evaluator/app/schemas/product.py",
+      "sha256": "1ee9f8098833bcfc9e69bece8b6b3d578a251541d8c84700b2e7ff86939e6b30",
+      "size": 2403
+    },
+    {
+      "path": "magasin-777/services/evaluator/app/schemas/site.py",
+      "sha256": "762686fa20cb1fae44f5531834cee61b0f2604ae728387626a331c82b2c913c9",
+      "size": 2530
+    },
+    {
+      "path": "magasin-777/services/gateway/nginx.conf",
+      "sha256": "93873ddd0b7d4e3a95e3a51b57c7e7176f76e7760a3621c8250f83586937a9d6",
+      "size": 1560
+    },
+    {
+      "path": "migrations/0001_foundation.sql",
+      "sha256": "1167ab5a0bfd7eb5e34d174387678352c2a49679a876c07a1d425f5f49f4924c",
+      "size": 1938
+    },
+    {
+      "path": "migrations/0002_auth.sql",
+      "sha256": "9bfb12121db883a9d86080f91b36918556ea2b5e72d2db4bc4f70f7c8b9d568e",
+      "size": 272
+    },
+    {
+      "path": "migrations/0003_marketplace.sql",
+      "sha256": "d266e7ce8e659f3a0462c8c27f5e379de2b7ba0773f1fae2d9ebc47431a06a75",
+      "size": 2145
+    },
+    {
+      "path": "migrations/0004_identity.sql",
+      "sha256": "15caace1f4580ac986d1dc01e422ffd08255154c715c242ac2e0351318b90f50",
+      "size": 2734
+    },
+    {
+      "path": "migrations/0005_constructor.sql",
+      "sha256": "9d2b0279cf6f67897e38a9997f16d4c98b06db87ced07798b161960ab9b3dd96",
+      "size": 5479
+    },
+    {
+      "path": "migrations/0006_estimates_orders.sql",
+      "sha256": "9dfa1cda0833761db4f63976881924254c841191edb3e20f39b61357cf13d06d",
+      "size": 3047
+    },
+    {
+      "path": "migrations/0007_contractors.sql",
+      "sha256": "ce49906bb410f1764720fc357ba5e38eec7055862e60131f7a61c57467d40b95",
+      "size": 1985
+    },
+    {
+      "path": "migrations/0008_suppliers.sql",
+      "sha256": "1f6b67b227d7d38c18850af4d67eb5b247894dae7eb6fe211e509cb1c15ccbda",
+      "size": 3513
+    },
+    {
+      "path": "migrations/0009_ratings.sql",
+      "sha256": "a6b1bf3b8a703efc9ad173550b6643767549eeb5b6a9ae3c738eef5edbcc3a6f",
+      "size": 4687
+    },
+    {
+      "path": "migrations/0010_ai.sql",
+      "sha256": "171dbdc0f93037bb8ca07ed9ca269454d020dccfc79cdc4dc6faf980d9c9a107",
+      "size": 6183
+    },
+    {
+      "path": "migrations/0011_bim.sql",
+      "sha256": "ef0e1f9967a4ac11960940b26aff8f1b8db008a68316f42b02d46b2a6f8f3897",
+      "size": 3854
+    },
+    {
+      "path": "migrations/0012_bim_runtime.sql",
+      "sha256": "47c91913d31ae076e0b4574892b5c3161a83de6b4e905aceb9813f7ecffa3a53",
+      "size": 1194
+    },
+    {
+      "path": "migrations/0013_bim_diff.sql",
+      "sha256": "158e4d5913ace3c9142ff2869b2eb60c45ae762c2c92a7b0b934b625e531ead2",
+      "size": 171
+    },
+    {
+      "path": "migrations/0014_bim_exchange_runtime.sql",
+      "sha256": "fc8eb2ba00db0c58666e73736449fc7648717e18044048f908fabaf2d02ead93",
+      "size": 596
+    },
+    {
+      "path": "migrations/0015_bim_ifc_semantics.sql",
+      "sha256": "9e8129b4a3256db11fa5d69fbeb70a85485d5dc7bbc730f8030924d623f9409b",
+      "size": 698
+    },
+    {
+      "path": "migrations/0016_bim_ifc_import_metadata.sql",
+      "sha256": "b25785b62c0718f7d240ec3722769ce808e25e10fda3a6ebe2bcc7de84cdda84",
+      "size": 377
+    },
+    {
+      "path": "migrations/0017_bim_semantic_runtime9.sql",
+      "sha256": "51935628f4842a2d3eb842dc52b5121438c36fd4f8d1c183ef6db4e6fcd1b8ee",
+      "size": 775
+    },
+    {
+      "path": "migrations/0018_bim_runtime10.sql",
+      "sha256": "37f6a1b1c208e494470cbb5c23b26c9edda855564a951595dfe687cb22320086",
+      "size": 420
+    },
+    {
+      "path": "migrations/0019_bim_storage_import_runtime11.sql",
+      "sha256": "5f441f52252166d250197acdc2e3d31b20a988a6b9e7483cc0c18f42445e77ed",
+      "size": 960
+    },
+    {
+      "path": "migrations/README.md",
+      "sha256": "8d215e1dbb53b32d192e76ccff7e2afbf1fb7cc72aa805bb612b3f5fc1f7d627",
+      "size": 780
+    },
+    {
+      "path": "proektirovka-sdaniy/.gitignore",
+      "sha256": "c677f275f9abc04f1b51d607c69e363b62fa5bbd9c60626e21f67b5fc005a764",
+      "size": 133
+    },
+    {
+      "path": "proektirovka-sdaniy/README.md",
+      "sha256": "077b04ac37fe2ee66e6692f0dd971b59d830463432898654c0c9eb9d04018638",
+      "size": 3157
+    },
+    {
+      "path": "proektirovka-sdaniy/cmd/generate/main.go",
+      "sha256": "72d7a3984e0e5fdb653cf419140d1824ebcd31cf41b45a5f61e6c6c51d18d2e2",
+      "size": 12239
+    },
+    {
+      "path": "proektirovka-sdaniy/configs/court_tosno.yaml",
+      "sha256": "cc6e1cb3682e82b933606f6238f5df8275febde187edbeced30506006b360256",
+      "size": 8727
+    },
+    {
+      "path": "proektirovka-sdaniy/go.mod",
+      "sha256": "3ec9c7796a12aefd06a40b8eed0e39f7d86641acee5702e19a2b4fb02af94e1e",
+      "size": 95
+    },
+    {
+      "path": "proektirovka-sdaniy/go.sum",
+      "sha256": "e42794fa9b56301ad073de55cac1dea683b320ed951454d8709ffc7156088dd2",
+      "size": 360
+    },
+    {
+      "path": "proektirovka-sdaniy/pkg/building/model.go",
+      "sha256": "0f6adb4ad27af389fbad681615cc9034b70ff98a6b1e5ddfaca33a909152add9",
+      "size": 6846
+    },
+    {
+      "path": "proektirovka-sdaniy/pkg/drawings/facade.go",
+      "sha256": "f2be77cbbdcb5d7f207edab14db9ab1adbbcc4b62eaded4d1d6951fe6f88a33e",
+      "size": 8147
+    },
+    {
+      "path": "proektirovka-sdaniy/pkg/drawings/floorplan.go",
+      "sha256": "99b316602171ef535386605bf1761734aa9d6324ee32cdecfe802a4bd135e2ec",
+      "size": 10050
+    },
+    {
+      "path": "proektirovka-sdaniy/pkg/drawings/helpers.go",
+      "sha256": "0997a9b6ecb0ce1a8f3e70a35932534e4fc190c67f45413a0c06c9f2f3c5d0d7",
+      "size": 11982
+    },
+    {
+      "path": "proektirovka-sdaniy/pkg/drawings/roofplan.go",
+      "sha256": "3c9649f5bba93d357e690e1f5259ba54d9706fca58b3156a0013261c78caf476",
+      "size": 6915
+    },
+    {
+      "path": "proektirovka-sdaniy/pkg/drawings/section.go",
+      "sha256": "f497e75bb1908533f1ab3793f1ce02f1357f7265ef93b4ebea6e809f9ff2bf5a",
+      "size": 8011
+    },
+    {
+      "path": "proektirovka-sdaniy/pkg/drawings/siteplan.go",
+      "sha256": "414730d16a87ea455772964c024fff60826c45a469f663022bc136a1162acc28",
+      "size": 9884
+    },
+    {
+      "path": "proektirovka-sdaniy/pkg/dxf/document.go",
+      "sha256": "8950b33b119faf923d7cc2062bdf4efcc7bfe62f33dc81fb5861651e867aed51",
+      "size": 16367
+    },
+    {
+      "path": "proektirovka-sdaniy/pkg/gost/frame.go",
+      "sha256": "24abb64bd3f95b955289500353cf7a2d0faf811e3bedaaf96c7617abf89a0b10",
+      "size": 10043
+    },
+    {
+      "path": "release/RELEASE_MANIFEST_TEMPLATE.json",
+      "sha256": "48e673c115d4318e16dac80dd847e159c55b594cc3f7bf762add739ac4b00f26",
+      "size": 342
+    },
+    {
+      "path": "scripts/backup-restore-drill.sh",
+      "sha256": "c2eb28ed412d32dce7f26f3675a3596c61149f8724abaa08ded6ff98d6348546",
+      "size": 2156
+    },
+    {
+      "path": "scripts/backup-verify.sh",
+      "sha256": "e54c5d0018cfe1b238a8159e3df6d67db0035b6639fe5513be7f273c6365b7ef",
+      "size": 664
+    },
+    {
+      "path": "scripts/build-release.sh",
+      "sha256": "024ca2977bf9400296bd7aea44791f9a0e9914915e40631f6c4638415307734e",
+      "size": 903
+    },
+    {
+      "path": "scripts/clean-host-check.sh",
+      "sha256": "334ae82105f0d379989d69ecc0d16a8d04589905d220be114197fdcb0b46df87",
+      "size": 978
+    },
+    {
+      "path": "scripts/dependency-audit.sh",
+      "sha256": "9913a2c24cfd8b2da76b27a990c072084b8de69d60f2e67270b21dd0a0e7a75c",
+      "size": 536
+    },
+    {
+      "path": "scripts/e2e-full.sh",
+      "sha256": "7499b36e787b9ae41548f5bb932d7eab47021bb65b80e155a9cf801a7380d8d8",
+      "size": 6539
+    },
+    {
+      "path": "scripts/e2e-smoke.sh",
+      "sha256": "4af0bddf2c92927e1e0c74c7622fc9eb8ce1ded2705f8ebd1f49e4bed4355ff4",
+      "size": 1090
+    },
+    {
+      "path": "scripts/package-release.sh",
+      "sha256": "29f5608e1e313de8bb70556491b55a1730195f325113c680632d49301b8f632f",
+      "size": 601
+    },
+    {
+      "path": "scripts/release-check.sh",
+      "sha256": "698f3c9f2bb2dbe959e684d13c8fd650a6caf51fb6be869d6bbf9468bd0a7dd6",
+      "size": 922
+    },
+    {
+      "path": "scripts/security-baseline.sh",
+      "sha256": "2c8f18a16c84d5da2a80a811ba1f15e14ba1c1c15482d5a1c2e2bdaebd3a9d85",
+      "size": 1339
+    },
+    {
+      "path": "scripts/security-release-gate.sh",
+      "sha256": "1176d2e6cf0cd8a8c4baae16af925781cdd263e53ff8b95617bcf806310817e5",
+      "size": 1046
+    },
+    {
+      "path": "scripts/validate-compose.sh",
+      "sha256": "4370d8c7d575797ac26064f96ded93cf8b54e6d261582aa962aa5079901c24a6",
+      "size": 275
+    },
+    {
+      "path": "super-sistema/.env.example",
+      "sha256": "bc10913822a83b2809b7726fd0a89d190530ddadce6d8dddd580e59b1b731d8d",
+      "size": 2943
+    },
+    {
+      "path": "super-sistema/.github/workflows/build-installer.yml",
+      "sha256": "fa194931c7e86e91d387df62295936146e6512c7344dc858deadf3c5522c454a",
+      "size": 2786
+    },
+    {
+      "path": "super-sistema/.gitignore",
+      "sha256": "1bf0380515b9c4f7b769744b316ce3d5b18c57347fac6529853750e2697f57ac",
+      "size": 435
+    },
+    {
+      "path": "super-sistema/LICENSE",
+      "sha256": "7dca5bb05c6c5311e7dde31a7d4eccad7ce18d18d9a5b8fd6052a57725478da7",
+      "size": 1070
+    },
+    {
+      "path": "super-sistema/README.md",
+      "sha256": "391c477850715b65ef3cc02752944bc04596f6a095847471e1059a694e3f744a",
+      "size": 3305
+    },
+    {
+      "path": "super-sistema/docker-compose.gpu.yml",
+      "sha256": "59b215e430f02a0faaa52250d09dc3e32d8fabde8e67ce80b69e1b2111fd4c1a",
+      "size": 4490
+    },
+    {
+      "path": "super-sistema/docker-compose.yml",
+      "sha256": "0e3465a76f881b3489912c68bc60b1e1262d4ccf4b4fe1c79dfd47582f9e9f53",
+      "size": 2763
+    },
+    {
+      "path": "super-sistema/docs/CONVERSATION.md",
+      "sha256": "78528d2bec013b587d398dcb95eaff481be3299b0117eb12b1db4aee1707cf07",
+      "size": 8781
+    },
+    {
+      "path": "super-sistema/docs/DONE.md",
+      "sha256": "1b08caa75931f944fcb4345371b5f05ab56e7c8b4b8e919418a19418ad9c039d",
+      "size": 6776
+    },
+    {
+      "path": "super-sistema/docs/ERRORS.md",
+      "sha256": "01e9415b496d7c27c2fa4d5ff886967982ef8813996e43ac670ec38f3d0d324e",
+      "size": 8462
+    },
+    {
+      "path": "super-sistema/docs/PLAN.md",
+      "sha256": "79e105e6c090565fa9eeba8fa2457cb69551b37d25fc6258f74e4e3b6bda15b6",
+      "size": 9393
+    },
+    {
+      "path": "super-sistema/docs/REPORT.md",
+      "sha256": "b9b149d7a27ead161f8ddcbb397d9e8e02c6e5eed90e86db17c95f258bf6daf9",
+      "size": 11424
+    },
+    {
+      "path": "super-sistema/docs/TECHNICAL.md",
+      "sha256": "69338f48ffe72e2018d72a33bc104fb4d7b46be6f4d7317c74c3f244c668fa4e",
+      "size": 15447
+    },
+    {
+      "path": "super-sistema/docs/TODO.md",
+      "sha256": "b06da55930993c53f028fd8be16a27c179d02d037bbebcf1b5cc14dcb6008e0e",
+      "size": 2312
+    },
+    {
+      "path": "super-sistema/docs/USERGUIDE.md",
+      "sha256": "35e799e0b358972c5b672fb2e65397221b1e74c4ee6badf6cf864739b7334db0",
+      "size": 9678
+    },
+    {
+      "path": "super-sistema/docs/github-actions/build-installer.yml",
+      "sha256": "44691f84f8c415c1290bbe4ded4ee67a9901bbb39e55e803acb05f78b785043e",
+      "size": 2424
+    },
+    {
+      "path": "super-sistema/gpu-panel/Dockerfile",
+      "sha256": "17ad2516e2fe2702ffd19ab3cc178a82a060fca64dfc29d3e6b1337110408ba7",
+      "size": 658
+    },
+    {
+      "path": "super-sistema/gpu-panel/app.py",
+      "sha256": "4c9010cf3ac7e213d8dff682d000e55f66f04aab801c9eafbfa7c64322515879",
+      "size": 8478
+    },
+    {
+      "path": "super-sistema/gpu-panel/requirements.txt",
+      "sha256": "cbe7e8d019319ee286ffd5e8e2140e65c0fab359da62d4af313502f8101f23c5",
+      "size": 71
+    },
+    {
+      "path": "super-sistema/gpu-panel/templates/index.html",
+      "sha256": "3ceb4bd5a51d5f573c100d77c39d86a905b81e8ce378f6cf0657763c82986a48",
+      "size": 16373
+    },
+    {
+      "path": "super-sistema/install.sh",
+      "sha256": "ada5c680a92910d9a61e03541986b2dc75cf1d5ecd2cd69a6fcd1628744cb5c9",
+      "size": 16139
+    },
+    {
+      "path": "super-sistema/installer/install.bat",
+      "sha256": "d8af6701db92b91d773c2e80aacc826fa9898c49e82e3649bcfad5ae199b46e6",
+      "size": 5465
+    },
+    {
+      "path": "super-sistema/installer/setup.nsi",
+      "sha256": "f9003e8f0f569ff7e39fd0cf559abd07ec29c9914e2171b02bcc298210f54874",
+      "size": 8502
+    },
+    {
+      "path": "super-sistema/installer/setup.ps1",
+      "sha256": "a6186383dd16f9f13c6bb0f6a3d285b41351cbfb92e0928ba41773092a945e44",
+      "size": 17074
+    },
+    {
+      "path": "super-sistema/scripts/download-models.sh",
+      "sha256": "ed37fdbebc9d25646daa7b1f099462d249ffd6b2e16cd555c2bc6bfabd5e2d70",
+      "size": 4789
+    },
+    {
+      "path": "super-sistema/scripts/install-gpu-monitor.sh",
+      "sha256": "b9ace76be98e04ba90e4ee8cd007731f5d85156a55e7d06d5650c024d5c53545",
+      "size": 2853
+    },
+    {
+      "path": "super-sistema/scripts/setup-tesla-p100.sh",
+      "sha256": "a35576018af919c7b5c99c646369eadf0a89900a82b0b92fbbc43965ae1d12a3",
+      "size": 30397
+    },
+    {
+      "path": "super-sistema/scripts/update.sh",
+      "sha256": "d11955805dffc3e007583b753dabf0177efbc270458403d71aa8c8f227f9306c",
+      "size": 998
+    },
+    {
+      "path": "super-sistema/scripts/watch-gpu.sh",
+      "sha256": "4b7d245779dcaa97fc989953dc8c2d145bbf3ddcf09afb618d3d9f20f4c79775",
+      "size": 9878
+    },
+    {
+      "path": "super-sistema/uninstall.sh",
+      "sha256": "7ee6e3cf6ae4d6a2bef5d9de5c352c241697e951b954ac5e07d481ea21a94ba2",
+      "size": 2453
+    },
+    {
+      "path": "testdata/ifc-malicious/README.md",
+      "sha256": "c22a47b4bbcfaeabbc10b81c42dba563dcedd421ec50504e132121929c7d282c",
+      "size": 456
+    },
+    {
+      "path": "testdata/ifc-malicious/invalid-step.ifc",
+      "sha256": "6a9b10296e3e75bcf93f67f85b8ac6fd0b51f41609c01799f2af12ab67c20ab6",
+      "size": 27
+    },
+    {
+      "path": "testdata/ifc-malicious/traversal-name.ifc",
+      "sha256": "2067193377ac9c2a2d3e5a84b741bd8e86c18877e6de26344665d7a59478ab8f",
+      "size": 296
+    },
+    {
+      "path": "training/README.md",
+      "sha256": "228581e695b6579644e4e32773a58da9f767a2c229daac4a0dbb3a84b65de01b",
+      "size": 943
+    },
+    {
+      "path": "training/scripts/prepare_dataset.py",
+      "sha256": "5ab2c94348128316b48adcbc5a8462066eea6492a1dd726f0ce08f7ffe58db91",
+      "size": 920
+    },
+    {
+      "path": "training/scripts/train_qlora.py",
+      "sha256": "e218ba11990497be02d478eb11ff75213f2cf9f520f738340fef567acd2287b9",
+      "size": 2269
+    },
+    {
+      "path": "trest-installer/.dockerignore",
+      "sha256": "7fc3bf9ba9ef7f7741308039b86bd57e690636d2a396b91c7918285d2dd874fd",
+      "size": 68
+    },
+    {
+      "path": "trest-installer/.gitignore",
+      "sha256": "b9238e143db84726d26fea54f984235b317ed53df7af5540fbead34a38850f9e",
+      "size": 217
+    },
+    {
+      "path": "trest-installer/Dockerfile",
+      "sha256": "2034dbc049b8f8a3a0413643d964ac4308aed80eafd522ca0792ab2898524fa9",
+      "size": 963
+    },
+    {
+      "path": "trest-installer/cmd/trest/audit.go",
+      "sha256": "39721c02016ef9560cf931d28e76625eaa37f31aa43b50dea6fc85aa05c28d59",
+      "size": 3208
+    },
+    {
+      "path": "trest-installer/cmd/trest/main.go",
+      "sha256": "1fd07d1a5b8158033eaf91a44361248ccd1d468f23b4ef48ab4a9799f55b6179",
+      "size": 2082
+    },
+    {
+      "path": "trest-installer/cmd/trest/run.go",
+      "sha256": "e748c71632056992eede214c0d2feff9babfd21eed2ca5afd7f66270f81382cd",
+      "size": 1710
+    },
+    {
+      "path": "trest-installer/cmd/trest/status.go",
+      "sha256": "e1da1b778898ff10eb90054c36e942dfde59878984a63e7ad9220c076bd5a40a",
+      "size": 900
+    },
+    {
+      "path": "trest-installer/config.yaml",
+      "sha256": "f21242e3e8f9747c0f2e50bcbf75380ad9ae52c1ffc9e4a53166499e7fa5e718",
+      "size": 1036
+    },
+    {
+      "path": "trest-installer/go.mod",
+      "sha256": "5f0206f7b7bbe18fc612560eace9d5c7b47abd56798588cc5c4e2725973a5317",
+      "size": 255
+    },
+    {
+      "path": "trest-installer/go.sum",
+      "sha256": "7fd6d31f60f0555f8f3021d6d695b27719684abb7c867f231bd8bc78b0acee3b",
+      "size": 1152
+    },
+    {
+      "path": "trest-installer/internal/appflow/appflow.go",
+      "sha256": "75bf1b4c73fb7625c924c9efbccefa7e51666a22e38ea86f762fa1e7220bcda8",
+      "size": 3396
+    },
+    {
+      "path": "trest-installer/internal/appflow/appflow_test.go",
+      "sha256": "66c5cee1e0282e27404281163deeeb4805e4c65cf690a0378f355d569edd5519",
+      "size": 4117
+    },
+    {
+      "path": "trest-installer/internal/config/config.go",
+      "sha256": "e1f03e71a52b9cda7018fc37e677037759fd9637f1a5e4abaafe5a396c763451",
+      "size": 4065
+    },
+    {
+      "path": "trest-installer/internal/config/config_test.go",
+      "sha256": "12d3883bb940ab73787a938b6f955395285b366bfced76ca7c7bbe2d625fcc7f",
+      "size": 2268
+    },
+    {
+      "path": "trest-installer/internal/diagnostics/diagnostics.go",
+      "sha256": "2788fbe84c15ae62a7b1f76d4aa6c32e374afaa9c42081746a97a65e8bf32374",
+      "size": 4394
+    },
+    {
+      "path": "trest-installer/internal/diagnostics/diagnostics_test.go",
+      "sha256": "c288963d28a0ee4d2b363aea1de3f01479f34efb5093b6cdfa52578c7b8aaed5",
+      "size": 3678
+    },
+    {
+      "path": "trest-installer/internal/errorlog/errorlog.go",
+      "sha256": "f82eac8e42473f6b7dcd541c0bdaa04c4c528c0228bc80a50e0a678f2415b64d",
+      "size": 945
+    },
+    {
+      "path": "trest-installer/internal/errorlog/errorlog_test.go",
+      "sha256": "4e79bf0adc6a2eda860daac2837f7ade07f19453378ec284435fd01c2bdfd02f",
+      "size": 1567
+    },
+    {
+      "path": "trest-installer/internal/gitrepo/gitrepo.go",
+      "sha256": "4a85ea3613751c2cb99f3fac752c43fb6894fa9fed4fdc964b75c61da842a87e",
+      "size": 3091
+    },
+    {
+      "path": "trest-installer/internal/gitrepo/gitrepo_test.go",
+      "sha256": "455cc124e73ca0a30ea45d1612bb40816103f97cb6d5d2d510e5f3d480737c67",
+      "size": 2895
+    },
+    {
+      "path": "trest-installer/internal/orchestrator/orchestrator.go",
+      "sha256": "fd87b711f80cd5d24e8687af9a55b15bf0406aacf56a5c1b578bc13bfe2ce807",
+      "size": 2848
+    },
+    {
+      "path": "trest-installer/internal/orchestrator/orchestrator_test.go",
+      "sha256": "2f41a61be3d56008cfd4b1a5706ed8cf00f08cc82cc410704d5d2166fab223bf",
+      "size": 3070
+    },
+    {
+      "path": "trest-installer/internal/report/report.go",
+      "sha256": "930258b8d380d88eb618f11bd9186ad61cd3346baaf3fd2f769da0afd6a0ab2e",
+      "size": 5403
+    },
+    {
+      "path": "trest-installer/internal/report/report_test.go",
+      "sha256": "305203a123517d04cc0246192e22b8ef944d5228fcc662e61d4ac9293fa0240f",
+      "size": 3749
+    },
+    {
+      "path": "trest-installer/internal/state/state.go",
+      "sha256": "6be9e7d4c8c23dff3872b4aab6adc51b8aba0b7b5e9487a04072373d2b28e542",
+      "size": 2634
+    },
+    {
+      "path": "trest-installer/internal/state/state_test.go",
+      "sha256": "04654008bf8cdc520f01144704cae98bebda001e73baf244868f3c1be8222ce8",
+      "size": 1455
+    },
+    {
+      "path": "trest-installer/internal/web/web.go",
+      "sha256": "d4912c4176bc134dae3dd7c4c7f3b2861ee72c055859438160c34e468a42d12c",
+      "size": 5318
+    },
+    {
+      "path": "trest-installer/internal/web/web_test.go",
+      "sha256": "43c50c6d84706d1c4ac8192109da28e66e0c6bb55e56b4647505e9d3a63f8d0e",
+      "size": 6004
+    },
+    {
+      "path": "web/bim-viewer/index.html",
+      "sha256": "60c8975f80c5363050d6775e56721f128d2b325e6c4337b7e72bf7b7433d8934",
+      "size": 10950
+    },
+    {
+      "path": "презентация/Trest_Systems_Презентация_продукта_RU.pdf",
+      "sha256": "22f31f46aa1237e21d84bb15c3ca2a01d38a1c56e3cedf007a1ef300371a19b4",
+      "size": 65840
+    },
+    {
+      "path": "презентация/presentation-manifest.json",
+      "sha256": "0bd6ea53c8bddd40f577a733083f18f71bae24d7d7f6f26a357a6c578f0e4c59",
+      "size": 130
+    },
+    {
+      "path": "презентация/ПРЕЗЕНТАЦИЯ_README.txt",
+      "sha256": "ee2a79ff218e38a0806a26f5a7293ea1fa17cd5d58a8c25841e9b253bdd62f43",
+      "size": 284
+    }
+  ]
+}

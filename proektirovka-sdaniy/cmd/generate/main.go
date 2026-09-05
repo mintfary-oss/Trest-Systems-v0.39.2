@@ -1,0 +1,349 @@
+// Command generate produces a complete set of construction drawings in DXF format.
+//
+// Usage:
+//
+//	generate --config configs/court_tosno.yaml --out ./output
+//
+// Outputs one DXF file per drawing to the specified directory.
+// Standards: ГОСТ Р 21.101-2020, ГОСТ 21.501-2018, ГОСТ 21.201-2011
+package main
+
+import (
+	"flag"
+	"fmt"
+	"os"
+	"path/filepath"
+
+	"gopkg.in/yaml.v3"
+
+	"github.com/mintfary-oss/Proektirovka-sdaniy/pkg/building"
+	"github.com/mintfary-oss/Proektirovka-sdaniy/pkg/drawings"
+	"github.com/mintfary-oss/Proektirovka-sdaniy/pkg/dxf"
+	"github.com/mintfary-oss/Proektirovka-sdaniy/pkg/gost"
+)
+
+func main() {
+	configPath := flag.String("config", "configs/court_tosno.yaml", "path to building YAML config")
+	outDir := flag.String("out", "./output", "output directory for DXF files")
+	flag.Parse()
+
+	// Load building config
+	b, err := loadBuilding(*configPath)
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "Error loading config %q: %v\n", *configPath, err)
+		os.Exit(1)
+	}
+
+	// Create output directory
+	if err := os.MkdirAll(*outDir, 0o755); err != nil {
+		fmt.Fprintf(os.Stderr, "Error creating output dir: %v\n", err)
+		os.Exit(1)
+	}
+
+	fmt.Println("═══════════════════════════════════════════════════════════════")
+	fmt.Printf("  Генератор строительных чертежей DXF\n")
+	fmt.Printf("  Объект: %s\n", b.Meta.ObjectName)
+	fmt.Printf("  Стадия: %s | Год: %s\n", b.Meta.Stage, b.Meta.Year)
+	fmt.Println("  Стандарты: ГОСТ Р 21.101-2020, ГОСТ 21.501-2018")
+	fmt.Println("═══════════════════════════════════════════════════════════════")
+	fmt.Println()
+
+	tb := gost.TitleBlockData{
+		Org:      b.Org.Name,
+		Project:  b.Meta.ObjectName,
+		Address:  b.Meta.Address,
+		Stage:    b.Meta.Stage,
+		Year:     b.Meta.Year,
+		Designer: b.Org.Designer,
+		Checker:  b.Org.Checker,
+		NormCtrl: b.Org.NormCtrl,
+		ChiefEng: b.Org.ChiefEng,
+		Approver: b.Org.Approver,
+	}
+
+	type drawTask struct {
+		filename string
+		mark     string
+		sheet    int
+		total    int
+		fn       func(d *dxf.Document)
+	}
+
+	// Determine total sheets
+	total := 8 + b.NFloors // base sheets + floor plans
+
+	tasks := []drawTask{
+		{
+			filename: "ОД-1_Общие_данные.dxf",
+			mark:     "АР", sheet: 0, total: total,
+			fn: func(d *dxf.Document) {
+				drawGeneralData(d, b, tb, total)
+			},
+		},
+		{
+			filename: "СПОЗУ-1_Генплан.dxf",
+			mark:     "СПОЗУ", sheet: 1, total: total,
+			fn: func(d *dxf.Document) {
+				drawings.DrawSitePlan(d, b, drawings.SitePlanConfig{Scale: 500})
+			},
+		},
+	}
+
+	// Floor plans
+	floorSheetBase := 2
+	for i, fl := range b.Floors {
+		fl := fl // capture
+		sheetN := floorSheetBase + i
+		mark := "АР"
+		filename := fmt.Sprintf("АР-%d_План_%s.dxf", sheetN, sanitizeName(fl.Name))
+		tasks = append(tasks, drawTask{
+			filename: filename,
+			mark:     mark, sheet: sheetN, total: total,
+			fn: func(d *dxf.Document) {
+				drawings.DrawFloorPlan(d, b, drawings.FloorPlanConfig{
+					Scale:       100,
+					FloorNumber: fl.Number,
+				})
+			},
+		})
+	}
+
+	// Facade
+	facadeSheet := floorSheetBase + len(b.Floors)
+	tasks = append(tasks, drawTask{
+		filename: fmt.Sprintf("АР-%d_Фасад_главный.dxf", facadeSheet),
+		mark:     "АР", sheet: facadeSheet, total: total,
+		fn: func(d *dxf.Document) {
+			drawings.DrawFacade(d, b, drawings.FacadeConfig{Scale: 100, Side: "south"})
+		},
+	})
+
+	// Section
+	sectionSheet := facadeSheet + 1
+	tasks = append(tasks, drawTask{
+		filename: fmt.Sprintf("АР-%d_Разрез_1-1.dxf", sectionSheet),
+		mark:     "АР", sheet: sectionSheet, total: total,
+		fn: func(d *dxf.Document) {
+			drawings.DrawSection(d, b, drawings.SectionConfig{
+				Scale: 100, Label: "1-1", CutDir: "x",
+			})
+		},
+	})
+
+	// Roof plan
+	roofSheet := sectionSheet + 1
+	tasks = append(tasks, drawTask{
+		filename: fmt.Sprintf("АР-%d_План_кровли.dxf", roofSheet),
+		mark:     "АР", sheet: roofSheet, total: total,
+		fn: func(d *dxf.Document) {
+			drawings.DrawRoofPlan(d, b, drawings.RoofPlanConfig{Scale: 200})
+		},
+	})
+
+	// Foundation plan (КР)
+	fndSheet := roofSheet + 1
+	tasks = append(tasks, drawTask{
+		filename: fmt.Sprintf("КР-1_Схема_фундаментов.dxf"),
+		mark:     "КР", sheet: fndSheet, total: total,
+		fn: func(d *dxf.Document) {
+			drawFoundation(d, b, tb)
+		},
+	})
+
+	// Generate all drawings
+	generated := 0
+	for _, task := range tasks {
+		task := task
+		path := filepath.Join(*outDir, task.filename)
+		fmt.Printf("  ▷  %-45s", task.filename)
+
+		f, err := os.Create(path)
+		if err != nil {
+			fmt.Printf("ОШИБКА: %v\n", err)
+			continue
+		}
+
+		doc := dxf.New(f)
+		doc.WritePreamble()
+
+		// Title block
+		t := tb
+		t.Mark = task.mark
+		t.Sheet = fmt.Sprintf("%d", task.sheet)
+		t.Sheets = fmt.Sprintf("%d", task.total)
+
+		gost.DrawFrame(doc)
+		gost.DrawTitleBlock(doc, t)
+
+		// Drawing content
+		task.fn(doc)
+
+		doc.Finalize()
+		f.Close()
+
+		fi, _ := os.Stat(path)
+		fmt.Printf(" ✓  (%.1f KB)\n", float64(fi.Size())/1024)
+		generated++
+	}
+
+	fmt.Println()
+	fmt.Printf("  Готово: %d чертежей → %s/\n", generated, *outDir)
+	fmt.Println()
+	fmt.Println("  Открывается в: AutoCAD 2010+ │ КОМПАС-3D │ NanoCAD │ ZWCAD │ BricsCAD │ FreeCAD")
+	fmt.Println("═══════════════════════════════════════════════════════════════")
+}
+
+// loadBuilding reads a YAML config file into a Building struct.
+func loadBuilding(path string) (*building.Building, error) {
+	data, err := os.ReadFile(path)
+	if err != nil {
+		return nil, fmt.Errorf("read file: %w", err)
+	}
+	var b building.Building
+	if err := yaml.Unmarshal(data, &b); err != nil {
+		return nil, fmt.Errorf("parse YAML: %w", err)
+	}
+	return &b, nil
+}
+
+// sanitizeName removes special characters for use in filenames.
+func sanitizeName(name string) string {
+	out := make([]rune, 0, len([]rune(name)))
+	for _, r := range name {
+		if (r >= 'А' && r <= 'я') || r == 'Ё' || r == 'ё' || (r >= 'A' && r <= 'Z') || (r >= 'a' && r <= 'z') || (r >= '0' && r <= '9') {
+			out = append(out, r)
+		} else if r == ' ' || r == '-' {
+			out = append(out, '_')
+		}
+	}
+	if len(out) > 20 {
+		out = out[:20]
+	}
+	return string(out)
+}
+
+// drawGeneralData draws the ОД-1 general data sheet.
+func drawGeneralData(d *dxf.Document, b *building.Building, tb gost.TitleBlockData, totalSheets int) {
+	x0 := gost.ContentX0 + 5.0
+	y := gost.ContentY1 - 18.0
+
+	title := func(text string, y float64, h float64) {
+		d.Text("ТЕКСТ", "STAMP", h, x0, y, text)
+	}
+	body := func(text string, y float64) {
+		d.Text("ТЕКСТ", "GOST", 2.8, x0+3.0, y, text)
+	}
+
+	title("ОБЩИЕ ДАННЫЕ ПО РАБОЧИМ ЧЕРТЕЖАМ", y, 4.5)
+	y -= 12.0
+
+	// Section 1: Drawing list
+	title("1. СОСТАВ РАБОЧИХ ЧЕРТЕЖЕЙ", y, 3.5)
+	y -= 8.0
+
+	// Table header
+	cols := []float64{x0, x0 + 35, x0 + 220, x0 + 265}
+	for _, cx := range cols {
+		d.Line("ШТАМП", dxf.LW025, cx, y-1.5, cx, y+6.0)
+	}
+	d.Line("ШТАМП", dxf.LW035, x0, y+6.0, cols[len(cols)-1], y+6.0)
+	d.Line("ШТАМП", dxf.LW025, x0, y-1.5, cols[len(cols)-1], y-1.5)
+	for i, hdr := range []string{"Марка", "Наименование", "Масштаб"} {
+		d.Text("ШТАМП", "STAMP", 3.0, cols[i]+1.5, y+1.0, hdr)
+	}
+	y -= 8.0
+
+	type row struct{ mark, name, scale string }
+	rows := []row{
+		{"ОД", "Общие данные. Перечень чертежей", "—"},
+		{"СПОЗУ-1", "Схема планировочной организации ЗУ", "1:500"},
+	}
+	for _, fl := range b.Floors {
+		rows = append(rows, row{
+			fmt.Sprintf("АР-%d", len(rows)),
+			fmt.Sprintf("План %s (отм. %+.3f)", fl.Name, fl.Elevation),
+			"1:100",
+		})
+	}
+	rows = append(rows,
+		row{"АР", "Фасад главный. Оси 1–9", "1:100"},
+		row{"АР", "Разрез 1–1", "1:100"},
+		row{"АР", "План кровли", "1:200"},
+		row{"КР-1", "Схема расположения фундаментов", "1:100"},
+	)
+
+	for _, r := range rows {
+		body(r.mark, y)
+		d.Text("ТЕКСТ", "GOST", 2.8, cols[1]+1.5, y, r.name)
+		d.Text("ТЕКСТ", "GOST", 2.8, cols[2]+1.5, y, r.scale)
+		d.Line("ШТАМП", dxf.LW013, x0, y-2.0, cols[len(cols)-1], y-2.0)
+		y -= 7.0
+	}
+	for _, cx := range cols {
+		d.Line("ШТАМП", dxf.LW025, cx, y+7.0, cx, y+7.0+float64(len(rows))*7.0+6.0)
+	}
+
+	y -= 10.0
+
+	// Section 2: Normative documents
+	title("2. ОСНОВНЫЕ НОРМАТИВНЫЕ ДОКУМЕНТЫ", y, 3.5)
+	y -= 6.0
+	norms := []string{
+		"ГОСТ Р 21.101-2020  — Система проектной документации для строительства",
+		"ГОСТ 21.501-2018    — Правила выполнения рабочей документации архит. решений",
+		"ГОСТ 21.201-2011    — Условные обозначения элементов зданий и сооружений",
+		"СП 152.13330.2018   — Здания федеральных судов (Актуализ. СНИП 31-06-2009)",
+		"СП 118.13330.2022   — Общественные здания и сооружения",
+		"СП 59.13330.2020    — Доступность зданий для маломобильных групп населения",
+		"СП 1.13130.2020     — Системы противопожарной защиты. Пути эвакуации",
+		"ФЗ № 123-ФЗ         — Технический регламент о требованиях пожарной безопасности",
+		"ФЗ № 384-ФЗ         — Технический регламент о безопасности зданий и сооружений",
+	}
+	for _, n := range norms {
+		body("— "+n, y)
+		y -= 5.5
+	}
+
+	y -= 8.0
+
+	// Section 3: TEP
+	title("3. ТЕХНИКО-ЭКОНОМИЧЕСКИЕ ПОКАЗАТЕЛИ", y, 3.5)
+	y -= 6.0
+
+	type kv struct{ k, v string }
+	kvs := []kv{
+		{"Площадь земельного участка:", fmt.Sprintf("%.4f га  (%.1f м²)", b.Plot.AreaHa, b.Plot.AreaHa*10000)},
+		{"Количество надземных этажей:", fmt.Sprintf("%d эт. + подвал", b.NFloors)},
+		{"Высота этажа:", fmt.Sprintf("%.1f м", b.Dims.FloorHM)},
+		{"Полная высота здания:", fmt.Sprintf("%.1f м + %.1f м (парапет)", float64(b.NFloors)*b.Dims.FloorHM, 0.7)},
+		{"Габариты здания по осям:", fmt.Sprintf("%.0f м × %.0f м", b.Axes.TotalWidth(), b.Axes.TotalDepth())},
+		{"Степень огнестойкости:", "II (ФЗ № 123-ФЗ)"},
+		{"Класс функц. пожарной опасности:", "Ф 4.3 (здания судов)"},
+		{"Уровень ответственности:", "Нормальный (КС-2, ГОСТ 27751-2014)"},
+		{"Класс энергоэффективности:", "Не ниже «С» (постановление Прав. РФ № 18)"},
+	}
+	for _, kv := range kvs {
+		body(kv.k, y)
+		d.Text("ТЕКСТ", "GOST", 2.8, x0+120.0, y, kv.v)
+		y -= 5.5
+	}
+}
+
+// drawFoundation draws the КР-1 foundation plan.
+func drawFoundation(d *dxf.Document, b *building.Building, tb gost.TitleBlockData) {
+	drawings.DrawFloorPlan(d, b, drawings.FloorPlanConfig{
+		Scale:       100,
+		FloorNumber: 0, // basement plan reused for foundation
+		Title:       fmt.Sprintf("СХЕМА РАСПОЛОЖЕНИЯ ФУНДАМЕНТОВ  Отм. -%.3f", b.Dims.BasementHM),
+	})
+	// Additional foundation annotations
+	d.Text("ТЕКСТ", "GOST", 2.5,
+		gost.ContentX0+5.0, gost.ContentY0+20.0,
+		"Фундамент: монолитная ж/б плита B25, W8, F150, h=300мм")
+	d.Text("ТЕКСТ", "GOST", 2.5,
+		gost.ContentX0+5.0, gost.ContentY0+14.0,
+		"Подбетонная подготовка: B7,5 h=100мм")
+	d.Text("ТЕКСТ", "GOST", 2.5,
+		gost.ContentX0+5.0, gost.ContentY0+8.0,
+		"Гидроизоляция: 2 слоя ТехноНИКОЛЬ ТЕХНОЭЛАСТ Барьер СБС на праймере")
+}

@@ -1,0 +1,14 @@
+FROM debian:bookworm-slim
+ARG TARGETARCH=amd64
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends ca-certificates tzdata libpq5 wget \
+    && rm -rf /var/lib/apt/lists/* \
+    && groupadd --system trest \
+    && useradd --system --gid trest --home-dir /app --shell /usr/sbin/nologin trest
+WORKDIR /app
+COPY release/bin/linux/${TARGETARCH}/trest-worker /usr/local/bin/trest-worker
+COPY migrations /app/migrations
+RUN chmod 0755 /usr/local/bin/trest-worker && chown -R trest:trest /app
+USER trest
+EXPOSE 8090
+ENTRYPOINT ["/usr/local/bin/trest-worker"]

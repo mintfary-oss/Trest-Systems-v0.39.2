@@ -1,0 +1,10 @@
+ISO-10303-21;
+HEADER;
+FILE_DESCRIPTION(('Trest security fixture'),'2;1');
+FILE_NAME('fixture.ifc','2026-09-03T00:00:00',('Trest'),('Trest Systems'),'','','');
+FILE_SCHEMA(('IFC4'));
+ENDSEC;
+DATA;
+#1=IFCPROJECT('0123456789012345678901',#2,'E2E Project',$,$,$,$,(#3),#4);
+ENDSEC;
+END-ISO-10303-21;

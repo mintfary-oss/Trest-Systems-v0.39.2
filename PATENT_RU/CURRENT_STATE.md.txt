@@ -1,0 +1,88 @@
+# CURRENT_STATE.md — текущее состояние проекта
+
+**Дата:** 2026-09-03  
+**Контрольная версия:** `v0.28-stage11-installer-hardening`  
+**Последний завершённый технический блок:** Stage 10 — Runtime 13  
+**Текущий режим:** Engineering MVP / Pre-Beta  
+**Ориентировочная общая готовность:** 60–65%  
+**Production readiness:** не подтверждена
+
+## 1. Что представляет собой проект
+Trest Systems — единая self-hosted строительная платформа: единый Go core/API/CLI, web-интерфейс, единый контекст пользователя/организации/проекта и интеграция специализированных подсистем.
+
+## 2. Сохранённые подсистемы
+- `magasin-777/` — Next.js + FastAPI LocalMarket.
+- `proektirovka-sdaniy/` — Go DXF/GOST проектировщик.
+- `super-sistema/` — Ollama/Open WebUI/GPU и install tooling.
+- `trest-installer/` — исходный installer/orchestrator.
+
+## 3. Завершённые этапы
+- Stage 0 — архитектура и документация.
+- Stage 1 — `trestctl` foundation.
+- Stage 2 — unified Docker Compose/runtime foundation.
+- Stage 3 — Identity.
+- Stage 4 — Constructor.
+- Stage 5 — Estimates & Orders.
+- Stage 6 — Contractors.
+- Stage 7 — Suppliers.
+- Stage 8 — Ratings.
+- Stage 9 — AI + Agents + Training Center.
+- Stage 10 — BIM/IFC runtime, продолжается production hardening.
+
+## 4. Миграции
+Текущая последовательность начинается с `0001_foundation.sql` и продолжается через BIM/runtime migrations до `0019_bim_storage_import_runtime11.sql`. Runtime 13 пока не требует отдельной миграции: геометрический mesh может использовать существующие `mesh_manifest`, storage и BIM version metadata.
+
+## 5. Что реально реализовано в BIM/IFC
+- BIM models/model versions/elements/progress/import-export.
+- OBJ parser + glTF JSON exporter.
+- DXF ASCII `3DFACE` subset.
+- GLB 2.0 encoder/decoder foundation.
+- Geometry diff.
+- IFC STEP parser.
+- IFC semantic index/reference graph.
+- Core IFC classes and relations.
+- PropertySets/Quantities.
+- Atomic semantic importer.
+- Local + S3/MinIO-compatible storage.
+- IFC multipart import API + audit metadata.
+- Mesh-element manifest and authorized manifest API.
+- Self-hosted WebGL viewer.
+- Runtime 13 geometry extraction for `IfcFacetedBrep` and `IfcTriangulatedFaceSet` into deterministic triangle meshes.
+
+## 6. Ограничения IFC Geometry
+Runtime 13 НЕ является полной реализацией IFC geometry engine. Не следует заявлять поддержку всего IFC. В частности, остаются полноценные placement/world-coordinate chains, ProductDefinitionShape/ShapeRepresentation integration, swept solids, CSG/boolean geometry, mapped representations, curved geometry, advanced BRep, robust tessellation и оптимизация больших моделей.
+
+## 7. Проверки
+Проходят доступные dependency-free Go/domain/BIM/converter/IFC/storage tests. ZIP integrity и duplicate-path checks выполняются. Полный `go build ./...`, полный `go test ./...`, `go vet ./...` и Docker/Compose E2E не подтверждены в текущей среде из-за отсутствия Docker/Compose и ограниченного доступа к Go module registry.
+
+Никогда не считать недоступный runtime-тест пройденным.
+
+## 8. Реальная оценка готовности
+- Архитектура: ~80–85%.
+- Backend/domain: ~75–80%.
+- Database/migrations: ~75–80%.
+- Constructor/estimates/orders/contractors/suppliers/ratings: ~65–75% по модулям.
+- AI/Agents: ~55–65%; фактическое GPU training не подтверждено.
+- BIM semantic: ~60–70%.
+- IFC geometry: ~35–45%.
+- 3D viewer: ~45–55%.
+- Installer/productization: ~30–40%.
+- E2E testing: ~25–35%.
+- Production deployment verification: ~10–20%.
+- Общая оценка: **60–65%, Engineering MVP / Pre-Beta**.
+
+## 9. Главные production blockers
+1. Полный Linux/Docker runtime.
+2. Реальные PostgreSQL/Redis/MinIO/API/worker/web E2E.
+3. Полный `trestctl install/start/stop/restart/backup/restore/update/repair/logs`.
+4. CI-built prebuilt binaries и OCI images.
+5. Clean-host install без Go toolchain.
+6. Security audit.
+7. Backup/restore и rollback verification.
+8. Unified production frontend.
+9. Полный IFC geometry/placement pipeline.
+10. Load/performance testing на больших BIM-моделях.
+
+## 10. Следующий этап
+**Stage 11 — Production Hardening / Release Candidate.**
+Не добавлять новые крупные функции, пока не доказан совместный runtime существующих модулей.

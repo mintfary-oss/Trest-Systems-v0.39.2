@@ -1,0 +1,267 @@
+package api
+
+import (
+	"encoding/json"
+	"net/http"
+	"strconv"
+	"strings"
+
+	"github.com/mintfary-oss/trest-sistems/internal/ratings"
+)
+
+func (s *Server) createRating(w http.ResponseWriter, r *http.Request) {
+	c, _ := claimsFromContext(r.Context())
+	var in struct {
+		OrderID, TargetType, TargetID, Comment string
+		Score                                  float64
+		Dimensions                             map[string]float64
+	}
+	if json.NewDecoder(r.Body).Decode(&in) != nil {
+		writeJSON(w, 400, map[string]string{"error": "invalid json"})
+		return
+	}
+	in.OrderID, in.TargetType, in.TargetID = strings.TrimSpace(in.OrderID), strings.ToLower(strings.TrimSpace(in.TargetType)), strings.TrimSpace(in.TargetID)
+	if err := ratings.ValidateTarget(in.TargetType); err != nil {
+		writeJSON(w, 400, map[string]string{"error": err.Error()})
+		return
+	}
+	if err := ratings.ValidateScore(in.Score); err != nil {
+		writeJSON(w, 400, map[string]string{"error": err.Error()})
+		return
+	}
+	if in.OrderID == "" || in.TargetID == "" {
+		writeJSON(w, 400, map[string]string{"error": "order_id and target_id are required"})
+		return
+	}
+	if in.Dimensions == nil {
+		in.Dimensions = map[string]float64{}
+	}
+	dimensions, _ := json.Marshal(in.Dimensions)
+	var owner, status, contractorID, supplierID string
+	if err := s.DB.QueryRowContext(r.Context(), `SELECT p.owner_id,o.status,COALESCE(o.contractor_id::text,''),COALESCE(o.supplier_id::text,'') FROM orders o JOIN projects p ON p.id=o.project_id WHERE o.id=$1`, in.OrderID).Scan(&owner, &status, &contractorID, &supplierID); err != nil {
+		writeJSON(w, 404, map[string]string{"error": "order not found"})
+		return
+	}
+	if owner != c.UserID && c.Role != "admin" {
+		writeJSON(w, 403, map[string]string{"error": "only project owner or admin can rate"})
+		return
+	}
+	if !ratings.EligibleOrderStatus(status) {
+		writeJSON(w, 409, map[string]string{"error": "only completed orders can be rated"})
+		return
+	}
+	if in.TargetType == "contractor" {
+		var profile string
+		if err := s.DB.QueryRowContext(r.Context(), `SELECT cp.id::text FROM contractor_profiles cp JOIN organization_members om ON om.organization_id=cp.organization_id WHERE om.user_id=$1 AND cp.id=$2 AND cp.verification_status='verified' AND cp.active=true`, contractorID, in.TargetID).Scan(&profile); err != nil || contractorID == "" {
+			writeJSON(w, 409, map[string]string{"error": "contractor is not eligible for this order"})
+			return
+		}
+	} else {
+		var profile string
+		if err := s.DB.QueryRowContext(r.Context(), `SELECT sp.id::text FROM supplier_profiles sp JOIN organization_members om ON om.organization_id=sp.organization_id WHERE om.user_id=$1 AND sp.id=$2 AND sp.verification_status='verified' AND sp.active=true`, supplierID, in.TargetID).Scan(&profile); err != nil || supplierID == "" {
+			writeJSON(w, 409, map[string]string{"error": "supplier is not eligible for this order"})
+			return
+		}
+	}
+	var existingID string
+	var createdAt any
+	lookupErr := s.DB.QueryRowContext(r.Context(), `SELECT id,created_at FROM ratings WHERE order_id=$1 AND reviewer_user_id=$2 AND target_type=$3 AND target_id=$4`, in.OrderID, c.UserID, in.TargetType, in.TargetID).Scan(&existingID, &createdAt)
+	if lookupErr == nil {
+		var editable bool
+		if err := s.DB.QueryRowContext(r.Context(), `SELECT created_at > now() - interval '30 days' FROM ratings WHERE id=$1`, existingID).Scan(&editable); err != nil || !editable {
+			writeJSON(w, 409, map[string]string{"error": "rating edit window has expired"})
+			return
+		}
+	}
+	var id string
+	if lookupErr == nil {
+		err := s.DB.QueryRowContext(r.Context(), `UPDATE ratings SET score=$1,dimensions=$2,comment=$3,status='published',updated_at=now() WHERE id=$4 RETURNING id`, in.Score, dimensions, in.Comment, existingID).Scan(&id)
+		if err != nil {
+			writeError(w, err)
+			return
+		}
+	} else {
+		err := s.DB.QueryRowContext(r.Context(), `INSERT INTO ratings(order_id,reviewer_user_id,target_type,target_id,score,dimensions,comment) VALUES($1,$2,$3,$4,$5,$6,$7) RETURNING id`, in.OrderID, c.UserID, in.TargetType, in.TargetID, in.Score, dimensions, in.Comment).Scan(&id)
+		if err != nil {
+			writeError(w, err)
+			return
+		}
+	}
+	if err := s.recalculateRating(r, in.TargetType, in.TargetID, id); err != nil {
+		writeError(w, err)
+		return
+	}
+	writeJSON(w, 201, map[string]any{"id": id, "status": "published"})
+}
+
+func (s *Server) recalculateRating(r *http.Request, targetType, targetID, sourceRating string) error {
+	var count int
+	var avg float64
+	if err := s.DB.QueryRowContext(r.Context(), `SELECT COUNT(*),COALESCE(AVG(score),0) FROM ratings WHERE target_type=$1 AND target_id=$2 AND status='published'`, targetType, targetID).Scan(&count, &avg); err != nil {
+		return err
+	}
+	var version int
+	if err := s.DB.QueryRowContext(r.Context(), `SELECT COALESCE(MAX(version),0)+1 FROM rating_history WHERE target_type=$1 AND target_id=$2`, targetType, targetID).Scan(&version); err != nil {
+		return err
+	}
+	if _, err := s.DB.ExecContext(r.Context(), `INSERT INTO rating_aggregates(target_type,target_id,rating_count,average_score,calculated_at,version) VALUES($1,$2,$3,$4,now(),$5) ON CONFLICT(target_type,target_id) DO UPDATE SET rating_count=EXCLUDED.rating_count,average_score=EXCLUDED.average_score,calculated_at=EXCLUDED.calculated_at,version=EXCLUDED.version`, targetType, targetID, count, avg, version); err != nil {
+		return err
+	}
+	_, err := s.DB.ExecContext(r.Context(), `INSERT INTO rating_history(target_type,target_id,rating_count,average_score,source_rating_id,version) VALUES($1,$2,$3,$4,$5,$6)`, targetType, targetID, count, avg, sourceRating, version)
+	return err
+}
+
+func (s *Server) ratings(w http.ResponseWriter, r *http.Request) {
+	targetType := strings.ToLower(strings.TrimSpace(r.URL.Query().Get("target_type")))
+	targetID := strings.TrimSpace(r.URL.Query().Get("target_id"))
+	if targetType == "" || targetID == "" {
+		writeJSON(w, 400, map[string]string{"error": "target_type and target_id are required"})
+		return
+	}
+	rows, err := s.DB.QueryContext(r.Context(), `SELECT id,order_id,reviewer_user_id,score,dimensions,comment,status,created_at,updated_at FROM ratings WHERE target_type=$1 AND target_id=$2 ORDER BY created_at DESC LIMIT 100`, targetType, targetID)
+	if err != nil {
+		writeError(w, err)
+		return
+	}
+	defer rows.Close()
+	out := []map[string]any{}
+	for rows.Next() {
+		var id, oid, rid, comment, status string
+		var score any
+		var dimensions any
+		var created, updated any
+		if err := rows.Scan(&id, &oid, &rid, &score, &dimensions, &comment, &status, &created, &updated); err != nil {
+			writeError(w, err)
+			return
+		}
+		out = append(out, map[string]any{"id": id, "order_id": oid, "reviewer_user_id": rid, "score": score, "dimensions": dimensions, "comment": comment, "status": status, "created_at": created, "updated_at": updated})
+	}
+	writeJSON(w, 200, out)
+}
+
+func (s *Server) ratingAggregate(w http.ResponseWriter, r *http.Request) {
+	t := strings.ToLower(strings.TrimSpace(r.URL.Query().Get("target_type")))
+	id := strings.TrimSpace(r.URL.Query().Get("target_id"))
+	if t == "" || id == "" {
+		writeJSON(w, 400, map[string]string{"error": "target_type and target_id are required"})
+		return
+	}
+	var count int
+	var avg float64
+	var dims any
+	var version int
+	var calculated any
+	err := s.DB.QueryRowContext(r.Context(), `SELECT rating_count,average_score,dimensions,version,calculated_at FROM rating_aggregates WHERE target_type=$1 AND target_id=$2`, t, id).Scan(&count, &avg, &dims, &version, &calculated)
+	if err != nil {
+		writeJSON(w, 404, map[string]string{"error": "aggregate not found"})
+		return
+	}
+	writeJSON(w, 200, map[string]any{"target_type": t, "target_id": id, "rating_count": count, "average_score": avg, "dimensions": dims, "version": version, "calculated_at": calculated})
+}
+
+func (s *Server) ratingHistory(w http.ResponseWriter, r *http.Request) {
+	t := strings.ToLower(strings.TrimSpace(r.URL.Query().Get("target_type")))
+	id := strings.TrimSpace(r.URL.Query().Get("target_id"))
+	limit := 100
+	if v, _ := strconv.Atoi(r.URL.Query().Get("limit")); v > 0 && v < 500 {
+		limit = v
+	}
+	rows, err := s.DB.QueryContext(r.Context(), `SELECT version,rating_count,average_score,source_rating_id,created_at FROM rating_history WHERE target_type=$1 AND target_id=$2 ORDER BY version DESC LIMIT `+strconv.Itoa(limit), t, id)
+	if err != nil {
+		writeError(w, err)
+		return
+	}
+	defer rows.Close()
+	out := []map[string]any{}
+	for rows.Next() {
+		var v, c int
+		var avg any
+		var source any
+		var created any
+		if err := rows.Scan(&v, &c, &avg, &source, &created); err != nil {
+			writeError(w, err)
+			return
+		}
+		out = append(out, map[string]any{"version": v, "rating_count": c, "average_score": avg, "source_rating_id": source, "created_at": created})
+	}
+	writeJSON(w, 200, out)
+}
+
+func (s *Server) createRatingDispute(w http.ResponseWriter, r *http.Request) {
+	c, _ := claimsFromContext(r.Context())
+	var in struct{ RatingID, Reason string }
+	if json.NewDecoder(r.Body).Decode(&in) != nil || strings.TrimSpace(in.RatingID) == "" || strings.TrimSpace(in.Reason) == "" {
+		writeJSON(w, 400, map[string]string{"error": "rating_id and reason are required"})
+		return
+	}
+	var id string
+	err := s.DB.QueryRowContext(r.Context(), `INSERT INTO rating_disputes(rating_id,opened_by,reason) SELECT id,$2,$3 FROM ratings WHERE id=$1 RETURNING id`, in.RatingID, c.UserID, in.Reason).Scan(&id)
+	if err != nil {
+		writeJSON(w, 404, map[string]string{"error": "rating not found or dispute unavailable"})
+		return
+	}
+	_, _ = s.DB.ExecContext(r.Context(), `UPDATE ratings SET status='disputed',updated_at=now() WHERE id=$1`, in.RatingID)
+	_, _ = s.DB.ExecContext(r.Context(), `INSERT INTO rating_dispute_events(dispute_id,actor_user_id,event_type,payload) VALUES($1,$2,'opened','{}'::jsonb)`, id, c.UserID)
+	writeJSON(w, 201, map[string]any{"id": id, "status": "open"})
+}
+
+func (s *Server) resolveRatingDispute(w http.ResponseWriter, r *http.Request) {
+	c, _ := claimsFromContext(r.Context())
+	var in struct{ DisputeID, Status, ResolutionNote string }
+	if json.NewDecoder(r.Body).Decode(&in) != nil {
+		writeJSON(w, 400, map[string]string{"error": "invalid json"})
+		return
+	}
+	allowed := map[string]bool{"resolved_upheld": true, "resolved_removed": true, "rejected": true}
+	if !allowed[in.Status] {
+		writeJSON(w, 400, map[string]string{"error": "invalid resolution status"})
+		return
+	}
+	var ratingID string
+	if err := s.DB.QueryRowContext(r.Context(), `UPDATE rating_disputes SET status=$1,resolution_note=$2,resolved_by=$3,resolved_at=now(),updated_at=now() WHERE id=$4 RETURNING rating_id`, in.Status, in.ResolutionNote, c.UserID, in.DisputeID).Scan(&ratingID); err != nil {
+		writeJSON(w, 404, map[string]string{"error": "dispute not found"})
+		return
+	}
+	if in.Status == "resolved_removed" {
+		_, _ = s.DB.ExecContext(r.Context(), `UPDATE ratings SET status='hidden',updated_at=now() WHERE id=$1`, ratingID)
+	} else {
+		_, _ = s.DB.ExecContext(r.Context(), `UPDATE ratings SET status='published',updated_at=now() WHERE id=$1`, ratingID)
+	}
+	_, _ = s.DB.ExecContext(r.Context(), `INSERT INTO rating_dispute_events(dispute_id,actor_user_id,event_type,payload) VALUES($1,$2,$3,$4::jsonb)`, in.DisputeID, c.UserID, "resolved", `{"status":"`+in.Status+`"}`)
+	writeJSON(w, 200, map[string]any{"dispute_id": in.DisputeID, "rating_id": ratingID, "status": in.Status})
+}
+
+func (s *Server) createReputationAction(w http.ResponseWriter, r *http.Request) {
+	c, _ := claimsFromContext(r.Context())
+	var in struct {
+		TargetType, TargetID, Reason string
+		Points                       float64
+		Action                       string
+		ExpiresAt                    *string
+	}
+	if json.NewDecoder(r.Body).Decode(&in) != nil {
+		writeJSON(w, 400, map[string]string{"error": "invalid json"})
+		return
+	}
+	if ratings.ValidateTarget(in.TargetType) != nil || in.TargetID == "" || in.Reason == "" || in.Points <= 0 || (in.Action != "bonus" && in.Action != "sanction") {
+		writeJSON(w, 400, map[string]string{"error": "invalid reputation action"})
+		return
+	}
+	if in.Action == "bonus" {
+		var id string
+		err := s.DB.QueryRowContext(r.Context(), `INSERT INTO reputation_bonuses(target_type,target_id,points,reason,created_by) VALUES($1,$2,$3,$4,$5) RETURNING id`, in.TargetType, in.TargetID, in.Points, in.Reason, c.UserID).Scan(&id)
+		if err != nil {
+			writeError(w, err)
+			return
+		}
+		writeJSON(w, 201, map[string]any{"id": id, "action": "bonus"})
+		return
+	}
+	var id string
+	err := s.DB.QueryRowContext(r.Context(), `INSERT INTO reputation_sanctions(target_type,target_id,points,reason,created_by) VALUES($1,$2,$3,$4,$5) RETURNING id`, in.TargetType, in.TargetID, in.Points, in.Reason, c.UserID).Scan(&id)
+	if err != nil {
+		writeError(w, err)
+		return
+	}
+	writeJSON(w, 201, map[string]any{"id": id, "action": "sanction"})
+}

@@ -1,0 +1,17 @@
+package converter
+
+import (
+	"bytes"
+	"testing"
+)
+
+func TestEncodeGLB(t *testing.T) {
+	var b bytes.Buffer
+	e := EncodeGLB(&b, Mesh{Positions: []float64{0, 0, 0, 1, 0, 0, 0, 1, 0}, Indices: []uint32{0, 1, 2}})
+	if e != nil {
+		t.Fatal(e)
+	}
+	if e = ValidateGLBHeader(b.Bytes()); e != nil {
+		t.Fatal(e)
+	}
+}

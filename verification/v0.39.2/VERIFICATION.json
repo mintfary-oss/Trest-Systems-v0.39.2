@@ -1,0 +1,523 @@
+{
+  "version": "0.39.2",
+  "generated_at_utc": "2026-09-05T08:03:30.700810+00:00",
+  "release_classification": "RELEASE_CANDIDATE_SOURCE_AND_PREBUILT",
+  "counts": {
+    "PASS": 28,
+    "FAIL": 0,
+    "SKIP": 1,
+    "BLOCKED": 10
+  },
+  "checks": [
+    {
+      "name": "go_tests_root",
+      "status": "PASS",
+      "detail": "",
+      "command": [
+        "go",
+        "test",
+        "-count=1",
+        "-json",
+        "./..."
+      ],
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "duration_seconds": 1.899,
+      "log": "verification/v0.39.2/logs/go_tests_root.log"
+    },
+    {
+      "name": "go_vet_root",
+      "status": "PASS",
+      "detail": "",
+      "command": [
+        "go",
+        "vet",
+        "./..."
+      ],
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "duration_seconds": 0.355,
+      "log": "verification/v0.39.2/logs/go_vet_root.log"
+    },
+    {
+      "name": "go_tests_bootstrap",
+      "status": "PASS",
+      "detail": "",
+      "command": [
+        "go",
+        "test",
+        "-count=1",
+        "-json",
+        "./..."
+      ],
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "duration_seconds": 0.066,
+      "log": "verification/v0.39.2/logs/go_tests_bootstrap.log"
+    },
+    {
+      "name": "go_vet_bootstrap",
+      "status": "PASS",
+      "detail": "",
+      "command": [
+        "go",
+        "vet",
+        "./..."
+      ],
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "duration_seconds": 0.094,
+      "log": "verification/v0.39.2/logs/go_vet_bootstrap.log"
+    },
+    {
+      "name": "go_tests_installer",
+      "status": "PASS",
+      "detail": "",
+      "command": [
+        "go",
+        "test",
+        "-count=1",
+        "-json",
+        "./..."
+      ],
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "duration_seconds": 0.817,
+      "log": "verification/v0.39.2/logs/go_tests_installer.log"
+    },
+    {
+      "name": "go_vet_installer",
+      "status": "PASS",
+      "detail": "",
+      "command": [
+        "go",
+        "vet",
+        "./..."
+      ],
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "duration_seconds": 0.161,
+      "log": "verification/v0.39.2/logs/go_vet_installer.log"
+    },
+    {
+      "name": "go_tests_dxf",
+      "status": "PASS",
+      "detail": "",
+      "command": [
+        "go",
+        "test",
+        "-count=1",
+        "-json",
+        "./..."
+      ],
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "duration_seconds": 0.103,
+      "log": "verification/v0.39.2/logs/go_tests_dxf.log"
+    },
+    {
+      "name": "go_vet_dxf",
+      "status": "PASS",
+      "detail": "",
+      "command": [
+        "go",
+        "vet",
+        "./..."
+      ],
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "duration_seconds": 0.107,
+      "log": "verification/v0.39.2/logs/go_vet_dxf.log"
+    },
+    {
+      "name": "go_tests_pgx_compatibility",
+      "status": "PASS",
+      "detail": "",
+      "command": [
+        "go",
+        "test",
+        "-count=1",
+        "-json",
+        "./..."
+      ],
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "duration_seconds": 0.324,
+      "log": "verification/v0.39.2/logs/go_tests_pgx_compatibility.log"
+    },
+    {
+      "name": "go_vet_pgx_compatibility",
+      "status": "PASS",
+      "detail": "",
+      "command": [
+        "go",
+        "vet",
+        "./..."
+      ],
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "duration_seconds": 0.409,
+      "log": "verification/v0.39.2/logs/go_vet_pgx_compatibility.log"
+    },
+    {
+      "name": "go_race_auth_db",
+      "status": "PASS",
+      "detail": "",
+      "command": [
+        "go",
+        "test",
+        "-count=1",
+        "-race",
+        "./internal/auth",
+        "./internal/db"
+      ],
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "duration_seconds": 9.087,
+      "log": "verification/v0.39.2/logs/go_race_auth_db.log"
+    },
+    {
+      "name": "python_installer_44_tests",
+      "status": "PASS",
+      "detail": "",
+      "command": [
+        "/opt/pyvenv/bin/python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "tests/installer",
+        "-v"
+      ],
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "duration_seconds": 0.983,
+      "log": "verification/v0.39.2/logs/python_installer_44_tests.log"
+    },
+    {
+      "name": "binary_sha256",
+      "status": "PASS",
+      "detail": "",
+      "command": [
+        "sha256sum",
+        "-c",
+        "release/bin/SHA256SUMS"
+      ],
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "duration_seconds": 0.032,
+      "log": "verification/v0.39.2/logs/binary_sha256.log"
+    },
+    {
+      "name": "trestctl_version",
+      "status": "PASS",
+      "detail": "",
+      "command": [
+        "release/bin/linux/amd64/trestctl",
+        "version"
+      ],
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "duration_seconds": 0.001,
+      "log": "verification/v0.39.2/logs/trestctl_version.log"
+    },
+    {
+      "name": "bootstrap_version",
+      "status": "PASS",
+      "detail": "",
+      "command": [
+        "release/bin/linux/amd64/trest-install",
+        "version"
+      ],
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "duration_seconds": 0.001,
+      "log": "verification/v0.39.2/logs/bootstrap_version.log"
+    },
+    {
+      "name": "api_refuses_missing_secret",
+      "status": "PASS",
+      "detail": "",
+      "exit_code": 1,
+      "log": "verification/v0.39.2/logs/api_refuses_missing_secret.log"
+    },
+    {
+      "name": "dxf_generation",
+      "status": "PASS",
+      "detail": "",
+      "command": [
+        "release/bin/linux/amd64/generate-dxf",
+        "--config",
+        "proektirovka-sdaniy/configs/court_tosno.yaml",
+        "--out",
+        "/mnt/data/trest_v0392_dxf_smoke"
+      ],
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "duration_seconds": 0.035,
+      "log": "verification/v0.39.2/logs/dxf_generation.log"
+    },
+    {
+      "name": "dxf_generated_files",
+      "status": "PASS",
+      "detail": "",
+      "files": [
+        {
+          "name": "АР-2_План_Подвал.dxf",
+          "bytes": 73272
+        },
+        {
+          "name": "АР-3_План_1_й_этаж.dxf",
+          "bytes": 78051
+        },
+        {
+          "name": "АР-4_План_Типовой_этаж_25.dxf",
+          "bytes": 78808
+        },
+        {
+          "name": "АР-5_План_6_й_этаж_технический.dxf",
+          "bytes": 75118
+        },
+        {
+          "name": "АР-6_Фасад_главный.dxf",
+          "bytes": 69531
+        },
+        {
+          "name": "АР-7_Разрез_1-1.dxf",
+          "bytes": 55707
+        },
+        {
+          "name": "АР-8_План_кровли.dxf",
+          "bytes": 36718
+        },
+        {
+          "name": "КР-1_Схема_фундаментов.dxf",
+          "bytes": 74055
+        },
+        {
+          "name": "ОД-1_Общие_данные.dxf",
+          "bytes": 31082
+        },
+        {
+          "name": "СПОЗУ-1_Генплан.dxf",
+          "bytes": 55426
+        }
+      ],
+      "scope": "generation only; not certified construction/code compliance"
+    },
+    {
+      "name": "binary_payload_formats",
+      "status": "PASS",
+      "detail": "",
+      "binaries": [
+        {
+          "path": "release/bin/linux/amd64/generate-dxf",
+          "file": "release/bin/linux/amd64/generate-dxf: ELF 64-bit LSB executable, x86-64, version 1 (SYSV), statically linked, stripped",
+          "sha256": "1fd315e880848a1c4a15c8133105b7e5d1a95de1507a048b31d4a4575aba4a3d",
+          "bytes": 1921159
+        },
+        {
+          "path": "release/bin/linux/amd64/trest",
+          "file": "release/bin/linux/amd64/trest: ELF 64-bit LSB executable, x86-64, version 1 (SYSV), dynamically linked, interpreter /lib64/ld-linux-x86-64.so.2, stripped",
+          "sha256": "5866984ac22d01bd7a4832c5568b9ad1325358c43ab3ac0256975404326227cc",
+          "bytes": 7844083
+        },
+        {
+          "path": "release/bin/linux/amd64/trest-api",
+          "file": "release/bin/linux/amd64/trest-api: ELF 64-bit LSB executable, x86-64, version 1 (SYSV), dynamically linked, interpreter /lib64/ld-linux-x86-64.so.2, BuildID[sha1]=254e8b48ceb6cc2a285fb93fe68e6595d8a8b0c9, for GNU/Linux 3.2.0, stripped",
+          "sha256": "612f4849d94b643960ad6d3ee28170f144d94267d6e20fbb856bddb5eeae8aad",
+          "bytes": 6993200
+        },
+        {
+          "path": "release/bin/linux/amd64/trest-install",
+          "file": "release/bin/linux/amd64/trest-install: ELF 64-bit LSB executable, x86-64, version 1 (SYSV), statically linked, stripped",
+          "sha256": "b3abd18072e20eb5199fe43e0530137d909234469f57f5f284b2b6d5c4d15dea",
+          "bytes": 2392199
+        },
+        {
+          "path": "release/bin/linux/amd64/trest-installer",
+          "file": "release/bin/linux/amd64/trest-installer: ELF 64-bit LSB executable, x86-64, version 1 (SYSV), statically linked, stripped",
+          "sha256": "d63f1b515a11602b2a3f8d7d473985918448e97944f1f11e9fc6ae9457aa8a21",
+          "bytes": 7585927
+        },
+        {
+          "path": "release/bin/linux/amd64/trest-worker",
+          "file": "release/bin/linux/amd64/trest-worker: ELF 64-bit LSB executable, x86-64, version 1 (SYSV), dynamically linked, interpreter /lib64/ld-linux-x86-64.so.2, BuildID[sha1]=2eadf0785a93d9b2e28936a42ee3930dae619f33, for GNU/Linux 3.2.0, stripped",
+          "sha256": "a65ce170809f2f0f443abecbdc9caaecb5450a64f2be97fba1ebbbea93a3c55b",
+          "bytes": 5552816
+        },
+        {
+          "path": "release/bin/linux/amd64/trestctl",
+          "file": "release/bin/linux/amd64/trestctl: ELF 64-bit LSB executable, x86-64, version 1 (SYSV), statically linked, stripped",
+          "sha256": "3782279220474f642b5a69fc1c20189cd59e534f14906b7e1493b159eda1daab",
+          "bytes": 1654919
+        },
+        {
+          "path": "release/bin/windows/amd64/trest-install.exe",
+          "file": "release/bin/windows/amd64/trest-install.exe: PE32+ executable for MS Windows 6.01 (console), x86-64, 8 sections",
+          "sha256": "c90b4309ffa365d76a71f4d8139eba97604d51e205253ff25ec16dee9d80687e",
+          "bytes": 2548224
+        }
+      ]
+    },
+    {
+      "name": "linux_binary_dependencies",
+      "status": "PASS",
+      "detail": "",
+      "command": [
+        "ldd",
+        "release/bin/linux/amd64/trest-api"
+      ],
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "duration_seconds": 0.006,
+      "log": "verification/v0.39.2/logs/linux_binary_dependencies.log"
+    },
+    {
+      "name": "postgres_migration_integration",
+      "status": "SKIP",
+      "detail": "TREST_TEST_DATABASE_URL not supplied; no PostgreSQL server/psql in build environment. Go integration test explicitly skipped. Wire-protocol fixture is NOT a live database test."
+    },
+    {
+      "name": "docker_compose_runtime",
+      "status": "BLOCKED",
+      "detail": "Docker executable, socket and daemon are absent. No new release container startup was run."
+    },
+    {
+      "name": "clean_host_install_repeat_update",
+      "status": "BLOCKED",
+      "detail": "No disposable supported Linux/Docker host available; dry-run and 44 offline unit tests are not this test."
+    },
+    {
+      "name": "frontend_dependencies_build",
+      "status": "BLOCKED",
+      "detail": "New Next.js/Node frontend dependencies could not be fetched; DNS/network unavailable. Docker/frontend build not performed."
+    },
+    {
+      "name": "marketplace_python_runtime",
+      "status": "BLOCKED",
+      "detail": "Python syntax and SQLAlchemy metadata verified; full pinned dependencies + PostgreSQL integration not run."
+    },
+    {
+      "name": "full_business_e2e",
+      "status": "BLOCKED",
+      "detail": "Full authentication/orders/BIM/AI/browser scenarios not executed. Opt-in limited business smoke script is supplied, not claimed run."
+    },
+    {
+      "name": "sql_backup_restore_runtime",
+      "status": "BLOCKED",
+      "detail": "Backup/isolated restore code and safeguards inspected; not executed on PostgreSQL here."
+    },
+    {
+      "name": "offline_images_models_bundle",
+      "status": "BLOCKED",
+      "detail": "No Docker images/model weight payload available in this environment. Exporter included; images.tar/ollama-models.tar NOT included."
+    },
+    {
+      "name": "trusted_tls_external_browser",
+      "status": "BLOCKED",
+      "detail": "No domain/ACME/external browser testing of this new release."
+    },
+    {
+      "name": "windows_wsl_runtime",
+      "status": "BLOCKED",
+      "detail": "Windows launcher cross-compiled, not executed on Windows/WSL."
+    },
+    {
+      "name": "dependency_security_audit",
+      "status": "BLOCKED",
+      "detail": "Network advisory/SBOM vulnerability audit of inherited Python/Go compatibility dependencies not completed."
+    },
+    {
+      "name": "installer_entrypoint_static_tests",
+      "status": "PASS",
+      "command": [
+        "bash",
+        "scripts/installer/test-installer-static.sh"
+      ],
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "log": "verification/v0.39.2/logs/installer_entrypoint_static_tests.log"
+    },
+    {
+      "name": "production_gate_refuses_unverified_release",
+      "status": "PASS",
+      "command": [
+        "bash",
+        "scripts/production-rc-gate.sh"
+      ],
+      "exit_code": 1,
+      "expected_exit_code": 1,
+      "log": "verification/v0.39.2/logs/production_gate_refuses_unverified_release.log"
+    },
+    {
+      "name": "source_syntax_formats",
+      "status": "PASS",
+      "counts": {
+        "python": 39,
+        "shell": 32,
+        "json": 26,
+        "yaml": 13
+      },
+      "errors": []
+    },
+    {
+      "name": "release_secret_pattern_scan",
+      "status": "PASS",
+      "text_files_scanned": 1030,
+      "matching_paths": [],
+      "private_config_paths": [],
+      "scope": "limited pattern scan; not a complete security audit"
+    },
+    {
+      "name": "installer_dry_run_non_mutating",
+      "status": "PASS",
+      "detail": "Package checksum validation passed; target directory not created. No Docker/system installation performed.",
+      "evidence": "verification/v0.39.2/INSTALLER_DRY_RUN.json"
+    },
+    {
+      "name": "original_migrations_unchanged",
+      "status": "PASS",
+      "checked_files": 19,
+      "changed": []
+    },
+    {
+      "name": "original_project_completeness",
+      "status": "PASS",
+      "original_file_count": 948,
+      "preserved_unchanged": 887,
+      "changed_count": 61,
+      "removed": [],
+      "detail": "All original file paths preserved; changed versions in-place, selected originals retained under archive."
+    },
+    {
+      "name": "all_release_binaries_built",
+      "status": "PASS",
+      "linux_amd64_binaries": 7,
+      "windows_amd64_launcher": 1,
+      "log": "verification/v0.39.2/logs/build_binaries.log",
+      "scope": "build/link only; Windows launcher not runtime tested"
+    }
+  ],
+  "full_product_e2e_verified": false,
+  "new_release_docker_runtime_verified": false,
+  "external_browser_verified": false,
+  "offline_images_included": false,
+  "ollama_weights_included": false,
+  "windows_runtime_verified": false,
+  "production_ready_claim": false,
+  "go_test_counts": {
+    "pass": 161,
+    "fail": 0,
+    "skip": 1
+  },
+  "python_regression_tests": 44,
+  "environment": {
+    "go_version": "go version go1.23.2 linux/amd64",
+    "python": "3.13.5",
+    "docker_command": null,
+    "docker_socket": false,
+    "architecture": "x86_64"
+  },
+  "verified_runtime_scope": "Only directly executable CLI/fail-closed/DXF and selected race/unit tests; no Docker or live PostgreSQL runtime."
+}

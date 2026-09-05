@@ -1,0 +1,105 @@
+{
+  "release": "v0.39.1-stage11-prebuilt-auto-install",
+  "generated_at_utc": "2026-09-04T22:23:59.439484+00:00",
+  "checks": [
+    {
+      "name": "JSON syntax",
+      "status": "PASS",
+      "detail": "26 valid; invalid=0",
+      "command": "json.loads on all *.json",
+      "log": ""
+    },
+    {
+      "name": "YAML syntax",
+      "status": "PASS",
+      "detail": "12 valid; invalid=0",
+      "command": "yaml.safe_load on operational YAML",
+      "log": ""
+    },
+    {
+      "name": "Secret shape scan",
+      "status": "PASS",
+      "detail": "hits=0",
+      "command": "",
+      "log": ""
+    },
+    {
+      "name": "Merge conflict scan",
+      "status": "PASS",
+      "detail": "hits=0",
+      "command": "",
+      "log": ""
+    },
+    {
+      "name": "Compose required services",
+      "status": "PASS",
+      "detail": "services=11; missing=[]",
+      "command": "",
+      "log": ""
+    },
+    {
+      "name": "Compose build paths",
+      "status": "PASS",
+      "detail": "all build contexts and Dockerfiles exist",
+      "command": "",
+      "log": ""
+    },
+    {
+      "name": "Public port policy",
+      "status": "PASS",
+      "detail": "only edge may bind publicly",
+      "command": "",
+      "log": ""
+    },
+    {
+      "name": "Compose secret fail-closed policy",
+      "status": "PASS",
+      "detail": "unsafe fallbacks=[]",
+      "command": "",
+      "log": ""
+    },
+    {
+      "name": "Worker mandatory DB/Redis configuration",
+      "status": "PASS",
+      "detail": "{'WORKER_ADDR': ':8090', 'DATABASE_URL': '${DATABASE_URL:?DATABASE_URL is required}', 'REDIS_URL': '${REDIS_URL:?REDIS_URL is required}'}",
+      "command": "",
+      "log": ""
+    },
+    {
+      "name": "Linux amd64 prebuilt binaries",
+      "status": "PASS",
+      "detail": "missing=[]; present=7",
+      "command": "",
+      "log": ""
+    },
+    {
+      "name": "Prebuilt SHA-256 verification",
+      "status": "PASS",
+      "detail": "release/bin/linux/amd64/generate-dxf: OK\nrelease/bin/linux/amd64/trest: OK\nrelease/bin/linux/amd64/trest-api: OK\nrelease/bin/linux/amd64/trest-install: OK\nrelease/bin/linux/amd64/trest-installer: OK\nrelease/bin/linux/amd64/trest-worker: OK\nrelease/bin/linux/amd64/trestctl: OK",
+      "command": "sha256sum -c release/bin/SHA256SUMS",
+      "log": "verification/v0.39.1/prebuilt-checksums.log"
+    },
+    {
+      "name": "Binary shared-library linkage",
+      "status": "PASS",
+      "detail": "no missing shared libraries reported",
+      "command": "",
+      "log": "verification/v0.39.1/binary-linkage.log"
+    },
+    {
+      "name": "Original source/data preservation",
+      "status": "PASS",
+      "detail": "input=930; source/data missing=0; generated pyc removed=31",
+      "command": "",
+      "log": ""
+    },
+    {
+      "name": "Required project content",
+      "status": "PASS",
+      "detail": "missing=[]",
+      "command": "",
+      "log": ""
+    }
+  ],
+  "pass": true
+}
